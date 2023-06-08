@@ -1,0 +1,3733 @@
+[
+    {
+        "name": "Antikviteter og kunst",
+        "name_eng": "Antiquities and art",
+        "id": "76",
+        "depth": "0",
+        "parent": null
+    },
+    {
+        "name": "Andre antikviteter",
+        "name_eng": "Other antiques",
+        "id": "5175",
+        "depth": "1",
+        "parent": "76"
+    },
+    {
+        "name": "Antikke m\u00f8bler",
+        "name_eng": "Antique furniture",
+        "id": "5178",
+        "depth": "1",
+        "parent": "76"
+    },
+    {
+        "name": "Keramikk, porselen og glass",
+        "name_eng": "Ceramics, porcelain and glass",
+        "id": "5176",
+        "depth": "1",
+        "parent": "76"
+    },
+    {
+        "name": "Kunst",
+        "name_eng": "Art",
+        "id": "5177",
+        "depth": "1",
+        "parent": "76"
+    },
+    {
+        "name": "Akryl",
+        "name_eng": "Acrylic",
+        "id": "385",
+        "depth": "2",
+        "parent": "5177"
+    },
+    {
+        "name": "Akvarell",
+        "name_eng": "Watercolor",
+        "id": "386",
+        "depth": "2",
+        "parent": "5177"
+    },
+    {
+        "name": "Annen kunst",
+        "name_eng": "Other art",
+        "id": "395",
+        "depth": "2",
+        "parent": "5177"
+    },
+    {
+        "name": "Blandingsteknikker",
+        "name_eng": "Mixing techniques",
+        "id": "387",
+        "depth": "2",
+        "parent": "5177"
+    },
+    {
+        "name": "Fotografi",
+        "name_eng": "Photograph",
+        "id": "388",
+        "depth": "2",
+        "parent": "5177"
+    },
+    {
+        "name": "Litografi",
+        "name_eng": "Lithography",
+        "id": "389",
+        "depth": "2",
+        "parent": "5177"
+    },
+    {
+        "name": "Oljemaleri",
+        "name_eng": "Oil painting",
+        "id": "390",
+        "depth": "2",
+        "parent": "5177"
+    },
+    {
+        "name": "Skulptur",
+        "name_eng": "Sculpture",
+        "id": "391",
+        "depth": "2",
+        "parent": "5177"
+    },
+    {
+        "name": "Tegning",
+        "name_eng": "Drawing",
+        "id": "392",
+        "depth": "2",
+        "parent": "5177"
+    },
+    {
+        "name": "Tresnitt",
+        "name_eng": "Woodcut",
+        "id": "393",
+        "depth": "2",
+        "parent": "5177"
+    },
+    {
+        "name": "Trykk",
+        "name_eng": "Press",
+        "id": "394",
+        "depth": "2",
+        "parent": "5177"
+    },
+    {
+        "name": "S\u00f8lvt\u00f8y og bestikk",
+        "name_eng": "Silverware and cutlery",
+        "id": "5179",
+        "depth": "1",
+        "parent": "76"
+    },
+    {
+        "name": "Dyr og utstyr",
+        "name_eng": "Animals and equipment",
+        "id": "77",
+        "depth": "0",
+        "parent": null
+    },
+    {
+        "name": "Akvarier",
+        "name_eng": "Aquariums",
+        "id": "3976",
+        "depth": "1",
+        "parent": "77"
+    },
+    {
+        "name": "Andre dyr",
+        "name_eng": "Other animals",
+        "id": "5183",
+        "depth": "1",
+        "parent": "77"
+    },
+    {
+        "name": "Annet dyreutstyr",
+        "name_eng": "Other animal equipment",
+        "id": "5185",
+        "depth": "1",
+        "parent": "77"
+    },
+    {
+        "name": "Bur",
+        "name_eng": "Cage",
+        "id": "3977",
+        "depth": "1",
+        "parent": "77"
+    },
+    {
+        "name": "Fisker",
+        "name_eng": "Fisherman",
+        "id": "5206",
+        "depth": "1",
+        "parent": "77"
+    },
+    {
+        "name": "Fugler",
+        "name_eng": "Birds",
+        "id": "5205",
+        "depth": "1",
+        "parent": "77"
+    },
+    {
+        "name": "F\u00f4rverter, dyrepass, avl og stallplasser",
+        "name_eng": "Feeders, animal care, breeding and stables",
+        "id": "5186",
+        "depth": "1",
+        "parent": "77"
+    },
+    {
+        "name": "Gnagere og kaniner",
+        "name_eng": "Rodents and rabbits",
+        "id": "5207",
+        "depth": "1",
+        "parent": "77"
+    },
+    {
+        "name": "Heste- og rideutstyr",
+        "name_eng": "Horse and riding equipment",
+        "id": "5195",
+        "depth": "1",
+        "parent": "77"
+    },
+    {
+        "name": "Hester",
+        "name_eng": "Horses",
+        "id": "5190",
+        "depth": "1",
+        "parent": "77"
+    },
+    {
+        "name": "Kaldblodshester",
+        "name_eng": "Cold-blooded horses",
+        "id": "36",
+        "depth": "2",
+        "parent": "5190"
+    },
+    {
+        "name": "Ponnier",
+        "name_eng": "Ponies",
+        "id": "37",
+        "depth": "2",
+        "parent": "5190"
+    },
+    {
+        "name": "Varmblodshester",
+        "name_eng": "Warmblood horses",
+        "id": "38",
+        "depth": "2",
+        "parent": "5190"
+    },
+    {
+        "name": "Hunder",
+        "name_eng": "Dogs",
+        "id": "5192",
+        "depth": "1",
+        "parent": "77"
+    },
+    {
+        "name": "Apporterende hunder",
+        "name_eng": "Fetching dogs",
+        "id": "21",
+        "depth": "2",
+        "parent": "5192"
+    },
+    {
+        "name": "Blandingshunder",
+        "name_eng": "Mixed breed dogs",
+        "id": "22",
+        "depth": "2",
+        "parent": "5192"
+    },
+    {
+        "name": "Bruks-, hyrde- og gjeterhunder",
+        "name_eng": "Working, herding and herding dogs",
+        "id": "23",
+        "depth": "2",
+        "parent": "5192"
+    },
+    {
+        "name": "Dachs-, drivende og sporhunder",
+        "name_eng": "Dachshund, driving and tracking dogs",
+        "id": "24",
+        "depth": "2",
+        "parent": "5192"
+    },
+    {
+        "name": "Mynder",
+        "name_eng": "Figures",
+        "id": "25",
+        "depth": "2",
+        "parent": "5192"
+    },
+    {
+        "name": "Pinscher-, schnauzer-, molosser og sennenhunder",
+        "name_eng": "Pinschers, schnauzers, molossers and mountain dogs",
+        "id": "26",
+        "depth": "2",
+        "parent": "5192"
+    },
+    {
+        "name": "Selskapshunder",
+        "name_eng": "Companion dogs",
+        "id": "27",
+        "depth": "2",
+        "parent": "5192"
+    },
+    {
+        "name": "Spisshunder",
+        "name_eng": "Spitz dogs",
+        "id": "28",
+        "depth": "2",
+        "parent": "5192"
+    },
+    {
+        "name": "St\u00e5ende fuglehunder",
+        "name_eng": "Standing bird dogs",
+        "id": "29",
+        "depth": "2",
+        "parent": "5192"
+    },
+    {
+        "name": "Terriere",
+        "name_eng": "Terriers",
+        "id": "501",
+        "depth": "2",
+        "parent": "5192"
+    },
+    {
+        "name": "Hundeutstyr",
+        "name_eng": "Dog equipment",
+        "id": "5193",
+        "depth": "1",
+        "parent": "77"
+    },
+    {
+        "name": "Insekter og edderkopper",
+        "name_eng": "Insects and spiders",
+        "id": "5208",
+        "depth": "1",
+        "parent": "77"
+    },
+    {
+        "name": "Katter",
+        "name_eng": "Cats",
+        "id": "5191",
+        "depth": "1",
+        "parent": "77"
+    },
+    {
+        "name": "Blandingskatter",
+        "name_eng": "Mixed taxes",
+        "id": "31",
+        "depth": "2",
+        "parent": "5191"
+    },
+    {
+        "name": "Korth\u00e5ret",
+        "name_eng": "The short hair",
+        "id": "32",
+        "depth": "2",
+        "parent": "5191"
+    },
+    {
+        "name": "Orientalere",
+        "name_eng": "Orientals",
+        "id": "33",
+        "depth": "2",
+        "parent": "5191"
+    },
+    {
+        "name": "Persere",
+        "name_eng": "Persians",
+        "id": "34",
+        "depth": "2",
+        "parent": "5191"
+    },
+    {
+        "name": "Semi-langh\u00e5ret",
+        "name_eng": "Semi-long haired",
+        "id": "35",
+        "depth": "2",
+        "parent": "5191"
+    },
+    {
+        "name": "Katteutstyr",
+        "name_eng": "Cat equipment",
+        "id": "5194",
+        "depth": "1",
+        "parent": "77"
+    },
+    {
+        "name": "Reptiler",
+        "name_eng": "Reptiles",
+        "id": "5210",
+        "depth": "1",
+        "parent": "77"
+    },
+    {
+        "name": "Elektronikk og hvitevarer",
+        "name_eng": "Electronics and appliances",
+        "id": "93",
+        "depth": "0",
+        "parent": null
+    },
+    {
+        "name": "Data",
+        "name_eng": "Data",
+        "id": "3215",
+        "depth": "1",
+        "parent": "93"
+    },
+    {
+        "name": "B\u00e6rbar PC",
+        "name_eng": "Laptop",
+        "id": "43",
+        "depth": "2",
+        "parent": "3215"
+    },
+    {
+        "name": "Datatilbeh\u00f8r",
+        "name_eng": "Computer accessories",
+        "id": "46",
+        "depth": "2",
+        "parent": "3215"
+    },
+    {
+        "name": "Kalkulatorer",
+        "name_eng": "Calculators",
+        "id": "47",
+        "depth": "2",
+        "parent": "3215"
+    },
+    {
+        "name": "Programvare",
+        "name_eng": "Software",
+        "id": "49",
+        "depth": "2",
+        "parent": "3215"
+    },
+    {
+        "name": "Skjermer",
+        "name_eng": "Screens",
+        "id": "45",
+        "depth": "2",
+        "parent": "3215"
+    },
+    {
+        "name": "Stasjon\u00e6r PC",
+        "name_eng": "Stationary PC",
+        "id": "44",
+        "depth": "2",
+        "parent": "3215"
+    },
+    {
+        "name": "Tablet og lesebrett",
+        "name_eng": "Tablet and reading board",
+        "id": "48",
+        "depth": "2",
+        "parent": "3215"
+    },
+    {
+        "name": "Foto og video",
+        "name_eng": "Photo and video",
+        "id": "3904",
+        "depth": "1",
+        "parent": "93"
+    },
+    {
+        "name": "Annet fotoutstyr",
+        "name_eng": "Other photo equipment",
+        "id": "505",
+        "depth": "2",
+        "parent": "3904"
+    },
+    {
+        "name": "Fotovesker og -bager",
+        "name_eng": "Photo bags and backpacks",
+        "id": "500",
+        "depth": "2",
+        "parent": "3904"
+    },
+    {
+        "name": "Hybridkamera",
+        "name_eng": "Hybrid camera",
+        "id": "303",
+        "depth": "2",
+        "parent": "3904"
+    },
+    {
+        "name": "Kompaktkameraer",
+        "name_eng": "Compact cameras",
+        "id": "502",
+        "depth": "2",
+        "parent": "3904"
+    },
+    {
+        "name": "Objektiver",
+        "name_eng": "Objectives",
+        "id": "503",
+        "depth": "2",
+        "parent": "3904"
+    },
+    {
+        "name": "Systemkameraer",
+        "name_eng": "System cameras",
+        "id": "66",
+        "depth": "2",
+        "parent": "3904"
+    },
+    {
+        "name": "Videokameraer",
+        "name_eng": "Video cameras",
+        "id": "504",
+        "depth": "2",
+        "parent": "3904"
+    },
+    {
+        "name": "Husholdningsapparater",
+        "name_eng": "Household appliances",
+        "id": "3216",
+        "depth": "1",
+        "parent": "93"
+    },
+    {
+        "name": "Andre apparater",
+        "name_eng": "Other appliances",
+        "id": "304",
+        "depth": "2",
+        "parent": "3216"
+    },
+    {
+        "name": "Blender",
+        "name_eng": "Blender",
+        "id": "83",
+        "depth": "2",
+        "parent": "3216"
+    },
+    {
+        "name": "Br\u00f8drister",
+        "name_eng": "Toaster",
+        "id": "87",
+        "depth": "2",
+        "parent": "3216"
+    },
+    {
+        "name": "Kaffemaskin",
+        "name_eng": "Coffee machine",
+        "id": "506",
+        "depth": "2",
+        "parent": "3216"
+    },
+    {
+        "name": "Kj\u00f8kkenmaskin og foodprosessor",
+        "name_eng": "Kitchen machine and food processor",
+        "id": "507",
+        "depth": "2",
+        "parent": "3216"
+    },
+    {
+        "name": "Miksere",
+        "name_eng": "Mixers",
+        "id": "89",
+        "depth": "2",
+        "parent": "3216"
+    },
+    {
+        "name": "Strykejern",
+        "name_eng": "Iron",
+        "id": "84",
+        "depth": "2",
+        "parent": "3216"
+    },
+    {
+        "name": "St\u00f8vsuger",
+        "name_eng": "Vacuum cleaner",
+        "id": "81",
+        "depth": "2",
+        "parent": "3216"
+    },
+    {
+        "name": "Vaffel- og toastjern",
+        "name_eng": "Waffle and toast iron",
+        "id": "88",
+        "depth": "2",
+        "parent": "3216"
+    },
+    {
+        "name": "Vannkoker",
+        "name_eng": "Kettle",
+        "id": "85",
+        "depth": "2",
+        "parent": "3216"
+    },
+    {
+        "name": "Hvitevarer",
+        "name_eng": "Appliances",
+        "id": "3907",
+        "depth": "1",
+        "parent": "93"
+    },
+    {
+        "name": "Andre hvitevarer",
+        "name_eng": "Other white goods",
+        "id": "305",
+        "depth": "2",
+        "parent": "3907"
+    },
+    {
+        "name": "Frysere",
+        "name_eng": "Freezers",
+        "id": "72",
+        "depth": "2",
+        "parent": "3907"
+    },
+    {
+        "name": "Innbyggingsovner",
+        "name_eng": "Built-in ovens",
+        "id": "74",
+        "depth": "2",
+        "parent": "3907"
+    },
+    {
+        "name": "Kj\u00f8leskap",
+        "name_eng": "Refrigerator",
+        "id": "292",
+        "depth": "2",
+        "parent": "3907"
+    },
+    {
+        "name": "Komfyrer",
+        "name_eng": "Stoves",
+        "id": "73",
+        "depth": "2",
+        "parent": "3907"
+    },
+    {
+        "name": "Mikrob\u00f8lgeovner",
+        "name_eng": "Microwave ovens",
+        "id": "508",
+        "depth": "2",
+        "parent": "3907"
+    },
+    {
+        "name": "Oppvaskmaskiner",
+        "name_eng": "Dishwashers",
+        "id": "509",
+        "depth": "2",
+        "parent": "3907"
+    },
+    {
+        "name": "Platetopper",
+        "name_eng": "Plate tops",
+        "id": "75",
+        "depth": "2",
+        "parent": "3907"
+    },
+    {
+        "name": "T\u00f8rketromler",
+        "name_eng": "Tumble dryers",
+        "id": "510",
+        "depth": "2",
+        "parent": "3907"
+    },
+    {
+        "name": "Vaskemaskiner",
+        "name_eng": "Washing machines",
+        "id": "79",
+        "depth": "2",
+        "parent": "3907"
+    },
+    {
+        "name": "Ventilatorer",
+        "name_eng": "Ventilators",
+        "id": "511",
+        "depth": "2",
+        "parent": "3907"
+    },
+    {
+        "name": "Lyd og bilde",
+        "name_eng": "Sound and image",
+        "id": "3906",
+        "depth": "1",
+        "parent": "93"
+    },
+    {
+        "name": "Bluray-spillere",
+        "name_eng": "Bluray players",
+        "id": "56",
+        "depth": "2",
+        "parent": "3906"
+    },
+    {
+        "name": "DVD-spillere",
+        "name_eng": "DVD players",
+        "id": "57",
+        "depth": "2",
+        "parent": "3906"
+    },
+    {
+        "name": "Digital-TV og mediabokser",
+        "name_eng": "Digital TV and media boxes",
+        "id": "61",
+        "depth": "2",
+        "parent": "3906"
+    },
+    {
+        "name": "Forsterkere og receivere",
+        "name_eng": "Amplifiers and receivers",
+        "id": "52",
+        "depth": "2",
+        "parent": "3906"
+    },
+    {
+        "name": "Hjemmekinoanlegg",
+        "name_eng": "Home cinema system",
+        "id": "59",
+        "depth": "2",
+        "parent": "3906"
+    },
+    {
+        "name": "Hodetelefoner",
+        "name_eng": "Headphones",
+        "id": "51",
+        "depth": "2",
+        "parent": "3906"
+    },
+    {
+        "name": "H\u00f8yttalere",
+        "name_eng": "Speakers",
+        "id": "53",
+        "depth": "2",
+        "parent": "3906"
+    },
+    {
+        "name": "Kabler og tilbeh\u00f8r",
+        "name_eng": "Cables and accessories",
+        "id": "326",
+        "depth": "2",
+        "parent": "3906"
+    },
+    {
+        "name": "MP3 og b\u00e6rbar lyd",
+        "name_eng": "MP3 and portable audio",
+        "id": "50",
+        "depth": "2",
+        "parent": "3906"
+    },
+    {
+        "name": "PA-utstyr",
+        "name_eng": "PA equipment",
+        "id": "54",
+        "depth": "2",
+        "parent": "3906"
+    },
+    {
+        "name": "Projektor og lerret",
+        "name_eng": "Projector and screen",
+        "id": "60",
+        "depth": "2",
+        "parent": "3906"
+    },
+    {
+        "name": "Radio",
+        "name_eng": "Radio",
+        "id": "302",
+        "depth": "2",
+        "parent": "3906"
+    },
+    {
+        "name": "Stereo",
+        "name_eng": "Stereo",
+        "id": "55",
+        "depth": "2",
+        "parent": "3906"
+    },
+    {
+        "name": "TV",
+        "name_eng": "Television",
+        "id": "62",
+        "depth": "2",
+        "parent": "3906"
+    },
+    {
+        "name": "Videospillere",
+        "name_eng": "Video players",
+        "id": "58",
+        "depth": "2",
+        "parent": "3906"
+    },
+    {
+        "name": "Spill og konsoll",
+        "name_eng": "Games and console",
+        "id": "3905",
+        "depth": "1",
+        "parent": "93"
+    },
+    {
+        "name": "Spill",
+        "name_eng": "Game",
+        "id": "64",
+        "depth": "2",
+        "parent": "3905"
+    },
+    {
+        "name": "Spillkonsoller",
+        "name_eng": "Game consoles",
+        "id": "63",
+        "depth": "2",
+        "parent": "3905"
+    },
+    {
+        "name": "Tilbeh\u00f8r",
+        "name_eng": "Accessories",
+        "id": "65",
+        "depth": "2",
+        "parent": "3905"
+    },
+    {
+        "name": "Telefoner og tilbeh\u00f8r",
+        "name_eng": "Phones and accessories",
+        "id": "3217",
+        "depth": "1",
+        "parent": "93"
+    },
+    {
+        "name": "Andre telefoner",
+        "name_eng": "Other phones",
+        "id": "40",
+        "depth": "2",
+        "parent": "3217"
+    },
+    {
+        "name": "Mobiltelefoner",
+        "name_eng": "Mobile phones",
+        "id": "39",
+        "depth": "2",
+        "parent": "3217"
+    },
+    {
+        "name": "Telefontilbeh\u00f8r",
+        "name_eng": "Phone accessories",
+        "id": "41",
+        "depth": "2",
+        "parent": "3217"
+    },
+    {
+        "name": "Annet",
+        "name_eng": "Other",
+        "id": "3213",
+        "depth": "1",
+        "parent": "93"
+    },
+    {
+        "name": "Foreldre og barn",
+        "name_eng": "Parents and children",
+        "id": "68",
+        "depth": "0",
+        "parent": null
+    },
+    {
+        "name": "Barnekl\u00e6r",
+        "name_eng": "Children's clothing",
+        "id": "3913",
+        "depth": "1",
+        "parent": "68"
+    },
+    {
+        "name": "Baby",
+        "name_eng": "Baby",
+        "id": "341",
+        "depth": "2",
+        "parent": "3913"
+    },
+    {
+        "name": "Gutt",
+        "name_eng": "Boy",
+        "id": "342",
+        "depth": "2",
+        "parent": "3913"
+    },
+    {
+        "name": "Jente",
+        "name_eng": "Girl",
+        "id": "343",
+        "depth": "2",
+        "parent": "3913"
+    },
+    {
+        "name": "Unisex",
+        "name_eng": "Unisex",
+        "id": "380",
+        "depth": "2",
+        "parent": "3913"
+    },
+    {
+        "name": "Barnem\u00f8bler",
+        "name_eng": "Children's furniture",
+        "id": "3916",
+        "depth": "1",
+        "parent": "68"
+    },
+    {
+        "name": "Bord",
+        "name_eng": "Table",
+        "id": "314",
+        "depth": "2",
+        "parent": "3916"
+    },
+    {
+        "name": "Oppbevaring",
+        "name_eng": "Storage",
+        "id": "315",
+        "depth": "2",
+        "parent": "3916"
+    },
+    {
+        "name": "Senger",
+        "name_eng": "Beds",
+        "id": "312",
+        "depth": "2",
+        "parent": "3916"
+    },
+    {
+        "name": "Stellebord",
+        "name_eng": "Changing table",
+        "id": "316",
+        "depth": "2",
+        "parent": "3916"
+    },
+    {
+        "name": "Stoler",
+        "name_eng": "Chairs",
+        "id": "313",
+        "depth": "2",
+        "parent": "3916"
+    },
+    {
+        "name": "Annet",
+        "name_eng": "Other",
+        "id": "317",
+        "depth": "2",
+        "parent": "3916"
+    },
+    {
+        "name": "Barneseter",
+        "name_eng": "Child seats",
+        "id": "3911",
+        "depth": "1",
+        "parent": "68"
+    },
+    {
+        "name": "Barnesko",
+        "name_eng": "Children's shoes",
+        "id": "3915",
+        "depth": "1",
+        "parent": "68"
+    },
+    {
+        "name": "Baby",
+        "name_eng": "Baby",
+        "id": "381",
+        "depth": "2",
+        "parent": "3915"
+    },
+    {
+        "name": "Gutt",
+        "name_eng": "Boy",
+        "id": "382",
+        "depth": "2",
+        "parent": "3915"
+    },
+    {
+        "name": "Jente",
+        "name_eng": "Girl",
+        "id": "383",
+        "depth": "2",
+        "parent": "3915"
+    },
+    {
+        "name": "Unisex",
+        "name_eng": "Unisex",
+        "id": "384",
+        "depth": "2",
+        "parent": "3915"
+    },
+    {
+        "name": "Barnevogner",
+        "name_eng": "Prams",
+        "id": "3914",
+        "depth": "1",
+        "parent": "68"
+    },
+    {
+        "name": "Leker",
+        "name_eng": "Toys",
+        "id": "3912",
+        "depth": "1",
+        "parent": "68"
+    },
+    {
+        "name": "Andre leker",
+        "name_eng": "Other toys",
+        "id": "336",
+        "depth": "2",
+        "parent": "3912"
+    },
+    {
+        "name": "Babyleker",
+        "name_eng": "Baby toys",
+        "id": "330",
+        "depth": "2",
+        "parent": "3912"
+    },
+    {
+        "name": "Bamser, dukker og figurer",
+        "name_eng": "Teddy bears, dolls and figurines",
+        "id": "331",
+        "depth": "2",
+        "parent": "3912"
+    },
+    {
+        "name": "Biler og baner",
+        "name_eng": "Cars and tracks",
+        "id": "332",
+        "depth": "2",
+        "parent": "3912"
+    },
+    {
+        "name": "Lego og byggeklosser",
+        "name_eng": "Lego and building blocks",
+        "id": "333",
+        "depth": "2",
+        "parent": "3912"
+    },
+    {
+        "name": "Tegne- og formingsutstyr",
+        "name_eng": "Drawing and shaping equipment",
+        "id": "334",
+        "depth": "2",
+        "parent": "3912"
+    },
+    {
+        "name": "Uteleker",
+        "name_eng": "Outdoor games",
+        "id": "335",
+        "depth": "2",
+        "parent": "3912"
+    },
+    {
+        "name": "Mammakl\u00e6r",
+        "name_eng": "Maternity clothes",
+        "id": "3948",
+        "depth": "1",
+        "parent": "68"
+    },
+    {
+        "name": "Utstyr og sikkerhet",
+        "name_eng": "Equipment and safety",
+        "id": "3918",
+        "depth": "1",
+        "parent": "68"
+    },
+    {
+        "name": "Annet",
+        "name_eng": "Other",
+        "id": "3970",
+        "depth": "1",
+        "parent": "68"
+    },
+    {
+        "name": "Fritid, hobby og underholdning",
+        "name_eng": "Leisure, hobby and entertainment",
+        "id": "86",
+        "depth": "0",
+        "parent": null
+    },
+    {
+        "name": "Billetter og reiser",
+        "name_eng": "Tickets and travel",
+        "id": "7735",
+        "depth": "1",
+        "parent": "86"
+    },
+    {
+        "name": "Flybilletter",
+        "name_eng": "Airline tickets",
+        "id": "113",
+        "depth": "2",
+        "parent": "7735"
+    },
+    {
+        "name": "Idrettsarrangementer",
+        "name_eng": "Sports events",
+        "id": "116",
+        "depth": "2",
+        "parent": "7735"
+    },
+    {
+        "name": "Konsertbilletter",
+        "name_eng": "Concert tickets",
+        "id": "115",
+        "depth": "2",
+        "parent": "7735"
+    },
+    {
+        "name": "Pakkereiser",
+        "name_eng": "Package tours",
+        "id": "112",
+        "depth": "2",
+        "parent": "7735"
+    },
+    {
+        "name": "Teaterbilletter",
+        "name_eng": "Theater tickets",
+        "id": "117",
+        "depth": "2",
+        "parent": "7735"
+    },
+    {
+        "name": "Togbilletter",
+        "name_eng": "Train tickets",
+        "id": "114",
+        "depth": "2",
+        "parent": "7735"
+    },
+    {
+        "name": "Annet",
+        "name_eng": "Other",
+        "id": "118",
+        "depth": "2",
+        "parent": "7735"
+    },
+    {
+        "name": "Brettspill og bordspill",
+        "name_eng": "Board games and table games",
+        "id": "5203",
+        "depth": "1",
+        "parent": "86"
+    },
+    {
+        "name": "Andre spill",
+        "name_eng": "Other games",
+        "id": "122",
+        "depth": "2",
+        "parent": "5203"
+    },
+    {
+        "name": "Bordspill",
+        "name_eng": "Board games",
+        "id": "120",
+        "depth": "2",
+        "parent": "5203"
+    },
+    {
+        "name": "Brettspill",
+        "name_eng": "Board games",
+        "id": "119",
+        "depth": "2",
+        "parent": "5203"
+    },
+    {
+        "name": "Hage- og parkspill",
+        "name_eng": "Garden and park games",
+        "id": "121",
+        "depth": "2",
+        "parent": "5203"
+    },
+    {
+        "name": "Puslespill",
+        "name_eng": "Puzzle",
+        "id": "329",
+        "depth": "2",
+        "parent": "5203"
+    },
+    {
+        "name": "B\u00f8ker og blader",
+        "name_eng": "Books and magazines",
+        "id": "5209",
+        "depth": "1",
+        "parent": "86"
+    },
+    {
+        "name": "Blader og magasiner",
+        "name_eng": "Magazines and magazines",
+        "id": "512",
+        "depth": "2",
+        "parent": "5209"
+    },
+    {
+        "name": "Faglitteratur",
+        "name_eng": "Nonfiction",
+        "id": "513",
+        "depth": "2",
+        "parent": "5209"
+    },
+    {
+        "name": "Fakta og dokumentar",
+        "name_eng": "Facts and documentary",
+        "id": "520",
+        "depth": "2",
+        "parent": "5209"
+    },
+    {
+        "name": "Kokeb\u00f8ker",
+        "name_eng": "Cookbooks",
+        "id": "94",
+        "depth": "2",
+        "parent": "5209"
+    },
+    {
+        "name": "Oppslagsverk",
+        "name_eng": "Reference book",
+        "id": "521",
+        "depth": "2",
+        "parent": "5209"
+    },
+    {
+        "name": "Skj\u00f8nnlitteratur",
+        "name_eng": "Fiction",
+        "id": "514",
+        "depth": "2",
+        "parent": "5209"
+    },
+    {
+        "name": "Tegneserier",
+        "name_eng": "cartoons",
+        "id": "515",
+        "depth": "2",
+        "parent": "5209"
+    },
+    {
+        "name": "\u00d8vrige b\u00f8ker og verk",
+        "name_eng": "Other books and works",
+        "id": "97",
+        "depth": "2",
+        "parent": "5209"
+    },
+    {
+        "name": "H\u00e5ndarbeid",
+        "name_eng": "Handiwork",
+        "id": "7734",
+        "depth": "1",
+        "parent": "86"
+    },
+    {
+        "name": "Garn",
+        "name_eng": "Yarn",
+        "id": "124",
+        "depth": "2",
+        "parent": "7734"
+    },
+    {
+        "name": "Keramikk",
+        "name_eng": "Pottery",
+        "id": "130",
+        "depth": "2",
+        "parent": "7734"
+    },
+    {
+        "name": "Maling og maleutstyr",
+        "name_eng": "Paint and painting equipment",
+        "id": "128",
+        "depth": "2",
+        "parent": "7734"
+    },
+    {
+        "name": "Perler og smykkestener",
+        "name_eng": "Pearls and gemstones",
+        "id": "131",
+        "depth": "2",
+        "parent": "7734"
+    },
+    {
+        "name": "Scrapbooking",
+        "name_eng": "Scrapbooking",
+        "id": "129",
+        "depth": "2",
+        "parent": "7734"
+    },
+    {
+        "name": "Stoff",
+        "name_eng": "Fabric",
+        "id": "125",
+        "depth": "2",
+        "parent": "7734"
+    },
+    {
+        "name": "Sy- og strikkeutstyr",
+        "name_eng": "Sewing and knitting equipment",
+        "id": "126",
+        "depth": "2",
+        "parent": "7734"
+    },
+    {
+        "name": "Symaskiner",
+        "name_eng": "Sewing machines",
+        "id": "123",
+        "depth": "2",
+        "parent": "7734"
+    },
+    {
+        "name": "Tresl\u00f8yd",
+        "name_eng": "Tree gutted",
+        "id": "132",
+        "depth": "2",
+        "parent": "7734"
+    },
+    {
+        "name": "Vev",
+        "name_eng": "Loom",
+        "id": "127",
+        "depth": "2",
+        "parent": "7734"
+    },
+    {
+        "name": "Mat og drikke",
+        "name_eng": "Food and drink",
+        "id": "3972",
+        "depth": "1",
+        "parent": "86"
+    },
+    {
+        "name": "Modellbyggesett og modeller",
+        "name_eng": "Model building kits and models",
+        "id": "7732",
+        "depth": "1",
+        "parent": "86"
+    },
+    {
+        "name": "Musikk og film",
+        "name_eng": "Music and film",
+        "id": "3922",
+        "depth": "1",
+        "parent": "86"
+    },
+    {
+        "name": "Blu-ray",
+        "name_eng": "Blu-ray",
+        "id": "102",
+        "depth": "2",
+        "parent": "3922"
+    },
+    {
+        "name": "CD",
+        "name_eng": "CD",
+        "id": "98",
+        "depth": "2",
+        "parent": "3922"
+    },
+    {
+        "name": "DVD",
+        "name_eng": "DVD",
+        "id": "100",
+        "depth": "2",
+        "parent": "3922"
+    },
+    {
+        "name": "Kassetter",
+        "name_eng": "Cassettes",
+        "id": "402",
+        "depth": "2",
+        "parent": "3922"
+    },
+    {
+        "name": "LP/EP",
+        "name_eng": "LP/EP",
+        "id": "99",
+        "depth": "2",
+        "parent": "3922"
+    },
+    {
+        "name": "VHS",
+        "name_eng": "VHS",
+        "id": "101",
+        "depth": "2",
+        "parent": "3922"
+    },
+    {
+        "name": "Musikkinstrumenter",
+        "name_eng": "Musical instruments",
+        "id": "92",
+        "depth": "1",
+        "parent": "86"
+    },
+    {
+        "name": "Andre strengeinstrumenter",
+        "name_eng": "Other stringed instruments",
+        "id": "106",
+        "depth": "2",
+        "parent": "92"
+    },
+    {
+        "name": "Bassgitarer",
+        "name_eng": "Bass guitars",
+        "id": "296",
+        "depth": "2",
+        "parent": "92"
+    },
+    {
+        "name": "Gitarer",
+        "name_eng": "Guitars",
+        "id": "295",
+        "depth": "2",
+        "parent": "92"
+    },
+    {
+        "name": "Keyboard/synth",
+        "name_eng": "Keyboard/synth",
+        "id": "110",
+        "depth": "2",
+        "parent": "92"
+    },
+    {
+        "name": "Lydutstyr",
+        "name_eng": "Audio equipment",
+        "id": "108",
+        "depth": "2",
+        "parent": "92"
+    },
+    {
+        "name": "Messinginstrumenter",
+        "name_eng": "Brass instruments",
+        "id": "104",
+        "depth": "2",
+        "parent": "92"
+    },
+    {
+        "name": "Orgler",
+        "name_eng": "Organs",
+        "id": "337",
+        "depth": "2",
+        "parent": "92"
+    },
+    {
+        "name": "Piano/flygel",
+        "name_eng": "Piano/grand piano",
+        "id": "109",
+        "depth": "2",
+        "parent": "92"
+    },
+    {
+        "name": "Slagverk",
+        "name_eng": "Percussion",
+        "id": "107",
+        "depth": "2",
+        "parent": "92"
+    },
+    {
+        "name": "Strykeinstrumenter",
+        "name_eng": "String instruments",
+        "id": "105",
+        "depth": "2",
+        "parent": "92"
+    },
+    {
+        "name": "Trebl\u00e5sere",
+        "name_eng": "Woodwinds",
+        "id": "103",
+        "depth": "2",
+        "parent": "92"
+    },
+    {
+        "name": "Trekkspill",
+        "name_eng": "Accordion",
+        "id": "328",
+        "depth": "2",
+        "parent": "92"
+    },
+    {
+        "name": "\u00d8vrige instrumenter",
+        "name_eng": "Other instruments",
+        "id": "111",
+        "depth": "2",
+        "parent": "92"
+    },
+    {
+        "name": "RC-utstyr",
+        "name_eng": "RC equipment",
+        "id": "7733",
+        "depth": "1",
+        "parent": "86"
+    },
+    {
+        "name": "Bil",
+        "name_eng": "Car",
+        "id": "133",
+        "depth": "2",
+        "parent": "7733"
+    },
+    {
+        "name": "B\u00e5t",
+        "name_eng": "Boat",
+        "id": "134",
+        "depth": "2",
+        "parent": "7733"
+    },
+    {
+        "name": "Drone",
+        "name_eng": "Drone",
+        "id": "401",
+        "depth": "2",
+        "parent": "7733"
+    },
+    {
+        "name": "Fly",
+        "name_eng": "Fly",
+        "id": "135",
+        "depth": "2",
+        "parent": "7733"
+    },
+    {
+        "name": "Helikopter",
+        "name_eng": "Helicopter",
+        "id": "136",
+        "depth": "2",
+        "parent": "7733"
+    },
+    {
+        "name": "Modelljernbaner",
+        "name_eng": "Model railways",
+        "id": "327",
+        "depth": "2",
+        "parent": "7733"
+    },
+    {
+        "name": "Samleobjekter",
+        "name_eng": "Collectibles",
+        "id": "285",
+        "depth": "1",
+        "parent": "86"
+    },
+    {
+        "name": "Andre samlinger",
+        "name_eng": "Other collections",
+        "id": "141",
+        "depth": "2",
+        "parent": "285"
+    },
+    {
+        "name": "Frimerker",
+        "name_eng": "Stamps",
+        "id": "137",
+        "depth": "2",
+        "parent": "285"
+    },
+    {
+        "name": "Leker",
+        "name_eng": "Toys",
+        "id": "399",
+        "depth": "2",
+        "parent": "285"
+    },
+    {
+        "name": "Milit\u00e6reffekter",
+        "name_eng": "Military effects",
+        "id": "397",
+        "depth": "2",
+        "parent": "285"
+    },
+    {
+        "name": "Mynter og sedler",
+        "name_eng": "Coins and banknotes",
+        "id": "138",
+        "depth": "2",
+        "parent": "285"
+    },
+    {
+        "name": "Pins",
+        "name_eng": "Pentecost",
+        "id": "139",
+        "depth": "2",
+        "parent": "285"
+    },
+    {
+        "name": "Postkort",
+        "name_eng": "Postcard",
+        "id": "140",
+        "depth": "2",
+        "parent": "285"
+    },
+    {
+        "name": "Samlefigurer",
+        "name_eng": "Collectible figures",
+        "id": "400",
+        "depth": "2",
+        "parent": "285"
+    },
+    {
+        "name": "Samlekort",
+        "name_eng": "Trading cards",
+        "id": "396",
+        "depth": "2",
+        "parent": "285"
+    },
+    {
+        "name": "Skilt og plakater",
+        "name_eng": "Signs and posters",
+        "id": "398",
+        "depth": "2",
+        "parent": "285"
+    },
+    {
+        "name": "Annet",
+        "name_eng": "Other",
+        "id": "3973",
+        "depth": "1",
+        "parent": "86"
+    },
+    {
+        "name": "Hage, oppussing og hus",
+        "name_eng": "Garden, renovation and house",
+        "id": "67",
+        "depth": "0",
+        "parent": null
+    },
+    {
+        "name": "Alarm og sikkerhet",
+        "name_eng": "Alarm and security",
+        "id": "8347",
+        "depth": "1",
+        "parent": "67"
+    },
+    {
+        "name": "Baderomsinnredning",
+        "name_eng": "Bathroom furnishings",
+        "id": "7749",
+        "depth": "1",
+        "parent": "67"
+    },
+    {
+        "name": "Badekar",
+        "name_eng": "Bathtub",
+        "id": "157",
+        "depth": "2",
+        "parent": "7749"
+    },
+    {
+        "name": "Baderomsm\u00f8bler",
+        "name_eng": "Bathroom furniture",
+        "id": "164",
+        "depth": "2",
+        "parent": "7749"
+    },
+    {
+        "name": "Badstuer",
+        "name_eng": "Saunas",
+        "id": "158",
+        "depth": "2",
+        "parent": "7749"
+    },
+    {
+        "name": "Blandebatterier",
+        "name_eng": "Mixer taps",
+        "id": "156",
+        "depth": "2",
+        "parent": "7749"
+    },
+    {
+        "name": "Dusjkabinett og -vegger",
+        "name_eng": "Shower enclosure and walls",
+        "id": "160",
+        "depth": "2",
+        "parent": "7749"
+    },
+    {
+        "name": "Servanter",
+        "name_eng": "Sinks",
+        "id": "162",
+        "depth": "2",
+        "parent": "7749"
+    },
+    {
+        "name": "Steamdusjer",
+        "name_eng": "Steam showers",
+        "id": "159",
+        "depth": "2",
+        "parent": "7749"
+    },
+    {
+        "name": "Tilbeh\u00f8r",
+        "name_eng": "Accessories",
+        "id": "163",
+        "depth": "2",
+        "parent": "7749"
+    },
+    {
+        "name": "Toaletter",
+        "name_eng": "Toilets",
+        "id": "161",
+        "depth": "2",
+        "parent": "7749"
+    },
+    {
+        "name": "Byggevarer og oppussing",
+        "name_eng": "Building materials and renovation",
+        "id": "3899",
+        "depth": "1",
+        "parent": "67"
+    },
+    {
+        "name": "Andre byggevarer",
+        "name_eng": "Other building materials",
+        "id": "165",
+        "depth": "2",
+        "parent": "3899"
+    },
+    {
+        "name": "Byggesett",
+        "name_eng": "Construction kit",
+        "id": "166",
+        "depth": "2",
+        "parent": "3899"
+    },
+    {
+        "name": "D\u00f8rer",
+        "name_eng": "Doors",
+        "id": "169",
+        "depth": "2",
+        "parent": "3899"
+    },
+    {
+        "name": "Gulv",
+        "name_eng": "Floor",
+        "id": "167",
+        "depth": "2",
+        "parent": "3899"
+    },
+    {
+        "name": "Tapet og maling",
+        "name_eng": "Wallpaper and paint",
+        "id": "301",
+        "depth": "2",
+        "parent": "3899"
+    },
+    {
+        "name": "Trapper",
+        "name_eng": "Stairs",
+        "id": "346",
+        "depth": "2",
+        "parent": "3899"
+    },
+    {
+        "name": "Vinduer",
+        "name_eng": "Windows",
+        "id": "168",
+        "depth": "2",
+        "parent": "3899"
+    },
+    {
+        "name": "Garasje",
+        "name_eng": "Garage",
+        "id": "8348",
+        "depth": "1",
+        "parent": "67"
+    },
+    {
+        "name": "Hage og uteomr\u00e5der",
+        "name_eng": "Garden and outdoor areas",
+        "id": "3901",
+        "depth": "1",
+        "parent": "67"
+    },
+    {
+        "name": "Annet hageutstyr",
+        "name_eng": "Other garden equipment",
+        "id": "145",
+        "depth": "2",
+        "parent": "3901"
+    },
+    {
+        "name": "Beplantning og tilbeh\u00f8r",
+        "name_eng": "Planting and accessories",
+        "id": "339",
+        "depth": "2",
+        "parent": "3901"
+    },
+    {
+        "name": "Gressklippere",
+        "name_eng": "Lawnmowers",
+        "id": "149",
+        "depth": "2",
+        "parent": "3901"
+    },
+    {
+        "name": "Grill",
+        "name_eng": "Barbecue",
+        "id": "147",
+        "depth": "2",
+        "parent": "3901"
+    },
+    {
+        "name": "Hagem\u00f8bler",
+        "name_eng": "Garden furniture",
+        "id": "142",
+        "depth": "2",
+        "parent": "3901"
+    },
+    {
+        "name": "Hageredskap",
+        "name_eng": "Garden tools",
+        "id": "143",
+        "depth": "2",
+        "parent": "3901"
+    },
+    {
+        "name": "Markiser og parasoller",
+        "name_eng": "Awnings and parasols",
+        "id": "146",
+        "depth": "2",
+        "parent": "3901"
+    },
+    {
+        "name": "Partytelt",
+        "name_eng": "Party tent",
+        "id": "144",
+        "depth": "2",
+        "parent": "3901"
+    },
+    {
+        "name": "Sn\u00f8rydding",
+        "name_eng": "Snow removal",
+        "id": "148",
+        "depth": "2",
+        "parent": "3901"
+    },
+    {
+        "name": "Sv\u00f8mmebasseng og spabad",
+        "name_eng": "Swimming pool and hot tub",
+        "id": "150",
+        "depth": "2",
+        "parent": "3901"
+    },
+    {
+        "name": "Hytteutstyr",
+        "name_eng": "Cabin equipment",
+        "id": "3968",
+        "depth": "1",
+        "parent": "67"
+    },
+    {
+        "name": "Kj\u00f8kkeninnredning",
+        "name_eng": "Kitchen furnishings",
+        "id": "3900",
+        "depth": "1",
+        "parent": "67"
+    },
+    {
+        "name": "Oppvarming og ventilasjon",
+        "name_eng": "Heating and ventilation",
+        "id": "5218",
+        "depth": "1",
+        "parent": "67"
+    },
+    {
+        "name": "Aircondition og vifter",
+        "name_eng": "Air conditioning and fans",
+        "id": "297",
+        "depth": "2",
+        "parent": "5218"
+    },
+    {
+        "name": "Elektriske ovner",
+        "name_eng": "Electric ovens",
+        "id": "155",
+        "depth": "2",
+        "parent": "5218"
+    },
+    {
+        "name": "Ovner",
+        "name_eng": "Ovens",
+        "id": "151",
+        "depth": "2",
+        "parent": "5218"
+    },
+    {
+        "name": "Peis",
+        "name_eng": "Fireplace",
+        "id": "152",
+        "depth": "2",
+        "parent": "5218"
+    },
+    {
+        "name": "Varmepumper",
+        "name_eng": "Heat pumps",
+        "id": "154",
+        "depth": "2",
+        "parent": "5218"
+    },
+    {
+        "name": "Ved og brensel",
+        "name_eng": "Firewood and fuel",
+        "id": "153",
+        "depth": "2",
+        "parent": "5218"
+    },
+    {
+        "name": "Verkt\u00f8y",
+        "name_eng": "Tool",
+        "id": "5219",
+        "depth": "1",
+        "parent": "67"
+    },
+    {
+        "name": "Annet",
+        "name_eng": "Other",
+        "id": "3969",
+        "depth": "1",
+        "parent": "67"
+    },
+    {
+        "name": "Kl\u00e6r, kosmetikk og tilbeh\u00f8r",
+        "name_eng": "Clothing, cosmetics and accessories",
+        "id": "71",
+        "depth": "0",
+        "parent": null
+    },
+    {
+        "name": "Briller og linser",
+        "name_eng": "Glasses and lenses",
+        "id": "8344",
+        "depth": "1",
+        "parent": "71"
+    },
+    {
+        "name": "Briller",
+        "name_eng": "Glasses",
+        "id": "200",
+        "depth": "2",
+        "parent": "8344"
+    },
+    {
+        "name": "Linser",
+        "name_eng": "Lentils",
+        "id": "201",
+        "depth": "2",
+        "parent": "8344"
+    },
+    {
+        "name": "Solbriller",
+        "name_eng": "Sunglasses",
+        "id": "199",
+        "depth": "2",
+        "parent": "8344"
+    },
+    {
+        "name": "Damekl\u00e6r",
+        "name_eng": "Women's clothing",
+        "id": "3941",
+        "depth": "1",
+        "parent": "71"
+    },
+    {
+        "name": "Brudekjoler",
+        "name_eng": "Wedding dresses",
+        "id": "171",
+        "depth": "2",
+        "parent": "3941"
+    },
+    {
+        "name": "Bukser",
+        "name_eng": "Pants",
+        "id": "174",
+        "depth": "2",
+        "parent": "3941"
+    },
+    {
+        "name": "Bunader",
+        "name_eng": "Bunader",
+        "id": "170",
+        "depth": "2",
+        "parent": "3941"
+    },
+    {
+        "name": "Gensere",
+        "name_eng": "Sweaters",
+        "id": "177",
+        "depth": "2",
+        "parent": "3941"
+    },
+    {
+        "name": "Jakker",
+        "name_eng": "Jackets",
+        "id": "178",
+        "depth": "2",
+        "parent": "3941"
+    },
+    {
+        "name": "Kjoler",
+        "name_eng": "Dresses",
+        "id": "172",
+        "depth": "2",
+        "parent": "3941"
+    },
+    {
+        "name": "Luer, skjerf og votter",
+        "name_eng": "Hats, scarves and mittens",
+        "id": "310",
+        "depth": "2",
+        "parent": "3941"
+    },
+    {
+        "name": "Skjorter",
+        "name_eng": "Shirts",
+        "id": "180",
+        "depth": "2",
+        "parent": "3941"
+    },
+    {
+        "name": "Skj\u00f8rt",
+        "name_eng": "Skirt",
+        "id": "175",
+        "depth": "2",
+        "parent": "3941"
+    },
+    {
+        "name": "T-skjorter",
+        "name_eng": "T shirts",
+        "id": "179",
+        "depth": "2",
+        "parent": "3941"
+    },
+    {
+        "name": "Topper",
+        "name_eng": "Tops",
+        "id": "176",
+        "depth": "2",
+        "parent": "3941"
+    },
+    {
+        "name": "Undert\u00f8y",
+        "name_eng": "Underwear",
+        "id": "181",
+        "depth": "2",
+        "parent": "3941"
+    },
+    {
+        "name": "Ytterkl\u00e6r",
+        "name_eng": "Outerwear",
+        "id": "173",
+        "depth": "2",
+        "parent": "3941"
+    },
+    {
+        "name": "Annet",
+        "name_eng": "Other",
+        "id": "182",
+        "depth": "2",
+        "parent": "3941"
+    },
+    {
+        "name": "Herrekl\u00e6r",
+        "name_eng": "Men's clothing",
+        "id": "3950",
+        "depth": "1",
+        "parent": "71"
+    },
+    {
+        "name": "Bukser",
+        "name_eng": "Pants",
+        "id": "184",
+        "depth": "2",
+        "parent": "3950"
+    },
+    {
+        "name": "Bunader",
+        "name_eng": "Bunader",
+        "id": "188",
+        "depth": "2",
+        "parent": "3950"
+    },
+    {
+        "name": "Dresser",
+        "name_eng": "Suits",
+        "id": "189",
+        "depth": "2",
+        "parent": "3950"
+    },
+    {
+        "name": "Gensere",
+        "name_eng": "Sweaters",
+        "id": "186",
+        "depth": "2",
+        "parent": "3950"
+    },
+    {
+        "name": "Luer, skjerf og votter",
+        "name_eng": "Hats, scarves and mittens",
+        "id": "311",
+        "depth": "2",
+        "parent": "3950"
+    },
+    {
+        "name": "Skjorter",
+        "name_eng": "Shirts",
+        "id": "185",
+        "depth": "2",
+        "parent": "3950"
+    },
+    {
+        "name": "Smokinger",
+        "name_eng": "Tuxedos",
+        "id": "190",
+        "depth": "2",
+        "parent": "3950"
+    },
+    {
+        "name": "T-skjorter",
+        "name_eng": "T shirts",
+        "id": "187",
+        "depth": "2",
+        "parent": "3950"
+    },
+    {
+        "name": "Undert\u00f8y",
+        "name_eng": "Underwear",
+        "id": "191",
+        "depth": "2",
+        "parent": "3950"
+    },
+    {
+        "name": "Ytterkl\u00e6r",
+        "name_eng": "Outerwear",
+        "id": "183",
+        "depth": "2",
+        "parent": "3950"
+    },
+    {
+        "name": "Annet",
+        "name_eng": "Other",
+        "id": "192",
+        "depth": "2",
+        "parent": "3950"
+    },
+    {
+        "name": "Hud-, h\u00e5r- og kroppspleie",
+        "name_eng": "Skin, hair and body care",
+        "id": "8280",
+        "depth": "1",
+        "parent": "71"
+    },
+    {
+        "name": "Klokker og ur",
+        "name_eng": "Clocks and watches",
+        "id": "3945",
+        "depth": "1",
+        "parent": "71"
+    },
+    {
+        "name": "Kosmetikk",
+        "name_eng": "Cosmetics",
+        "id": "8282",
+        "depth": "1",
+        "parent": "71"
+    },
+    {
+        "name": "Kostyme",
+        "name_eng": "Costume",
+        "id": "8349",
+        "depth": "1",
+        "parent": "71"
+    },
+    {
+        "name": "Sko",
+        "name_eng": "Shoe",
+        "id": "3949",
+        "depth": "1",
+        "parent": "71"
+    },
+    {
+        "name": "Damesko",
+        "name_eng": "Women's shoes",
+        "id": "194",
+        "depth": "2",
+        "parent": "3949"
+    },
+    {
+        "name": "Herresko",
+        "name_eng": "Men's shoes",
+        "id": "193",
+        "depth": "2",
+        "parent": "3949"
+    },
+    {
+        "name": "Smykker og oppbevaring",
+        "name_eng": "Jewelery and storage",
+        "id": "7748",
+        "depth": "1",
+        "parent": "71"
+    },
+    {
+        "name": "Andre smykker",
+        "name_eng": "Other jewelry",
+        "id": "306",
+        "depth": "2",
+        "parent": "7748"
+    },
+    {
+        "name": "Armb\u00e5nd",
+        "name_eng": "Bracelet",
+        "id": "198",
+        "depth": "2",
+        "parent": "7748"
+    },
+    {
+        "name": "Halskjeder",
+        "name_eng": "Necklaces",
+        "id": "195",
+        "depth": "2",
+        "parent": "7748"
+    },
+    {
+        "name": "Ringer",
+        "name_eng": "Calls",
+        "id": "196",
+        "depth": "2",
+        "parent": "7748"
+    },
+    {
+        "name": "Smykkeskrin og oppbevaring",
+        "name_eng": "Jewelery box and storage",
+        "id": "307",
+        "depth": "2",
+        "parent": "7748"
+    },
+    {
+        "name": "\u00d8repynt",
+        "name_eng": "Earrings",
+        "id": "197",
+        "depth": "2",
+        "parent": "7748"
+    },
+    {
+        "name": "Vesker og bager",
+        "name_eng": "Bags and bags",
+        "id": "3946",
+        "depth": "1",
+        "parent": "71"
+    },
+    {
+        "name": "Annet",
+        "name_eng": "Other",
+        "id": "5204",
+        "depth": "1",
+        "parent": "71"
+    },
+    {
+        "name": "M\u00f8bler og interi\u00f8r",
+        "name_eng": "Furniture and interiors",
+        "id": "78",
+        "depth": "0",
+        "parent": null
+    },
+    {
+        "name": "Belysning",
+        "name_eng": "Lighting",
+        "id": "5181",
+        "depth": "1",
+        "parent": "78"
+    },
+    {
+        "name": "Andre lamper",
+        "name_eng": "Other lamps",
+        "id": "230",
+        "depth": "2",
+        "parent": "5181"
+    },
+    {
+        "name": "Bordlamper",
+        "name_eng": "Table lamps",
+        "id": "229",
+        "depth": "2",
+        "parent": "5181"
+    },
+    {
+        "name": "St\u00e5lamper",
+        "name_eng": "Steel lamps",
+        "id": "228",
+        "depth": "2",
+        "parent": "5181"
+    },
+    {
+        "name": "Taklamper",
+        "name_eng": "Ceiling lights",
+        "id": "226",
+        "depth": "2",
+        "parent": "5181"
+    },
+    {
+        "name": "Vegglamper",
+        "name_eng": "Wall lamps",
+        "id": "227",
+        "depth": "2",
+        "parent": "5181"
+    },
+    {
+        "name": "Bord og stoler",
+        "name_eng": "Table and chairs",
+        "id": "5196",
+        "depth": "1",
+        "parent": "78"
+    },
+    {
+        "name": "Andre bord og stoler",
+        "name_eng": "Other tables and chairs",
+        "id": "217",
+        "depth": "2",
+        "parent": "5196"
+    },
+    {
+        "name": "Kj\u00f8kkenbord",
+        "name_eng": "Kitchen table",
+        "id": "213",
+        "depth": "2",
+        "parent": "5196"
+    },
+    {
+        "name": "Kontorstoler",
+        "name_eng": "Office chairs",
+        "id": "215",
+        "depth": "2",
+        "parent": "5196"
+    },
+    {
+        "name": "Salongbord",
+        "name_eng": "Coffee table",
+        "id": "212",
+        "depth": "2",
+        "parent": "5196"
+    },
+    {
+        "name": "Skrivebord",
+        "name_eng": "Desk",
+        "id": "214",
+        "depth": "2",
+        "parent": "5196"
+    },
+    {
+        "name": "Spisestuer",
+        "name_eng": "Dining rooms",
+        "id": "211",
+        "depth": "2",
+        "parent": "5196"
+    },
+    {
+        "name": "Stoler og krakker",
+        "name_eng": "Chairs and stools",
+        "id": "216",
+        "depth": "2",
+        "parent": "5196"
+    },
+    {
+        "name": "Dekorasjon og pyntegjenstander",
+        "name_eng": "Decoration and ornaments",
+        "id": "5222",
+        "depth": "1",
+        "parent": "78"
+    },
+    {
+        "name": "Andre pyntgjenstander",
+        "name_eng": "Other decorative items",
+        "id": "241",
+        "depth": "2",
+        "parent": "5222"
+    },
+    {
+        "name": "Bilder og rammer",
+        "name_eng": "Pictures and frames",
+        "id": "237",
+        "depth": "2",
+        "parent": "5222"
+    },
+    {
+        "name": "Fat",
+        "name_eng": "Barrel",
+        "id": "239",
+        "depth": "2",
+        "parent": "5222"
+    },
+    {
+        "name": "Lysestaker",
+        "name_eng": "Candlesticks",
+        "id": "240",
+        "depth": "2",
+        "parent": "5222"
+    },
+    {
+        "name": "Speil",
+        "name_eng": "Mirror",
+        "id": "299",
+        "depth": "2",
+        "parent": "5222"
+    },
+    {
+        "name": "Vaser",
+        "name_eng": "Vases",
+        "id": "238",
+        "depth": "2",
+        "parent": "5222"
+    },
+    {
+        "name": "Garderobe og skap",
+        "name_eng": "Wardrobe and closet",
+        "id": "5198",
+        "depth": "1",
+        "parent": "78"
+    },
+    {
+        "name": "Garderober",
+        "name_eng": "Wardrobes",
+        "id": "218",
+        "depth": "2",
+        "parent": "5198"
+    },
+    {
+        "name": "Seksjoner",
+        "name_eng": "Sections",
+        "id": "222",
+        "depth": "2",
+        "parent": "5198"
+    },
+    {
+        "name": "Skap",
+        "name_eng": "Cabinet",
+        "id": "225",
+        "depth": "2",
+        "parent": "5198"
+    },
+    {
+        "name": "Hyller og kommoder",
+        "name_eng": "Shelves and chests of drawers",
+        "id": "8345",
+        "depth": "1",
+        "parent": "78"
+    },
+    {
+        "name": "Hyller",
+        "name_eng": "Shelves",
+        "id": "219",
+        "depth": "2",
+        "parent": "8345"
+    },
+    {
+        "name": "Kommoder",
+        "name_eng": "Chest of drawers",
+        "id": "221",
+        "depth": "2",
+        "parent": "8345"
+    },
+    {
+        "name": "Nattbord",
+        "name_eng": "Bedside table",
+        "id": "223",
+        "depth": "2",
+        "parent": "8345"
+    },
+    {
+        "name": "Skjenk",
+        "name_eng": "Sideboard",
+        "id": "220",
+        "depth": "2",
+        "parent": "8345"
+    },
+    {
+        "name": "TV-m\u00f8bler",
+        "name_eng": "TV furniture",
+        "id": "224",
+        "depth": "2",
+        "parent": "8345"
+    },
+    {
+        "name": "Kj\u00f8kkenutstyr og serviser",
+        "name_eng": "Kitchen equipment and crockery",
+        "id": "5223",
+        "depth": "1",
+        "parent": "78"
+    },
+    {
+        "name": "Senger og madrasser",
+        "name_eng": "Beds and mattresses",
+        "id": "5197",
+        "depth": "1",
+        "parent": "78"
+    },
+    {
+        "name": "Madrasser",
+        "name_eng": "Mattresses",
+        "id": "203",
+        "depth": "2",
+        "parent": "5197"
+    },
+    {
+        "name": "Rammemadrasser",
+        "name_eng": "Frame mattresses",
+        "id": "293",
+        "depth": "2",
+        "parent": "5197"
+    },
+    {
+        "name": "Senger",
+        "name_eng": "Beds",
+        "id": "202",
+        "depth": "2",
+        "parent": "5197"
+    },
+    {
+        "name": "Sofaer og lenestoler",
+        "name_eng": "Sofas and armchairs",
+        "id": "7756",
+        "depth": "1",
+        "parent": "78"
+    },
+    {
+        "name": "2-seter",
+        "name_eng": "2-seater",
+        "id": "204",
+        "depth": "2",
+        "parent": "7756"
+    },
+    {
+        "name": "3-seter",
+        "name_eng": "3-seater",
+        "id": "205",
+        "depth": "2",
+        "parent": "7756"
+    },
+    {
+        "name": "Hj\u00f8rnesofaer",
+        "name_eng": "Corner sofas",
+        "id": "207",
+        "depth": "2",
+        "parent": "7756"
+    },
+    {
+        "name": "Lenestoler",
+        "name_eng": "Armchairs",
+        "id": "210",
+        "depth": "2",
+        "parent": "7756"
+    },
+    {
+        "name": "Puffer",
+        "name_eng": "Poufs",
+        "id": "209",
+        "depth": "2",
+        "parent": "7756"
+    },
+    {
+        "name": "Sofagrupper",
+        "name_eng": "Sofa groups",
+        "id": "208",
+        "depth": "2",
+        "parent": "7756"
+    },
+    {
+        "name": "Sovesofaer",
+        "name_eng": "Sofa beds",
+        "id": "206",
+        "depth": "2",
+        "parent": "7756"
+    },
+    {
+        "name": "Tepper og tekstiler",
+        "name_eng": "Carpets and textiles",
+        "id": "5180",
+        "depth": "1",
+        "parent": "78"
+    },
+    {
+        "name": "Andre tekstiler",
+        "name_eng": "Other textiles",
+        "id": "235",
+        "depth": "2",
+        "parent": "5180"
+    },
+    {
+        "name": "Duker",
+        "name_eng": "Tablecloths",
+        "id": "233",
+        "depth": "2",
+        "parent": "5180"
+    },
+    {
+        "name": "Gardiner",
+        "name_eng": "Curtains",
+        "id": "234",
+        "depth": "2",
+        "parent": "5180"
+    },
+    {
+        "name": "Puter",
+        "name_eng": "Pillows",
+        "id": "232",
+        "depth": "2",
+        "parent": "5180"
+    },
+    {
+        "name": "Tepper",
+        "name_eng": "Carpets",
+        "id": "231",
+        "depth": "2",
+        "parent": "5180"
+    },
+    {
+        "name": "Annet",
+        "name_eng": "Other",
+        "id": "3971",
+        "depth": "1",
+        "parent": "78"
+    },
+    {
+        "name": "N\u00e6ringsvirksomhet",
+        "name_eng": "Commercial activities",
+        "id": "91",
+        "depth": "0",
+        "parent": null
+    },
+    {
+        "name": "Butikk og varehandel",
+        "name_eng": "Shop and retail",
+        "id": "3108",
+        "depth": "1",
+        "parent": "91"
+    },
+    {
+        "name": "Annet butikkutstyr",
+        "name_eng": "Other shop equipment",
+        "id": "364",
+        "depth": "2",
+        "parent": "3108"
+    },
+    {
+        "name": "Betalingsutstyr",
+        "name_eng": "Payment equipment",
+        "id": "358",
+        "depth": "2",
+        "parent": "3108"
+    },
+    {
+        "name": "Butikkbelysning",
+        "name_eng": "Shop lighting",
+        "id": "362",
+        "depth": "2",
+        "parent": "3108"
+    },
+    {
+        "name": "Butikkinnredning",
+        "name_eng": "Shop furnishings",
+        "id": "359",
+        "depth": "2",
+        "parent": "3108"
+    },
+    {
+        "name": "Lagerutstyr",
+        "name_eng": "Storage equipment",
+        "id": "361",
+        "depth": "2",
+        "parent": "3108"
+    },
+    {
+        "name": "Sikkerhet og overv\u00e5kning",
+        "name_eng": "Security and monitoring",
+        "id": "360",
+        "depth": "2",
+        "parent": "3108"
+    },
+    {
+        "name": "Vareparti og konkursbo",
+        "name_eng": "Goods lot and bankruptcy estate",
+        "id": "363",
+        "depth": "2",
+        "parent": "3108"
+    },
+    {
+        "name": "Container og brakker",
+        "name_eng": "Containers and barracks",
+        "id": "3111",
+        "depth": "1",
+        "parent": "91"
+    },
+    {
+        "name": "Annet anleggsutstyr",
+        "name_eng": "Other construction equipment",
+        "id": "368",
+        "depth": "2",
+        "parent": "3111"
+    },
+    {
+        "name": "Brakker",
+        "name_eng": "Barracks",
+        "id": "366",
+        "depth": "2",
+        "parent": "3111"
+    },
+    {
+        "name": "Containere",
+        "name_eng": "Containers",
+        "id": "365",
+        "depth": "2",
+        "parent": "3111"
+    },
+    {
+        "name": "Mannskapsvogner",
+        "name_eng": "Crew cars",
+        "id": "367",
+        "depth": "2",
+        "parent": "3111"
+    },
+    {
+        "name": "Helse og behandling",
+        "name_eng": "Health and treatment",
+        "id": "8343",
+        "depth": "1",
+        "parent": "91"
+    },
+    {
+        "name": "Annet utstyr",
+        "name_eng": "Other equipment",
+        "id": "357",
+        "depth": "2",
+        "parent": "8343"
+    },
+    {
+        "name": "F\u00f8rstehjelpsutstyr",
+        "name_eng": "First aid equipment",
+        "id": "347",
+        "depth": "2",
+        "parent": "8343"
+    },
+    {
+        "name": "Hjelpemidler",
+        "name_eng": "Aids",
+        "id": "348",
+        "depth": "2",
+        "parent": "8343"
+    },
+    {
+        "name": "Hud- og kroppspleie",
+        "name_eng": "Skin and body care",
+        "id": "349",
+        "depth": "2",
+        "parent": "8343"
+    },
+    {
+        "name": "Utstyr og inventar",
+        "name_eng": "Equipment and inventory",
+        "id": "350",
+        "depth": "2",
+        "parent": "8343"
+    },
+    {
+        "name": "Kontorutstyr og innredning",
+        "name_eng": "Office equipment and furnishings",
+        "id": "3105",
+        "depth": "1",
+        "parent": "91"
+    },
+    {
+        "name": "Innredning",
+        "name_eng": "Furnishing",
+        "id": "294",
+        "depth": "2",
+        "parent": "3105"
+    },
+    {
+        "name": "Kopimaskiner",
+        "name_eng": "Copy machines",
+        "id": "243",
+        "depth": "2",
+        "parent": "3105"
+    },
+    {
+        "name": "Printere",
+        "name_eng": "Printers",
+        "id": "244",
+        "depth": "2",
+        "parent": "3105"
+    },
+    {
+        "name": "Rekvisita",
+        "name_eng": "Props",
+        "id": "242",
+        "depth": "2",
+        "parent": "3105"
+    },
+    {
+        "name": "Landbruk",
+        "name_eng": "Agriculture",
+        "id": "3114",
+        "depth": "1",
+        "parent": "91"
+    },
+    {
+        "name": "Last og transport",
+        "name_eng": "Load and transport",
+        "id": "3113",
+        "depth": "1",
+        "parent": "91"
+    },
+    {
+        "name": "Maskinutstyr og reservedeler",
+        "name_eng": "Machine equipment and spare parts",
+        "id": "3112",
+        "depth": "1",
+        "parent": "91"
+    },
+    {
+        "name": "Resirkulering og returavfall",
+        "name_eng": "Recycling and return waste",
+        "id": "3115",
+        "depth": "1",
+        "parent": "91"
+    },
+    {
+        "name": "Havplast",
+        "name_eng": "Marine plastic",
+        "id": "403",
+        "depth": "2",
+        "parent": "3115"
+    },
+    {
+        "name": "Scene",
+        "name_eng": "Stage",
+        "id": "3110",
+        "depth": "1",
+        "parent": "91"
+    },
+    {
+        "name": "Storkj\u00f8kken og restaurant",
+        "name_eng": "Commercial kitchen and restaurant",
+        "id": "3103",
+        "depth": "1",
+        "parent": "91"
+    },
+    {
+        "name": "Annet utstyr",
+        "name_eng": "Other equipment",
+        "id": "356",
+        "depth": "2",
+        "parent": "3103"
+    },
+    {
+        "name": "Innredning",
+        "name_eng": "Furnishing",
+        "id": "355",
+        "depth": "2",
+        "parent": "3103"
+    },
+    {
+        "name": "Kj\u00f8kkenutstyr",
+        "name_eng": "Kitchen equipment",
+        "id": "351",
+        "depth": "2",
+        "parent": "3103"
+    },
+    {
+        "name": "Kj\u00f8l og frys",
+        "name_eng": "Refrigerate and freeze",
+        "id": "352",
+        "depth": "2",
+        "parent": "3103"
+    },
+    {
+        "name": "Koke- og stekeprodukter",
+        "name_eng": "Cooking and baking products",
+        "id": "353",
+        "depth": "2",
+        "parent": "3103"
+    },
+    {
+        "name": "Oppvask",
+        "name_eng": "Dishwashing",
+        "id": "354",
+        "depth": "2",
+        "parent": "3103"
+    },
+    {
+        "name": "Verksted, bygg og anlegg",
+        "name_eng": "Workshop, building and construction",
+        "id": "3102",
+        "depth": "1",
+        "parent": "91"
+    },
+    {
+        "name": "Annet utstyr",
+        "name_eng": "Other equipment",
+        "id": "379",
+        "depth": "2",
+        "parent": "3102"
+    },
+    {
+        "name": "Byggt\u00f8rkere",
+        "name_eng": "Building dryers",
+        "id": "372",
+        "depth": "2",
+        "parent": "3102"
+    },
+    {
+        "name": "Kompressor",
+        "name_eng": "Compressor",
+        "id": "373",
+        "depth": "2",
+        "parent": "3102"
+    },
+    {
+        "name": "Lagerhall",
+        "name_eng": "Warehouse",
+        "id": "378",
+        "depth": "2",
+        "parent": "3102"
+    },
+    {
+        "name": "Lys",
+        "name_eng": "Light",
+        "id": "371",
+        "depth": "2",
+        "parent": "3102"
+    },
+    {
+        "name": "Maskiner og utstyr",
+        "name_eng": "Machinery and equipment",
+        "id": "377",
+        "depth": "2",
+        "parent": "3102"
+    },
+    {
+        "name": "Maskinutleie",
+        "name_eng": "Machine rental",
+        "id": "376",
+        "depth": "2",
+        "parent": "3102"
+    },
+    {
+        "name": "Stillas og reoler",
+        "name_eng": "Scaffolding and shelving",
+        "id": "374",
+        "depth": "2",
+        "parent": "3102"
+    },
+    {
+        "name": "Treforedling",
+        "name_eng": "Wood processing",
+        "id": "375",
+        "depth": "2",
+        "parent": "3102"
+    },
+    {
+        "name": "Verkstedsutstyr",
+        "name_eng": "Workshop equipment",
+        "id": "370",
+        "depth": "2",
+        "parent": "3102"
+    },
+    {
+        "name": "Verkt\u00f8y",
+        "name_eng": "Tool",
+        "id": "369",
+        "depth": "2",
+        "parent": "3102"
+    },
+    {
+        "name": "Webdomener og gullnummer",
+        "name_eng": "Web domains and gold numbers",
+        "id": "3106",
+        "depth": "1",
+        "parent": "91"
+    },
+    {
+        "name": "Annet",
+        "name_eng": "Other",
+        "id": "3104",
+        "depth": "1",
+        "parent": "91"
+    },
+    {
+        "name": "Sport og friluftsliv",
+        "name_eng": "Sports and outdoor life",
+        "id": "69",
+        "depth": "0",
+        "parent": null
+    },
+    {
+        "name": "Annen sport",
+        "name_eng": "Other sports",
+        "id": "3966",
+        "depth": "1",
+        "parent": "69"
+    },
+    {
+        "name": "Ballsport",
+        "name_eng": "Ball sports",
+        "id": "3961",
+        "depth": "1",
+        "parent": "69"
+    },
+    {
+        "name": "Annen ballsport",
+        "name_eng": "Other ball sports",
+        "id": "251",
+        "depth": "2",
+        "parent": "3961"
+    },
+    {
+        "name": "Bandy",
+        "name_eng": "Bandy",
+        "id": "250",
+        "depth": "2",
+        "parent": "3961"
+    },
+    {
+        "name": "Basketball",
+        "name_eng": "Basketball",
+        "id": "247",
+        "depth": "2",
+        "parent": "3961"
+    },
+    {
+        "name": "Fotball",
+        "name_eng": "Soccer",
+        "id": "245",
+        "depth": "2",
+        "parent": "3961"
+    },
+    {
+        "name": "H\u00e5ndball",
+        "name_eng": "handball",
+        "id": "246",
+        "depth": "2",
+        "parent": "3961"
+    },
+    {
+        "name": "Tennis",
+        "name_eng": "Tennis",
+        "id": "249",
+        "depth": "2",
+        "parent": "3961"
+    },
+    {
+        "name": "Volleyball",
+        "name_eng": "Volleyball",
+        "id": "248",
+        "depth": "2",
+        "parent": "3961"
+    },
+    {
+        "name": "Ekstremsport",
+        "name_eng": "Extreme sports",
+        "id": "3938",
+        "depth": "1",
+        "parent": "69"
+    },
+    {
+        "name": "Fallskjermhopping",
+        "name_eng": "Skydiving",
+        "id": "266",
+        "depth": "2",
+        "parent": "3938"
+    },
+    {
+        "name": "Kiting",
+        "name_eng": "Kiting",
+        "id": "264",
+        "depth": "2",
+        "parent": "3938"
+    },
+    {
+        "name": "Klatring",
+        "name_eng": "Climbing",
+        "id": "265",
+        "depth": "2",
+        "parent": "3938"
+    },
+    {
+        "name": "Skate- og longboard",
+        "name_eng": "Skate and longboard",
+        "id": "267",
+        "depth": "2",
+        "parent": "3938"
+    },
+    {
+        "name": "GPS og pulsklokker",
+        "name_eng": "GPS and heart rate monitors",
+        "id": "3967",
+        "depth": "1",
+        "parent": "69"
+    },
+    {
+        "name": "Golf",
+        "name_eng": "Golf",
+        "id": "5164",
+        "depth": "1",
+        "parent": "69"
+    },
+    {
+        "name": "Jakt, fiske og friluftsliv",
+        "name_eng": "Hunting, fishing and outdoor activities",
+        "id": "3964",
+        "depth": "1",
+        "parent": "69"
+    },
+    {
+        "name": "Annet fiskeutstyr",
+        "name_eng": "Other fishing equipment",
+        "id": "275",
+        "depth": "2",
+        "parent": "3964"
+    },
+    {
+        "name": "Annet jaktutstyr",
+        "name_eng": "Other hunting equipment",
+        "id": "270",
+        "depth": "2",
+        "parent": "3964"
+    },
+    {
+        "name": "Annet turutstyr",
+        "name_eng": "Other hiking equipment",
+        "id": "280",
+        "depth": "2",
+        "parent": "3964"
+    },
+    {
+        "name": "Fiskekl\u00e6r",
+        "name_eng": "Fishing clothes",
+        "id": "274",
+        "depth": "2",
+        "parent": "3964"
+    },
+    {
+        "name": "Fiskestenger",
+        "name_eng": "Fishing rods",
+        "id": "271",
+        "depth": "2",
+        "parent": "3964"
+    },
+    {
+        "name": "Jaktkl\u00e6r",
+        "name_eng": "Hunting clothes",
+        "id": "269",
+        "depth": "2",
+        "parent": "3964"
+    },
+    {
+        "name": "Kano",
+        "name_eng": "Canoe",
+        "id": "279",
+        "depth": "2",
+        "parent": "3964"
+    },
+    {
+        "name": "Kikkerter og optikk",
+        "name_eng": "Binoculars and optics",
+        "id": "300",
+        "depth": "2",
+        "parent": "3964"
+    },
+    {
+        "name": "Ryggsekker",
+        "name_eng": "Backpacks",
+        "id": "278",
+        "depth": "2",
+        "parent": "3964"
+    },
+    {
+        "name": "Sneller, fluer og kroker",
+        "name_eng": "Reels, flies and hooks",
+        "id": "273",
+        "depth": "2",
+        "parent": "3964"
+    },
+    {
+        "name": "Soveposer",
+        "name_eng": "Sleeping bags",
+        "id": "276",
+        "depth": "2",
+        "parent": "3964"
+    },
+    {
+        "name": "Teiner og garn",
+        "name_eng": "Twine and yarn",
+        "id": "272",
+        "depth": "2",
+        "parent": "3964"
+    },
+    {
+        "name": "Telt",
+        "name_eng": "Tent",
+        "id": "277",
+        "depth": "2",
+        "parent": "3964"
+    },
+    {
+        "name": "V\u00e5pen",
+        "name_eng": "Arms",
+        "id": "268",
+        "depth": "2",
+        "parent": "3964"
+    },
+    {
+        "name": "Kosttilskudd",
+        "name_eng": "Dietary supplements",
+        "id": "8281",
+        "depth": "1",
+        "parent": "69"
+    },
+    {
+        "name": "Skisport",
+        "name_eng": "Skiing",
+        "id": "3962",
+        "depth": "1",
+        "parent": "69"
+    },
+    {
+        "name": "Alpint",
+        "name_eng": "Alpine",
+        "id": "253",
+        "depth": "2",
+        "parent": "3962"
+    },
+    {
+        "name": "Annet skiutstyr",
+        "name_eng": "Other ski equipment",
+        "id": "256",
+        "depth": "2",
+        "parent": "3962"
+    },
+    {
+        "name": "Langrenn",
+        "name_eng": "Cross-country skiing",
+        "id": "255",
+        "depth": "2",
+        "parent": "3962"
+    },
+    {
+        "name": "Snowboard",
+        "name_eng": "Snowboarding",
+        "id": "252",
+        "depth": "2",
+        "parent": "3962"
+    },
+    {
+        "name": "Telemark",
+        "name_eng": "Telemark",
+        "id": "254",
+        "depth": "2",
+        "parent": "3962"
+    },
+    {
+        "name": "Sk\u00f8ytesport",
+        "name_eng": "Ice skating",
+        "id": "8346",
+        "depth": "1",
+        "parent": "69"
+    },
+    {
+        "name": "Sk\u00f8yter til barn",
+        "name_eng": "Skates for children",
+        "id": "405",
+        "depth": "2",
+        "parent": "8346"
+    },
+    {
+        "name": "Sk\u00f8yter til voksne",
+        "name_eng": "Skates for adults",
+        "id": "404",
+        "depth": "2",
+        "parent": "8346"
+    },
+    {
+        "name": "Sk\u00f8yteutstyr",
+        "name_eng": "Skating equipment",
+        "id": "406",
+        "depth": "2",
+        "parent": "8346"
+    },
+    {
+        "name": "Sportskl\u00e6r og sko",
+        "name_eng": "Sportswear and shoes",
+        "id": "3940",
+        "depth": "1",
+        "parent": "69"
+    },
+    {
+        "name": "Barnekl\u00e6r",
+        "name_eng": "Children's clothing",
+        "id": "3983",
+        "depth": "2",
+        "parent": "3940"
+    },
+    {
+        "name": "Damekl\u00e6r",
+        "name_eng": "Women's clothing",
+        "id": "3981",
+        "depth": "2",
+        "parent": "3940"
+    },
+    {
+        "name": "Herrekl\u00e6r",
+        "name_eng": "Men's clothing",
+        "id": "3980",
+        "depth": "2",
+        "parent": "3940"
+    },
+    {
+        "name": "Sko",
+        "name_eng": "Shoe",
+        "id": "3984",
+        "depth": "2",
+        "parent": "3940"
+    },
+    {
+        "name": "Unisex",
+        "name_eng": "Unisex",
+        "id": "3982",
+        "depth": "2",
+        "parent": "3940"
+    },
+    {
+        "name": "Sportsskyting",
+        "name_eng": "Sports shooting",
+        "id": "3965",
+        "depth": "1",
+        "parent": "69"
+    },
+    {
+        "name": "Luftv\u00e5pen",
+        "name_eng": "Air weapons",
+        "id": "284",
+        "depth": "2",
+        "parent": "3965"
+    },
+    {
+        "name": "Paintball",
+        "name_eng": "Paintball",
+        "id": "281",
+        "depth": "2",
+        "parent": "3965"
+    },
+    {
+        "name": "Pistol",
+        "name_eng": "Pistol",
+        "id": "282",
+        "depth": "2",
+        "parent": "3965"
+    },
+    {
+        "name": "Softgun",
+        "name_eng": "Softgun",
+        "id": "283",
+        "depth": "2",
+        "parent": "3965"
+    },
+    {
+        "name": "Startnummer",
+        "name_eng": "Start number",
+        "id": "3960",
+        "depth": "1",
+        "parent": "69"
+    },
+    {
+        "name": "Supporterutstyr",
+        "name_eng": "Supporter equipment",
+        "id": "3937",
+        "depth": "1",
+        "parent": "69"
+    },
+    {
+        "name": "Sykkelsport",
+        "name_eng": "Cycling",
+        "id": "3963",
+        "depth": "1",
+        "parent": "69"
+    },
+    {
+        "name": "Sykler",
+        "name_eng": "Bicycles",
+        "id": "257",
+        "depth": "2",
+        "parent": "3963"
+    },
+    {
+        "name": "Utstyr",
+        "name_eng": "Equipment",
+        "id": "258",
+        "depth": "2",
+        "parent": "3963"
+    },
+    {
+        "name": "Treningsapparater og -utstyr",
+        "name_eng": "Exercise apparatus and equipment",
+        "id": "5166",
+        "depth": "1",
+        "parent": "69"
+    },
+    {
+        "name": "Ellipsemaskiner",
+        "name_eng": "Elliptical machines",
+        "id": "291",
+        "depth": "2",
+        "parent": "5166"
+    },
+    {
+        "name": "Romaskiner",
+        "name_eng": "Rowing machines",
+        "id": "287",
+        "depth": "2",
+        "parent": "5166"
+    },
+    {
+        "name": "Stepmaskiner",
+        "name_eng": "Step machines",
+        "id": "290",
+        "depth": "2",
+        "parent": "5166"
+    },
+    {
+        "name": "Styrkeapparater",
+        "name_eng": "Strength equipment",
+        "id": "288",
+        "depth": "2",
+        "parent": "5166"
+    },
+    {
+        "name": "Tredem\u00f8ller",
+        "name_eng": "Treadmills",
+        "id": "516",
+        "depth": "2",
+        "parent": "5166"
+    },
+    {
+        "name": "Treningssykler",
+        "name_eng": "Exercise bikes",
+        "id": "286",
+        "depth": "2",
+        "parent": "5166"
+    },
+    {
+        "name": "Treningsutstyr",
+        "name_eng": "Training equipment",
+        "id": "289",
+        "depth": "2",
+        "parent": "5166"
+    },
+    {
+        "name": "Vannsport",
+        "name_eng": "Water sports",
+        "id": "7738",
+        "depth": "1",
+        "parent": "69"
+    },
+    {
+        "name": "Annet utstyr",
+        "name_eng": "Other equipment",
+        "id": "263",
+        "depth": "2",
+        "parent": "7738"
+    },
+    {
+        "name": "Dykking",
+        "name_eng": "Diving",
+        "id": "259",
+        "depth": "2",
+        "parent": "7738"
+    },
+    {
+        "name": "Padling",
+        "name_eng": "Paddling",
+        "id": "260",
+        "depth": "2",
+        "parent": "7738"
+    },
+    {
+        "name": "Seiling",
+        "name_eng": "Sailing",
+        "id": "261",
+        "depth": "2",
+        "parent": "7738"
+    },
+    {
+        "name": "Surfing",
+        "name_eng": "Surfing",
+        "id": "262",
+        "depth": "2",
+        "parent": "7738"
+    },
+    {
+        "name": "Windsurf",
+        "name_eng": "Windsurfing",
+        "id": "338",
+        "depth": "2",
+        "parent": "7738"
+    },
+    {
+        "name": "Utstyr til bil, b\u00e5t og MC",
+        "name_eng": "Equipment for car, boat and motorbike",
+        "id": "90",
+        "depth": "0",
+        "parent": null
+    },
+    {
+        "name": "ATV-deler",
+        "name_eng": "ATV parts",
+        "id": "3975",
+        "depth": "1",
+        "parent": "90"
+    },
+    {
+        "name": "Bildeler",
+        "name_eng": "Car parts",
+        "id": "82",
+        "depth": "1",
+        "parent": "90"
+    },
+    {
+        "name": "Annet biltilbeh\u00f8r",
+        "name_eng": "Other car accessories",
+        "id": "9",
+        "depth": "2",
+        "parent": "82"
+    },
+    {
+        "name": "Bildeler",
+        "name_eng": "Car parts",
+        "id": "2",
+        "depth": "2",
+        "parent": "82"
+    },
+    {
+        "name": "Bilseter",
+        "name_eng": "Car seats",
+        "id": "3",
+        "depth": "2",
+        "parent": "82"
+    },
+    {
+        "name": "Bilstereo",
+        "name_eng": "Car stereo",
+        "id": "5",
+        "depth": "2",
+        "parent": "82"
+    },
+    {
+        "name": "Dekk og felger",
+        "name_eng": "Tires and rims",
+        "id": "6",
+        "depth": "2",
+        "parent": "82"
+    },
+    {
+        "name": "GPS",
+        "name_eng": "GPS",
+        "id": "344",
+        "depth": "2",
+        "parent": "82"
+    },
+    {
+        "name": "Styling",
+        "name_eng": "Styling",
+        "id": "8",
+        "depth": "2",
+        "parent": "82"
+    },
+    {
+        "name": "Takstativ og boks",
+        "name_eng": "Roof rack and box",
+        "id": "4",
+        "depth": "2",
+        "parent": "82"
+    },
+    {
+        "name": "B\u00e5tdeler",
+        "name_eng": "Boat parts",
+        "id": "30",
+        "depth": "1",
+        "parent": "90"
+    },
+    {
+        "name": "Annet b\u00e5tutstyr",
+        "name_eng": "Other boat equipment",
+        "id": "325",
+        "depth": "2",
+        "parent": "30"
+    },
+    {
+        "name": "Elektronikk",
+        "name_eng": "Electronics",
+        "id": "318",
+        "depth": "2",
+        "parent": "30"
+    },
+    {
+        "name": "Fort\u00f8yningsutstyr",
+        "name_eng": "Mooring equipment",
+        "id": "324",
+        "depth": "2",
+        "parent": "30"
+    },
+    {
+        "name": "Interi\u00f8r og eksteri\u00f8r",
+        "name_eng": "Interior and exterior",
+        "id": "320",
+        "depth": "2",
+        "parent": "30"
+    },
+    {
+        "name": "Motordeler",
+        "name_eng": "Engine parts",
+        "id": "340",
+        "depth": "2",
+        "parent": "30"
+    },
+    {
+        "name": "Navigasjon",
+        "name_eng": "Navigation",
+        "id": "345",
+        "depth": "2",
+        "parent": "30"
+    },
+    {
+        "name": "Seilb\u00e5tutstyr",
+        "name_eng": "Sailboat equipment",
+        "id": "323",
+        "depth": "2",
+        "parent": "30"
+    },
+    {
+        "name": "Sikkerhet",
+        "name_eng": "Safety",
+        "id": "322",
+        "depth": "2",
+        "parent": "30"
+    },
+    {
+        "name": "Str\u00f8m og VVS",
+        "name_eng": "Electricity and plumbing",
+        "id": "319",
+        "depth": "2",
+        "parent": "30"
+    },
+    {
+        "name": "Styring og vinsj",
+        "name_eng": "Steering and winch",
+        "id": "321",
+        "depth": "2",
+        "parent": "30"
+    },
+    {
+        "name": "Caravandeler",
+        "name_eng": "Caravan parts",
+        "id": "70",
+        "depth": "1",
+        "parent": "90"
+    },
+    {
+        "name": "MC-deler",
+        "name_eng": "MC parts",
+        "id": "20",
+        "depth": "1",
+        "parent": "90"
+    },
+    {
+        "name": "MC-deler",
+        "name_eng": "MC parts",
+        "id": "10",
+        "depth": "2",
+        "parent": "20"
+    },
+    {
+        "name": "MC-kl\u00e6r",
+        "name_eng": "MC clothing",
+        "id": "12",
+        "depth": "2",
+        "parent": "20"
+    },
+    {
+        "name": "MC-tilbeh\u00f8r",
+        "name_eng": "MC accessories",
+        "id": "11",
+        "depth": "2",
+        "parent": "20"
+    },
+    {
+        "name": "Tilhengere",
+        "name_eng": "Followers",
+        "id": "80",
+        "depth": "1",
+        "parent": "90"
+    },
+    {
+        "name": "ATV- og MC-hengere",
+        "name_eng": "ATV and MC trailers",
+        "id": "16",
+        "depth": "2",
+        "parent": "80"
+    },
+    {
+        "name": "Biltransporthengere",
+        "name_eng": "Car transport trailers",
+        "id": "17",
+        "depth": "2",
+        "parent": "80"
+    },
+    {
+        "name": "B\u00e5t- og opplagshengere",
+        "name_eng": "Boat and storage trailers",
+        "id": "14",
+        "depth": "2",
+        "parent": "80"
+    },
+    {
+        "name": "Hestehengere",
+        "name_eng": "Horse trailers",
+        "id": "19",
+        "depth": "2",
+        "parent": "80"
+    },
+    {
+        "name": "Maskinhengere",
+        "name_eng": "Machine trailers",
+        "id": "18",
+        "depth": "2",
+        "parent": "80"
+    },
+    {
+        "name": "Skaphengere",
+        "name_eng": "Closet hangers",
+        "id": "15",
+        "depth": "2",
+        "parent": "80"
+    },
+    {
+        "name": "Termohengere",
+        "name_eng": "Thermal hangers",
+        "id": "517",
+        "depth": "2",
+        "parent": "80"
+    },
+    {
+        "name": "Tilhengertilbeh\u00f8r",
+        "name_eng": "Trailer accessories",
+        "id": "308",
+        "depth": "2",
+        "parent": "80"
+    },
+    {
+        "name": "Tipphengere",
+        "name_eng": "Tipper trailers",
+        "id": "309",
+        "depth": "2",
+        "parent": "80"
+    },
+    {
+        "name": "Varehengere",
+        "name_eng": "Goods trailers",
+        "id": "13",
+        "depth": "2",
+        "parent": "80"
+    },
+    {
+        "name": "Annet",
+        "name_eng": "Other",
+        "id": "3974",
+        "depth": "1",
+        "parent": "90"
+    }
+]
