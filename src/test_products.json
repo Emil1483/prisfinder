@@ -5,9 +5,9 @@
         "description": "Samsung Galaxy Buds2 Pro trådløse ørepropper, In-Ear (grå) - ANC & Ambient, Bluetooth 5.3 / USB-C, 360 lyd, 2 veis, 24 bit Hi-Fi, IPX7",
         "image": "https://www.komplett.no/img/p/1024/1215542.jpg",
         "category": {
-            "main": "93",
-            "sub": "3906",
-            "product": "51"
+            "main": 93,
+            "sub": 3906,
+            "product": 51
         },
         "mpns": [
             "SM-R510NZAAEUB"
