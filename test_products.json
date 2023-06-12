@@ -18,11 +18,13 @@
         "sellers": {
             "komplett": {
                 "price": 2490.0,
-                "sku": "1215542"
+                "sku": "1215542",
+                "url": "https://www.komplett.no/product/1215542/tv-lyd-bilde/hodetelefoner-tilbehoer/oerepropper/samsung-galaxy-buds2-pro-traadloese-oerepropper-in-ear-graa"
             },
             "elkjop": {
                 "price": 2690.0,
-                "sku": "495421"
+                "sku": "495421",
+                "url": "https://www.elkjop.no/product/tv-lyd-og-smarte-hjem/hodetelefoner-og-tilbehor/hodetelefoner/samsung-galaxy-buds2-pro-tradlose-in-ear-hodetelefoner-grafitt/495421"
             }
         }
     }
