@@ -48,8 +48,6 @@ class MyThread(Thread):
         if res > 1:
             ctypes.pythonapi.PyThreadState_SetAsyncExc(thread_id, 0)
 
-        # self._stop()
-
 
 def concurrent_threads(function, thread_count=5):
     threads: list[MyThread] = []

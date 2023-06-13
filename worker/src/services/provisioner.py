@@ -2,12 +2,16 @@ import hashlib
 import json
 from datetime import datetime, timedelta
 from math import floor
+from typing import Tuple
+from urllib.parse import urlparse
 from uuid import uuid4
 
 from redis import Redis
 
+
 from worker.src.models.provisioner import ProvisionerKey, ProvisionerValue
 from worker.src.models.url import URL, URLKey, URLValue
+from worker.src.services.redis_service import CustomRedis
 
 
 class CouldNotFindProvisioner(Exception):
@@ -26,10 +30,14 @@ class TakeOver(Exception):
     pass
 
 
+class URLExists(Exception):
+    pass
+
+
 class Provisioner:
     def __init__(self, timeout=timedelta(minutes=5)):
         self.timeout = timeout
-        self.r = Redis()
+        self.r = CustomRedis()
         self.id = uuid4().hex
 
     def __str__(self) -> str:
@@ -90,8 +98,6 @@ class Provisioner:
         )
 
     def find_provisioner(self):
-        print([*self.r.scan_iter("provisioner:*")])
-
         def gen_keys():
             yield from self.r.scan_iter("provisioner:off:*")
 
@@ -111,7 +117,9 @@ class Provisioner:
 
         raise CouldNotFindProvisioner()
 
-    def claim_provisioner(self, key_str: str):
+    def claim_provisioner(
+        self, key_str: str
+    ) -> Tuple[ProvisionerKey, ProvisionerValue]:
         pipe = self.r.pipeline()
 
         provisioner = self.r.get(key_str)
@@ -149,28 +157,39 @@ class Provisioner:
 
         return new_key, value
 
+    def fetch_url(self, url_id: str = None) -> URL:
+        url_key = URLKey(
+            domain=self.key.domain,
+            id=url_id or self.value.cursor,
+        )
+
+        url = URL(
+            key=url_key,
+            value=URLValue.from_json(self.r.get(str(url_key), use_cache=True)),
+        )
+
+        return url
+
     def iter_urls(self):
         while True:
-            pipe = self.r.pipeline()
+            now = self.timestamp()
 
-            url_key = URLKey(
-                domain=self.key.domain,
-                id=self.value.current,
-            )
-
-            url = URL(
-                key=url_key,
-                value=URLValue.from_json(self.r.get(str(url_key))),
+            url = self.fetch_url()
+            self.value = self.value.copy_with(
+                last_scrapet=now,
+                cursor=url.value.next,
             )
 
             yield url
 
-            now = self.timestamp()
+            url = self.fetch_url(url.key.id)
+
+            pipe = self.r.pipeline()
 
             pipe.delete(str(self.key))
 
             self.key = self.update_key()
-            self.value = ProvisionerValue(current=url.value.next, last_scrapet=now)
+
             pipe.set(
                 str(self.key),
                 self.value.to_json(),
@@ -182,6 +201,7 @@ class Provisioner:
             )
 
             result = pipe.execute()
+
             del_count = result[0]
             if del_count == 0:
                 self.r.delete(str(self.key))
@@ -189,7 +209,53 @@ class Provisioner:
                     "Could not modify key. Provisioner was probably claimed by another worker"
                 )
 
-    def append_url(url: str):
-        string_bytes = url.encode(encoding="utf8")
+    def append_url(self, url_str: str):
+        string_bytes = url_str.encode(encoding="utf8")
         hexdigest = hashlib.sha256(string_bytes).hexdigest()
-        url_id = hexdigest[:32]
+        new_url_id = hexdigest[:32]
+
+        url_key = URLKey(
+            domain=urlparse(url_str).netloc.replace("www.", ""),
+            id=new_url_id,
+        )
+
+        if self.r.get(str(url_key), use_cache=True):
+            raise URLExists()
+
+        url_at_cursor = self.fetch_url()
+        prev_url_id = url_at_cursor.value.prev
+        prev_url = self.fetch_url(prev_url_id)
+        new_url = URL(
+            key=url_key,
+            value=URLValue(
+                next=url_at_cursor.key.id,
+                prev=prev_url_id,
+                url=url_str,
+            ),
+        )
+
+        self.value = self.value.copy_with(cursor=new_url.key.id)
+
+        pipe = self.r.pipeline()
+
+        pipe.set(
+            str(prev_url.key),
+            prev_url.value.copy_with(next_id=new_url_id).to_json(),
+        )
+
+        pipe.set(
+            str(url_at_cursor.key),
+            url_at_cursor.value.copy_with(prev_id=new_url_id).to_json(),
+        )
+
+        pipe.set(
+            str(new_url.key),
+            new_url.value.to_json(),
+        )
+
+        pipe.set(
+            str(self.key),
+            self.value.to_json(),
+        )
+
+        pipe.execute()

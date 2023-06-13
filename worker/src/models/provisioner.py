@@ -6,8 +6,14 @@ from dataclasses_json import dataclass_json
 @dataclass_json
 @dataclass(order=True, frozen=True)
 class ProvisionerValue(object):
-    current: str
+    cursor: str
     last_scrapet: int | None = None
+
+    def copy_with(self, cursor: str | None = None, last_scrapet: int | None = None):
+        return ProvisionerValue(
+            cursor=cursor or self.cursor,
+            last_scrapet=last_scrapet or self.last_scrapet,
+        )
 
 
 @dataclass(order=True, frozen=True)

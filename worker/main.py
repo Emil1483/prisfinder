@@ -1,9 +1,5 @@
-import hashlib
-import json
-from dataclasses import asdict
-from time import sleep
+from time import sleep, time
 
-import loaders
 from redis import Redis
 
 from worker.src.helpers.thread import concurrent_threads
@@ -13,6 +9,7 @@ from worker.src.services.provisioner import (
     CouldNotFindProvisioner,
     Provisioner,
     TakeOver,
+    URLExists,
 )
 
 
@@ -26,7 +23,7 @@ def populate_test():
     domain = "example.com"
 
     provisioner_value = ProvisionerValue(
-        current="000",
+        cursor="000",
         last_scrapet=None,
     )
 
@@ -37,11 +34,11 @@ def populate_test():
 
     pipe.set(str(provisioner_key), provisioner_value.to_json())
 
-    for i in range(100):
+    for i in range(10):
         url_id = f"{i:03d}"
-        next_id = (i + 1) % 100
+        next_id = (i + 1) % 10
         next_id = f"{next_id:03d}"
-        prev_id = (i - 1) % 100
+        prev_id = (i - 1) % 10
         prev_id = f"{prev_id:03d}"
 
         url = URL(
@@ -65,10 +62,24 @@ def populate_test():
 def run():
     while True:
         try:
+            start = time()
             with Provisioner() as p:
                 for url in p.iter_urls():
-                    print(url)
-                    sleep(0.01)
+                    print("current", url)
+
+                    sleep(0.1)
+
+                    if len(url.key.id) == 3:
+                        try:
+                            p.append_url(
+                                f"https://www.{p.key.domain}/appended-by/{url.key.id}"
+                            )
+                        except URLExists as e:
+                            pass
+                            # end = time()
+                            # print(end - start)
+                            # quit()
+
                     # loader = loaders.ProgressLoader(total=50)
                     # for i in range(50):
                     #     loader.progress(i)
@@ -86,5 +97,5 @@ def run():
 
 if __name__ == "__main__":
     populate_test()
-    concurrent_threads(run, thread_count=1)
-    # run()
+    # concurrent_threads(run, thread_count=1)
+    run()

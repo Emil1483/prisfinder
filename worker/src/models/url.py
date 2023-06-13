@@ -11,11 +11,16 @@ class URLValue(object):
     prev: str
     scrapet_at: int | None = None
 
-    def copy_with(self, scrapet_at: int | None = None):
+    def copy_with(
+        self,
+        scrapet_at: int | None = None,
+        next_id: str | None = None,
+        prev_id: str | None = None,
+    ):
         return URLValue(
             scrapet_at=scrapet_at or self.scrapet_at,
-            next=self.next,
-            prev=self.prev,
+            next=next_id or self.next,
+            prev=prev_id or self.prev,
             url=self.url,
         )
 
@@ -41,3 +46,13 @@ class URLKey(object):
 class URL(object):
     value: URLValue
     key: URLKey
+
+    def copy_with(
+        self,
+        key: URLKey | None = None,
+        value: URLValue | None = None,
+    ):
+        return URL(
+            key=key or self.key,
+            value=value or self.value,
+        )
