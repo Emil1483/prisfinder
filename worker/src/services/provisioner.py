@@ -5,8 +5,12 @@ from typing import Tuple
 from urllib.parse import urlparse
 from uuid import uuid4
 
-from worker.src.helpers.misc import hash_string
-from worker.src.models.provisioner import ProvisionerKey, ProvisionerValue
+from worker.src.helpers.misc import hash_string, timestamp
+from worker.src.models.provisioner import (
+    ProvisionerKey,
+    ProvisionerStatus,
+    ProvisionerValue,
+)
 from worker.src.models.url import URL, URLKey, URLValue
 from worker.src.services.redis_service import CustomRedis
 
@@ -27,15 +31,12 @@ class TakeOver(Exception):
     pass
 
 
-class URLExists(Exception):
-    pass
-
-
 class Provisioner:
     def __init__(self, timeout=timedelta(minutes=5)):
         self.timeout = timeout
         self.r = CustomRedis()
         self.id = uuid4().hex
+        self.disabled = False
 
     def __str__(self) -> str:
         return f"(key: {self.key}, value: {self.value})"
@@ -55,7 +56,9 @@ class Provisioner:
             print("Warning: Already Closed")
             return
 
-        new_key = self.key.turn_off()
+        new_key = self.key.set_status(
+            ProvisionerStatus.DISABLED if self.disabled else ProvisionerStatus.OFF
+        )
         pipe.set(str(new_key), value)
         pipe.delete(str(self.key))
 
@@ -66,8 +69,8 @@ class Provisioner:
 
         self.r.quit()
 
-    def timestamp(self):
-        return round(datetime.now().timestamp() * 1000)
+    def disable(self):
+        self.disabled = True
 
     def time_id(self, current_time: datetime = None):
         if not current_time:
@@ -89,12 +92,14 @@ class Provisioner:
 
         return ProvisionerKey(
             domain=old_key.domain,
-            on=True,
+            status=ProvisionerStatus.ON,
             provisioner_id=self.id,
             time_id=self.time_id(),
         )
 
     def find_provisioner(self):
+        print([*self.r.scan_iter("provisioner*")])
+
         def gen_keys():
             yield from self.r.scan_iter("provisioner:off:*")
 
@@ -131,7 +136,7 @@ class Provisioner:
         value: ProvisionerValue = ProvisionerValue.from_dict(provisioner_json)
 
         if value.last_scrapet:
-            age = self.timestamp() - value.last_scrapet
+            age = timestamp() - value.last_scrapet
             age_timedelta = timedelta(milliseconds=age)
             print(f"claiming provisioner with age {age_timedelta}")
 
@@ -155,6 +160,8 @@ class Provisioner:
         return new_key, value
 
     def fetch_urls(self, url_ids: list[str] = None) -> list[URL]:
+        assert not self.disabled
+
         pipe = self.r.pipeline()
 
         url_keys = [
@@ -188,16 +195,17 @@ class Provisioner:
         return self.fetch_urls([url_id or self.value.cursor])[0]
 
     def iter_urls(self):
+        assert not self.disabled
         while True:
-            now = self.timestamp()
-
             url = self.fetch_url()
             self.value = self.value.copy_with(
-                last_scrapet=now,
+                last_scrapet=timestamp(),
                 cursor=url.value.next,
             )
 
             yield url
+
+            assert not self.disabled
 
             url = self.fetch_url(url.key.id)
 
@@ -214,7 +222,7 @@ class Provisioner:
 
             pipe.set(
                 str(url.key),
-                url.value.copy_with(scrapet_at=now).to_json(),
+                url.value.copy_with(scrapet_at=timestamp()).to_json(),
             )
 
             result = pipe.execute()
@@ -227,7 +235,31 @@ class Provisioner:
                 )
 
     def append_urls(self, urls_str: list[str]):
+        assert not self.disabled
         assert len(urls_str) == len(list(dict.fromkeys(urls_str)))
+
+        pipe = self.r.pipeline()
+        for url_str in urls_str:
+            url_domain = urlparse(url_str).netloc.replace("www.", "")
+            assert url_domain == self.key.domain
+
+            key = URLKey(
+                domain=url_domain,
+                id=hash_string(url_str),
+            )
+
+            pipe.get(str(key))
+
+        results = pipe.execute()
+
+        for url_str, result in zip(urls_str, results):
+            if result:
+                print(f'WARNING: URL "{url_str}" already exists')
+
+        urls_str = [u for u, r in zip(urls_str, results) if not r]
+
+        if len(urls_str) == 0:
+            return
 
         url_at_cursor = self.fetch_url()
         prev_url_id = url_at_cursor.value.prev
@@ -256,14 +288,6 @@ class Provisioner:
             )
 
             urls.append(url)
-
-        pipe = self.r.pipeline()
-        for url in urls:
-            pipe.get(str(url.key))
-
-        result = pipe.execute()
-        if any(result):
-            raise URLExists()
 
         self.value = self.value.copy_with(cursor=urls[0].key.id)
 

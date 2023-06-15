@@ -1,6 +1,20 @@
 from dataclasses import dataclass
+from enum import Enum
+from types import NoneType
 
 from dataclasses_json import dataclass_json
+
+
+class ProvisionerStatus(Enum):
+    ON = "on"
+    OFF = "off"
+    DISABLED = "disabled"
+
+    def __deepcopy__(self, memo):
+        return self.value
+
+    def __str__(self) -> str:
+        return self.value
 
 
 @dataclass_json
@@ -18,24 +32,29 @@ class ProvisionerValue(object):
 
 @dataclass(order=True, frozen=True)
 class ProvisionerKey(object):
-    on: bool
+    status: ProvisionerStatus
     domain: str
     provisioner_id: str | None = None
     time_id: int | None = None
 
+    def __post_init__(self):
+        assert isinstance(self.status, ProvisionerStatus)
+        assert isinstance(self.domain, str)
+        assert isinstance(self.provisioner_id, (str, NoneType))
+        assert isinstance(self.time_id, (int, NoneType))
+
     def __str__(self) -> str:
         if self.provisioner_id:
             assert self.time_id is not None
-            assert self.on is True
-            return f"provisioner:on:{self.time_id}:{self.provisioner_id}:{self.domain}"
+            assert self.status is ProvisionerStatus.ON
+            return f"provisioner:{self.status}:{self.time_id}:{self.provisioner_id}:{self.domain}"
 
-        assert not self.on
-        return f"provisioner:off:{self.domain}"
+        return f"provisioner:{self.status}:{self.domain}"
 
-    def turn_off(self):
-        assert self.on
+    def set_status(self, status: ProvisionerStatus):
+        assert self.status == ProvisionerStatus.ON
         return ProvisionerKey(
-            on=False,
+            status=status,
             domain=self.domain,
         )
 
@@ -43,23 +62,26 @@ class ProvisionerKey(object):
     def from_string(cls, string: str):
         parts = string.split(":")
         if len(parts) == 5:
-            _, on, time_id, provisioner_id, domain = parts
-            assert on == "on"
+            _, status, time_id, provisioner_id, domain = parts
+            assert status == ProvisionerStatus.ON
 
             return ProvisionerKey(
                 domain=domain,
-                on=True,
+                status=True,
                 provisioner_id=provisioner_id,
                 time_id=time_id,
             )
 
         elif len(parts) == 3:
-            _, off, domain = parts
-            assert off == "off"
+            _, status, domain = parts
+            assert status in (
+                ProvisionerStatus.OFF.value,
+                ProvisionerStatus.DISABLED.value,
+            )
 
             return ProvisionerKey(
                 domain=domain,
-                on=False,
+                status=ProvisionerStatus.OFF,
                 provisioner_id=None,
                 time_id=None,
             )

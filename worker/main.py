@@ -1,15 +1,20 @@
+from datetime import timedelta
 from time import sleep, time
 
 from redis import Redis
+from worker.src.helpers.misc import timestamp
 
 from worker.src.models.url import URL, URLKey, URLValue
 from worker.src.helpers.thread import concurrent_threads
-from worker.src.models.provisioner import ProvisionerKey, ProvisionerValue
+from worker.src.models.provisioner import (
+    ProvisionerKey,
+    ProvisionerStatus,
+    ProvisionerValue,
+)
 from worker.src.services.provisioner import (
     CouldNotFindProvisioner,
     Provisioner,
     TakeOver,
-    URLExists,
 )
 
 
@@ -29,7 +34,7 @@ def populate_test():
 
     provisioner_key = ProvisionerKey(
         domain=domain,
-        on=False,
+        status=ProvisionerStatus.OFF,
     )
 
     pipe.set(str(provisioner_key), provisioner_value.to_json())
@@ -64,25 +69,26 @@ def run():
         try:
             start = time()
             with Provisioner() as p:
-                # p.append_url(f"https://www.{p.key.domain}/appended")
                 for url in p.iter_urls():
                     print(url)
+
+                    if url.value.scrapet_at:
+                        p.disable()
+                        break
+
                     sleep(0.1)
 
                     if len(url.key.id) == 3:
-                        try:
-                            p.append_urls(
-                                [
-                                    f"https://www.{p.key.domain}/appended-by/{url.key.id}/0",
-                                    f"https://www.{p.key.domain}/appended-by/{url.key.id}/1",
-                                    f"https://www.{p.key.domain}/appended-by/{url.key.id}/2",
-                                ]
-                            )
-                        except URLExists as e:
-                            pass
-                            # end = time()
-                            # print(end - start)
-                            # quit()
+                        p.append_urls(
+                            [
+                                f"https://www.{p.key.domain}/appended-by/{url.key.id}/0",
+                                f"https://www.{p.key.domain}/appended-by/{url.key.id}/1",
+                                f"https://www.{p.key.domain}/appended-by/{url.key.id}/2",
+                            ]
+                        )
+                        # end = time()
+                        # print(end - start)
+                        # quit()
 
                     # loader = loaders.ProgressLoader(total=50)
                     # for i in range(50):
@@ -100,6 +106,6 @@ def run():
 
 
 if __name__ == "__main__":
-    populate_test()
+    # populate_test()
     # concurrent_threads(run, thread_count=1)
     run()
