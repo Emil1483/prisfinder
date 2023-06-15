@@ -1,4 +1,3 @@
-import hashlib
 import json
 from datetime import datetime, timedelta
 from math import floor
@@ -6,9 +5,7 @@ from typing import Tuple
 from urllib.parse import urlparse
 from uuid import uuid4
 
-from redis import Redis
-
-
+from worker.src.helpers.misc import hash_string
 from worker.src.models.provisioner import ProvisionerKey, ProvisionerValue
 from worker.src.models.url import URL, URLKey, URLValue
 from worker.src.services.redis_service import CustomRedis
@@ -157,18 +154,38 @@ class Provisioner:
 
         return new_key, value
 
+    def fetch_urls(self, url_ids: list[str] = None) -> list[URL]:
+        pipe = self.r.pipeline()
+
+        url_keys = [
+            URLKey(
+                domain=self.key.domain,
+                id=url_id or self.value.cursor,
+            )
+            for url_id in url_ids
+        ]
+
+        for url_key in url_keys:
+            pipe.get(str(url_key))
+
+        url_value_jsons = pipe.execute()
+
+        urls = []
+        for url_key, url_value_json in zip(url_keys, url_value_jsons):
+            if not url_value_json:
+                raise ValueError(f'URL with id "{url_key}" does not exist')
+
+            url = URL(
+                key=url_key,
+                value=URLValue.from_json(url_value_json),
+            )
+
+            urls.append(url)
+
+        return urls
+
     def fetch_url(self, url_id: str = None) -> URL:
-        url_key = URLKey(
-            domain=self.key.domain,
-            id=url_id or self.value.cursor,
-        )
-
-        url = URL(
-            key=url_key,
-            value=URLValue.from_json(self.r.get(str(url_key), use_cache=True)),
-        )
-
-        return url
+        return self.fetch_urls([url_id or self.value.cursor])[0]
 
     def iter_urls(self):
         while True:
@@ -209,49 +226,64 @@ class Provisioner:
                     "Could not modify key. Provisioner was probably claimed by another worker"
                 )
 
-    def append_url(self, url_str: str):
-        string_bytes = url_str.encode(encoding="utf8")
-        hexdigest = hashlib.sha256(string_bytes).hexdigest()
-        new_url_id = hexdigest[:32]
-
-        url_key = URLKey(
-            domain=urlparse(url_str).netloc.replace("www.", ""),
-            id=new_url_id,
-        )
-
-        if self.r.get(str(url_key), use_cache=True):
-            raise URLExists()
+    def append_urls(self, urls_str: list[str]):
+        assert len(urls_str) == len(list(dict.fromkeys(urls_str)))
 
         url_at_cursor = self.fetch_url()
         prev_url_id = url_at_cursor.value.prev
         prev_url = self.fetch_url(prev_url_id)
-        new_url = URL(
-            key=url_key,
-            value=URLValue(
-                next=url_at_cursor.key.id,
-                prev=prev_url_id,
-                url=url_str,
-            ),
-        )
 
-        self.value = self.value.copy_with(cursor=new_url.key.id)
+        url_ids = [prev_url_id, *map(hash_string, urls_str), url_at_cursor.key.id]
+
+        urls: list[URL] = []
+
+        for url_str, url_id, prev_id, next_id in zip(
+            urls_str, url_ids[1:-1], url_ids[:-2], url_ids[2:]
+        ):
+            url_domain = urlparse(url_str).netloc.replace("www.", "")
+            assert url_domain == self.key.domain
+
+            url = URL(
+                key=URLKey(
+                    domain=url_domain,
+                    id=url_id,
+                ),
+                value=URLValue(
+                    url=url_str,
+                    prev=prev_id,
+                    next=next_id,
+                ),
+            )
+
+            urls.append(url)
+
+        pipe = self.r.pipeline()
+        for url in urls:
+            pipe.get(str(url.key))
+
+        result = pipe.execute()
+        if any(result):
+            raise URLExists()
+
+        self.value = self.value.copy_with(cursor=urls[0].key.id)
 
         pipe = self.r.pipeline()
 
         pipe.set(
             str(prev_url.key),
-            prev_url.value.copy_with(next_id=new_url_id).to_json(),
+            prev_url.value.copy_with(next_id=urls[0].key.id).to_json(),
         )
 
         pipe.set(
             str(url_at_cursor.key),
-            url_at_cursor.value.copy_with(prev_id=new_url_id).to_json(),
+            url_at_cursor.value.copy_with(prev_id=urls[-1].key.id).to_json(),
         )
 
-        pipe.set(
-            str(new_url.key),
-            new_url.value.to_json(),
-        )
+        for url in urls:
+            pipe.set(
+                str(url.key),
+                url.value.to_json(),
+            )
 
         pipe.set(
             str(self.key),
@@ -259,3 +291,6 @@ class Provisioner:
         )
 
         pipe.execute()
+
+    def append_url(self, url_str: str):
+        return self.append_urls([url_str])

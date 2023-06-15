@@ -2,9 +2,9 @@ from time import sleep, time
 
 from redis import Redis
 
+from worker.src.models.url import URL, URLKey, URLValue
 from worker.src.helpers.thread import concurrent_threads
 from worker.src.models.provisioner import ProvisionerKey, ProvisionerValue
-from worker.src.models.url import URL, URLKey, URLValue
 from worker.src.services.provisioner import (
     CouldNotFindProvisioner,
     Provisioner,
@@ -34,11 +34,11 @@ def populate_test():
 
     pipe.set(str(provisioner_key), provisioner_value.to_json())
 
-    for i in range(10):
+    for i in range(3):
         url_id = f"{i:03d}"
-        next_id = (i + 1) % 10
+        next_id = (i + 1) % 3
         next_id = f"{next_id:03d}"
-        prev_id = (i - 1) % 10
+        prev_id = (i - 1) % 3
         prev_id = f"{prev_id:03d}"
 
         url = URL(
@@ -64,15 +64,19 @@ def run():
         try:
             start = time()
             with Provisioner() as p:
+                # p.append_url(f"https://www.{p.key.domain}/appended")
                 for url in p.iter_urls():
-                    print("current", url)
-
+                    print(url)
                     sleep(0.1)
 
                     if len(url.key.id) == 3:
                         try:
-                            p.append_url(
-                                f"https://www.{p.key.domain}/appended-by/{url.key.id}"
+                            p.append_urls(
+                                [
+                                    f"https://www.{p.key.domain}/appended-by/{url.key.id}/0",
+                                    f"https://www.{p.key.domain}/appended-by/{url.key.id}/1",
+                                    f"https://www.{p.key.domain}/appended-by/{url.key.id}/2",
+                                ]
                             )
                         except URLExists as e:
                             pass

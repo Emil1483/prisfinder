@@ -25,8 +25,8 @@ class ProvisionerKey(object):
 
     def __str__(self) -> str:
         if self.provisioner_id:
-            assert self.time_id
-            assert self.on
+            assert self.time_id is not None
+            assert self.on is True
             return f"provisioner:on:{self.time_id}:{self.provisioner_id}:{self.domain}"
 
         assert not self.on

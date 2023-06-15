@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from types import NoneType
 
 from dataclasses_json import dataclass_json
 
@@ -10,6 +11,12 @@ class URLValue(object):
     next: str
     prev: str
     scrapet_at: int | None = None
+
+    def __post_init__(self):
+        assert isinstance(self.url, str)
+        assert isinstance(self.next, str)
+        assert isinstance(self.prev, str)
+        assert isinstance(self.scrapet_at, (int, NoneType))
 
     def copy_with(
         self,
@@ -30,6 +37,10 @@ class URLKey(object):
     domain: str
     id: str
 
+    def __post_init__(self):
+        assert isinstance(self.domain, str)
+        assert isinstance(self.id, str)
+
     def __str__(self) -> str:
         return f"url:{self.domain}:{self.id}"
 
@@ -46,6 +57,13 @@ class URLKey(object):
 class URL(object):
     value: URLValue
     key: URLKey
+
+    def __post_init__(self):
+        assert isinstance(self.value, URLValue)
+        assert isinstance(self.key, URLKey)
+
+    def __str__(self):
+        return self.value.url
 
     def copy_with(
         self,
