@@ -1,8 +1,11 @@
-from datetime import timedelta
+import os
 from time import sleep, time
+from urllib.parse import urlparse
 
 from redis import Redis
-from worker.src.helpers.misc import timestamp
+import requests
+from worker.src.helpers.misc import hash_string
+from bs4 import BeautifulSoup
 
 from worker.src.models.url import URL, URLKey, URLValue
 from worker.src.helpers.thread import concurrent_threads
@@ -25,10 +28,12 @@ def populate_test():
     for key in r.scan_iter():
         pipe.delete(key)
 
-    domain = "example.com"
+    url_str = "https://www.komplett.no/"
+    domain = "komplett.no"
+    url_id = hash_string(url_str)
 
     provisioner_value = ProvisionerValue(
-        cursor="000",
+        cursor=url_id,
         last_scrapet=None,
     )
 
@@ -39,26 +44,19 @@ def populate_test():
 
     pipe.set(str(provisioner_key), provisioner_value.to_json())
 
-    for i in range(3):
-        url_id = f"{i:03d}"
-        next_id = (i + 1) % 3
-        next_id = f"{next_id:03d}"
-        prev_id = (i - 1) % 3
-        prev_id = f"{prev_id:03d}"
+    url = URL(
+        key=URLKey(
+            domain=domain,
+            id=url_id,
+        ),
+        value=URLValue(
+            url=url_str,
+            next=url_id,
+            prev=url_id,
+        ),
+    )
 
-        url = URL(
-            key=URLKey(
-                domain=domain,
-                id=url_id,
-            ),
-            value=URLValue(
-                url=f"https://www.{domain}/{url_id}",
-                next=next_id,
-                prev=prev_id,
-            ),
-        )
-
-        pipe.set(str(url.key), url.value.to_json())
+    pipe.set(str(url.key), url.value.to_json())
 
     pipe.execute()
     r.close()
@@ -67,7 +65,6 @@ def populate_test():
 def run():
     while True:
         try:
-            start = time()
             with Provisioner() as p:
                 for url in p.iter_urls():
                     print(url)
@@ -76,25 +73,53 @@ def run():
                         p.disable()
                         break
 
-                    sleep(0.1)
+                    start = time()
+                    response = requests.get(
+                        url.value.url,
+                        headers={
+                            "User-Agent": "PostmanRuntime/7.32.2",
+                        },
+                    )
+                    end = time()
+                    sleep(10 * (end - start))
 
-                    if len(url.key.id) == 3:
-                        p.append_urls(
-                            [
-                                f"https://www.{p.key.domain}/appended-by/{url.key.id}/0",
-                                f"https://www.{p.key.domain}/appended-by/{url.key.id}/1",
-                                f"https://www.{p.key.domain}/appended-by/{url.key.id}/2",
-                            ]
-                        )
-                        # end = time()
-                        # print(end - start)
-                        # quit()
+                    url_path = url.value.url.split(p.key.domain)[-1]
 
-                    # loader = loaders.ProgressLoader(total=50)
-                    # for i in range(50):
-                    #     loader.progress(i)
-                    #     sleep(0.1)
-                    # print()
+                    if url_path and url_path[-1] == "/":
+                        url_path = url_path[:-1]
+
+                    url_path = url_path.replace("?", "qmark")
+
+                    name = f"data/{p.key.domain}{url_path}.html"
+                    directory, _ = os.path.split(name)
+
+                    if directory:
+                        os.makedirs(directory, exist_ok=True)
+
+                    with open(name, "w") as f:
+                        f.write(response.text)
+
+                    def gen_new_urls():
+                        soup = BeautifulSoup(response.content, "html.parser")
+                        for a in soup.find_all("a"):
+                            href = a.get("href")
+                            if not href:
+                                continue
+                            if href == "#":
+                                continue
+
+                            if "http" in href:
+                                domain = urlparse(href).netloc.replace("www.", "")
+                                if domain == p.key.domain:
+                                    yield href
+                            else:
+                                url = f"https://www.{p.key.domain}{href}"
+                                url_domain = urlparse(url).netloc.replace("www.", "")
+                                if url_domain == p.key.domain:
+                                    yield url
+
+                    new_urls = [*gen_new_urls()]
+                    p.append_urls(list(dict.fromkeys(new_urls)))
 
         except CouldNotFindProvisioner as e:
             print(f"{type(e).__name__} {e}: sleeping...")

@@ -98,8 +98,6 @@ class Provisioner:
         )
 
     def find_provisioner(self):
-        print([*self.r.scan_iter("provisioner*")])
-
         def gen_keys():
             yield from self.r.scan_iter("provisioner:off:*")
 
@@ -251,10 +249,6 @@ class Provisioner:
             pipe.get(str(key))
 
         results = pipe.execute()
-
-        for url_str, result in zip(urls_str, results):
-            if result:
-                print(f'WARNING: URL "{url_str}" already exists')
 
         urls_str = [u for u, r in zip(urls_str, results) if not r]
 
