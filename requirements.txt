@@ -1,5 +1,4 @@
 beautifulsoup4==4.11.2
-dataclasses_json==0.5.7
 dataclasses_json==0.5.8
 load_dotenv==0.1.0
 microdata==0.8.0
