@@ -84,6 +84,7 @@ def run():
                         headers={
                             "User-Agent": "PostmanRuntime/7.32.2",
                         },
+                        timeout=30,
                     )
                     end = time()
 
