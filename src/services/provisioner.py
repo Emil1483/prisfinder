@@ -1,18 +1,19 @@
 import json
 from datetime import datetime, timedelta
 from math import floor
+import os
 from typing import Tuple
 from urllib.parse import urlparse
 from uuid import uuid4
 
-from worker.src.helpers.misc import hash_string, timestamp
-from worker.src.models.provisioner import (
+from src.helpers.misc import hash_string, timestamp
+from src.models.provisioner import (
     ProvisionerKey,
     ProvisionerStatus,
     ProvisionerValue,
 )
-from worker.src.models.url import URL, URLKey, URLValue
-from worker.src.services.redis_service import CustomRedis
+from src.models.url import URL, URLKey, URLValue
+from src.services.redis_service import CustomRedis
 
 
 class CouldNotFindProvisioner(Exception):
@@ -33,8 +34,10 @@ class TakeOver(Exception):
 
 class Provisioner:
     def __init__(self, timeout=timedelta(minutes=5)):
+        REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379")
+
         self.timeout = timeout
-        self.r = CustomRedis()
+        self.r = CustomRedis.from_url(REDIS_URL)
         self.id = uuid4().hex
         self.disabled = False
 

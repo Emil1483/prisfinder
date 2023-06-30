@@ -24,6 +24,7 @@ def string_to_object_id(string: str) -> ObjectId:
     return _id
 
 
+# TODO: use mongo_service
 def upsert_finn_ads(finn_ads: list[dict]):
     def gen():
         for ad in finn_ads:
