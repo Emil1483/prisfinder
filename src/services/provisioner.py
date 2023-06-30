@@ -101,6 +101,8 @@ class Provisioner:
         )
 
     def find_provisioner(self):
+        print("finding provisioner...")
+
         def gen_keys():
             yield from self.r.scan_iter("provisioner:off:*")
 

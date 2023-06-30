@@ -10,4 +10,4 @@ COPY . .
 
 ENV PYTHONPATH "${PYTHONPATH}:/app"
 
-CMD ["python", "scripts/worker.py"]
+CMD ["python", "-u", "scripts/worker.py"]
