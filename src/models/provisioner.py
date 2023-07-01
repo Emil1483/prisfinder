@@ -16,6 +16,9 @@ class ProvisionerStatus(Enum):
     def __str__(self) -> str:
         return self.value
 
+    def __eq__(self, __value: object) -> bool:
+        return __value == self.value
+
 
 @dataclass_json
 @dataclass(order=True, frozen=True)
@@ -67,9 +70,9 @@ class ProvisionerKey(object):
 
             return ProvisionerKey(
                 domain=domain,
-                status=True,
+                status=ProvisionerStatus.ON,
                 provisioner_id=provisioner_id,
-                time_id=time_id,
+                time_id=int(time_id),
             )
 
         elif len(parts) == 3:
