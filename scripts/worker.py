@@ -1,22 +1,14 @@
 import os
 from time import sleep, time
-from urllib.parse import urlparse
-
-from redis import Redis
+import traceback
 import requests
 
 from src.services.mongo_service import upload_products
 from src.helpers.exceptions import NotAProductPage
 from src.helpers.import_tools import import_scraper
 from src.helpers.iter_urls import iter_urls
-from src.helpers.misc import hash_string
-from src.models.url import URL, URLKey, URLValue
+from src.models.url import URL, URLStatus
 from src.helpers.thread import concurrent_threads
-from src.models.provisioner import (
-    ProvisionerKey,
-    ProvisionerStatus,
-    ProvisionerValue,
-)
 from src.services.provisioner import (
     CouldNotFindProvisioner,
     Provisioner,
@@ -24,79 +16,52 @@ from src.services.provisioner import (
 )
 
 
-def populate_test():
-    r = Redis()
-    pipe = r.pipeline()
-
-    for key in r.scan_iter():
-        pipe.delete(key)
-
-    url_str = "https://www.komplett.no/product/1179971"
-    domain = "komplett.no"
-    url_id = hash_string(url_str)
-
-    provisioner_value = ProvisionerValue(
-        cursor=url_id,
-        last_scrapet=None,
-    )
-
-    provisioner_key = ProvisionerKey(
-        domain=domain,
-        status=ProvisionerStatus.OFF,
-    )
-
-    pipe.set(str(provisioner_key), provisioner_value.to_json())
-
-    url = URL(
-        key=URLKey(
-            domain=domain,
-            id=url_id,
-        ),
-        value=URLValue(
-            url=url_str,
-            next=url_id,
-            prev=url_id,
-        ),
-    )
-
-    pipe.set(str(url.key), url.value.to_json())
-
-    pipe.execute()
-    r.close()
-
-
 def run():
     while True:
         try:
             with Provisioner() as p:
                 scrape = import_scraper(p.key.domain)
-                for url in p.iter_urls():
-                    print(url)
-
-                    if url.value.scrapet_at:
+                for url in p.iter_urls(URLStatus.WAITING):
+                    if url is None:
+                        # TODO: switch to failed urls
+                        print("Empty Cursor. Disabling")
                         p.disable()
                         break
 
-                    start = time()
-                    response = requests.get(
-                        url.value.url,
-                        allow_redirects=True,
-                        headers={
-                            "User-Agent": "PostmanRuntime/7.32.2",
-                        },
-                        timeout=30,
-                    )
-                    end = time()
+                    print(url)
 
                     try:
-                        products = scrape(response)
-                        upload_products(products)
-                    except NotAProductPage:
-                        pass
+                        start = time()
+                        response = requests.get(
+                            url.value.url,
+                            allow_redirects=True,
+                            headers={
+                                "User-Agent": "PostmanRuntime/7.32.2",
+                            },
+                            timeout=30,
+                        )
+                        end = time()
 
-                    p.append_urls(list(dict.fromkeys(iter_urls(response))))
+                        try:
+                            products = scrape(response)
+                            upload_products(products)
 
-                    sleep(10 * (end - start))
+                        except NotAProductPage:
+                            pass
+
+                        urls_str = list(dict.fromkeys(iter_urls(response)))
+                        urls = [URL.from_url_string(s) for s in urls_str]
+
+                        p.append_urls(urls, URLStatus.WAITING)
+
+                        sleep(10 * (end - start))
+
+                        p.complete_url(url, URLStatus.WAITING)
+                    except Exception as e:
+                        print(f"failed for url", url)
+                        print(e)
+                        print(traceback.format_exc())
+                        p.fail_url(url, URLStatus.WAITING)
 
         except CouldNotFindProvisioner as e:
             print(f"{type(e).__name__} {e}: sleeping...")
@@ -108,7 +73,6 @@ def run():
 
 
 if __name__ == "__main__":
-    # populate_test()
     THREAD_COUNT = int(os.getenv("THREAD_COUNT", "1"))
     if THREAD_COUNT > 1:
         concurrent_threads(run, thread_count=THREAD_COUNT)

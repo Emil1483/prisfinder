@@ -18,7 +18,7 @@ def iter_urls(response: Response):
         if "http" in href:
             domain = urlparse(href).netloc
             if domain == res_url_domain:
-                yield href
+                yield str(href)
         else:
             url = f"https://{res_url_domain}{href}"
             url_domain = urlparse(url).netloc

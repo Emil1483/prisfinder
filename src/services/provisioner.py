@@ -12,7 +12,7 @@ from src.models.provisioner import (
     ProvisionerStatus,
     ProvisionerValue,
 )
-from src.models.url import URL, URLKey, URLValue
+from src.models.url import URL, URLKey, URLStatus, URLValue
 from src.services.redis_service import CustomRedis
 
 
@@ -162,7 +162,7 @@ class Provisioner:
 
         return new_key, value
 
-    def fetch_urls(self, url_ids: list[str] = None) -> list[URL]:
+    def fetch_urls(self, url_ids: list[str] = None, should_raise=True) -> list[URL]:
         assert not self.disabled
 
         pipe = self.r.pipeline()
@@ -170,7 +170,7 @@ class Provisioner:
         url_keys = [
             URLKey(
                 domain=self.key.domain,
-                id=url_id or self.value.cursor,
+                id=url_id or self.value.cursor_waiting,
             )
             for url_id in url_ids
         ]
@@ -183,7 +183,11 @@ class Provisioner:
         urls = []
         for url_key, url_value_json in zip(url_keys, url_value_jsons):
             if not url_value_json:
-                raise ValueError(f'URL with id "{url_key}" does not exist')
+                if should_raise:
+                    raise ValueError(f'URL with id "{url_key}" does not exist')
+
+                urls.append(None)
+                continue
 
             url = URL(
                 key=url_key,
@@ -194,23 +198,37 @@ class Provisioner:
 
         return urls
 
-    def fetch_url(self, url_id: str = None) -> URL:
-        return self.fetch_urls([url_id or self.value.cursor])[0]
+    def fetch_url(self, url_id: str, should_raise=True) -> URL:
+        return self.fetch_urls([url_id], should_raise=should_raise)[0]
 
-    def iter_urls(self):
+    def fetch_url_at_cursor(self, url_status: URLStatus):
+        url_id = {
+            URLStatus.WAITING: self.value.cursor_waiting,
+            URLStatus.COMPLETED: self.value.cursor_completed,
+            URLStatus.FAILED: self.value.cursor_failed,
+        }[url_status]
+
+        if url_id is None:
+            return None
+
+        return self.fetch_url(url_id)
+
+    def iter_urls(self, urls_to_iter: URLStatus):
         assert not self.disabled
         while True:
-            url = self.fetch_url()
-            self.value = self.value.copy_with(
-                last_scrapet=timestamp(),
-                cursor=url.value.next,
-            )
+            url = self.fetch_url_at_cursor(urls_to_iter)
+            if url:
+                self.value = self.value.copy_with(
+                    last_scrapet=timestamp(),
+                    cursor=url.value.next,
+                    url_status=urls_to_iter,
+                )
 
             yield url
 
             assert not self.disabled
 
-            url = self.fetch_url(url.key.id)
+            url = self.fetch_url(url.key.id, should_raise=False)
 
             pipe = self.r.pipeline()
 
@@ -223,10 +241,11 @@ class Provisioner:
                 self.value.to_json(),
             )
 
-            pipe.set(
-                str(url.key),
-                url.value.copy_with(scrapet_at=timestamp()).to_json(),
-            )
+            if url:
+                pipe.set(
+                    str(url.key),
+                    url.value.copy_with(scrapet_at=timestamp()).to_json(),
+                )
 
             result = pipe.execute()
 
@@ -237,72 +256,94 @@ class Provisioner:
                     "Could not modify key. Provisioner was probably claimed by another worker"
                 )
 
-    def append_urls(self, urls_str: list[str]):
+    def append_urls(self, urls: list[URL], url_status: URLStatus):
         assert not self.disabled
-        assert len(urls_str) == len(list(dict.fromkeys(urls_str)))
+        assert len(urls) == len(list(dict.fromkeys([url.value.url for url in urls])))
 
         pipe = self.r.pipeline()
-        for url_str in urls_str:
-            url_domain = urlparse(url_str).netloc.replace("www.", "")
-            assert url_domain == self.key.domain
+        for url in urls:
+            assert url.key.domain == self.key.domain
 
-            key = URLKey(
-                domain=url_domain,
-                id=hash_string(url_str),
-            )
-
-            pipe.get(str(key))
+            pipe.get(str(url.key))
 
         results = pipe.execute()
 
-        urls_str = [u for u, r in zip(urls_str, results) if not r]
+        unique_urls = [u for u, r in zip(urls, results) if not r]
 
-        if len(urls_str) == 0:
+        if len(unique_urls) == 0:
             return
 
-        url_at_cursor = self.fetch_url()
+        url_at_cursor = self.fetch_url_at_cursor(url_status)
+        if url_at_cursor is None:
+            urls_to_insert = []
+
+            for i, url in enumerate(unique_urls):
+                urls_to_insert.append(
+                    url.copy_with(
+                        value=url.value.copy_with(
+                            prev_id=unique_urls[(i - 1) % len(unique_urls)].key.id,
+                            next_id=unique_urls[(i + 1) % len(unique_urls)].key.id,
+                        ),
+                    ),
+                )
+
+            self.value = self.value.copy_with(
+                cursor=urls_to_insert[0].key.id,
+                url_status=url_status,
+            )
+
+            pipe = self.r.pipeline()
+
+            for url in urls_to_insert:
+                pipe.set(
+                    str(url.key),
+                    url.value.to_json(),
+                )
+
+            pipe.set(
+                str(self.key),
+                self.value.to_json(),
+            )
+
+            pipe.execute()
+
+            return
+
         prev_url_id = url_at_cursor.value.prev
         prev_url = self.fetch_url(prev_url_id)
 
-        url_ids = [prev_url_id, *map(hash_string, urls_str), url_at_cursor.key.id]
+        all_urls = [prev_url, *unique_urls, url_at_cursor]
 
-        urls: list[URL] = []
+        urls_to_insert = []
 
-        for url_str, url_id, prev_id, next_id in zip(
-            urls_str, url_ids[1:-1], url_ids[:-2], url_ids[2:]
-        ):
-            url_domain = urlparse(url_str).netloc.replace("www.", "")
-            assert url_domain == self.key.domain
-
-            url = URL(
-                key=URLKey(
-                    domain=url_domain,
-                    id=url_id,
-                ),
-                value=URLValue(
-                    url=url_str,
-                    prev=prev_id,
-                    next=next_id,
+        for url, prev_url, next_url in zip(unique_urls, all_urls[:-2], all_urls[2:]):
+            urls_to_insert.append(
+                url.copy_with(
+                    value=url.value.copy_with(
+                        prev_id=prev_url.key.id,
+                        next_id=next_url.key.id,
+                    ),
                 ),
             )
 
-            urls.append(url)
-
-        self.value = self.value.copy_with(cursor=urls[0].key.id)
+        self.value = self.value.copy_with(
+            cursor=urls_to_insert[0].key.id,
+            url_status=url_status,
+        )
 
         pipe = self.r.pipeline()
 
         pipe.set(
             str(prev_url.key),
-            prev_url.value.copy_with(next_id=urls[0].key.id).to_json(),
+            prev_url.value.copy_with(next_id=urls_to_insert[0].key.id).to_json(),
         )
 
         pipe.set(
             str(url_at_cursor.key),
-            url_at_cursor.value.copy_with(prev_id=urls[-1].key.id).to_json(),
+            url_at_cursor.value.copy_with(prev_id=urls_to_insert[-1].key.id).to_json(),
         )
 
-        for url in urls:
+        for url in urls_to_insert:
             pipe.set(
                 str(url.key),
                 url.value.to_json(),
@@ -315,5 +356,58 @@ class Provisioner:
 
         pipe.execute()
 
-    def append_url(self, url_str: str):
-        return self.append_urls([url_str])
+    def append_url(self, url: URL, url_status: URLStatus):
+        return self.append_urls([url], url_status)
+
+    def delete_url(self, url: URL, url_status: URLStatus):
+        if url.value.prev == url.value.next:
+            if url.key.id == url.value.prev:
+                self.r.delete(str(url.key))
+                self.value = self.value.with_cursor_none(url_status)
+                return
+
+            prev_url = self.fetch_url(url.value.prev)
+            prev_url = prev_url.copy_with(
+                value=prev_url.value.copy_with(
+                    prev_id=prev_url.key.id,
+                    next_id=prev_url.key.id,
+                ),
+            )
+
+            pipe = self.r.pipeline()
+
+            pipe.delete(str(url.key))
+            pipe.set(str(prev_url.key), prev_url.value.to_json())
+
+            pipe.execute()
+
+            return
+
+        prev_url, next_url = self.fetch_urls([url.value.prev, url.value.next])
+
+        prev_url = prev_url.copy_with(
+            value=prev_url.value.copy_with(next_id=next_url.key.id),
+        )
+
+        next_url = next_url.copy_with(
+            value=next_url.value.copy_with(prev_id=prev_url.key.id)
+        )
+
+        pipe = self.r.pipeline()
+
+        pipe.delete(str(url.key))
+        pipe.set(str(prev_url.key), prev_url.value.to_json())
+        pipe.set(str(next_url.key), next_url.value.to_json())
+
+        pipe.execute()
+
+        # TODO: don't execute the pipe. Execute both delete and append
+        # TODO: at the same time.
+
+    def complete_url(self, url: URL, url_status: URLStatus):
+        self.delete_url(self.fetch_url(url.key.id), url_status)
+        self.append_url(url, url_status=URLStatus.COMPLETED)
+
+    def fail_url(self, url: URL, url_status: URLStatus):
+        self.delete_url(self.fetch_url(url.key.id), url_status)
+        self.append_url(url, url_status=URLStatus.FAILED)

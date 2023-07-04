@@ -4,6 +4,8 @@ from types import NoneType
 
 from dataclasses_json import dataclass_json
 
+from src.models.url import URLStatus
+
 
 class ProvisionerStatus(Enum):
     ON = "on"
@@ -23,14 +25,46 @@ class ProvisionerStatus(Enum):
 @dataclass_json
 @dataclass(order=True, frozen=True)
 class ProvisionerValue(object):
-    cursor: str
+    cursor_waiting: str | None = None
+    cursor_completed: str | None = None
+    cursor_failed: str | None = None
     last_scrapet: int | None = None
 
-    def copy_with(self, cursor: str | None = None, last_scrapet: int | None = None):
+    def with_cursor_none(self, status: URLStatus):
+        completed = status == URLStatus.COMPLETED
         return ProvisionerValue(
-            cursor=cursor or self.cursor,
+            cursor_waiting=self.cursor_waiting if status != URLStatus.WAITING else None,
+            cursor_failed=self.cursor_failed if status != URLStatus.FAILED else None,
+            cursor_completed=self.cursor_completed if not completed else None,
+            last_scrapet=self.last_scrapet,
+        )
+
+    def copy_with(
+        self,
+        cursor: str | None = None,
+        url_status: str | None = None,
+        last_scrapet: int | None = None,
+    ):
+        assert (cursor is None) == (url_status is None)
+
+        return ProvisionerValue(
+            cursor_waiting=cursor
+            if url_status == URLStatus.WAITING
+            else self.cursor_waiting,
+            cursor_failed=cursor
+            if url_status == URLStatus.FAILED
+            else self.cursor_failed,
+            cursor_completed=cursor
+            if url_status == URLStatus.COMPLETED
+            else self.cursor_completed,
             last_scrapet=last_scrapet or self.last_scrapet,
         )
+
+    def __post_init__(self):
+        assert isinstance(self.cursor_waiting, (NoneType, str))
+        assert isinstance(self.cursor_completed, (NoneType, str))
+        assert isinstance(self.cursor_failed, (NoneType, str))
+        assert isinstance(self.last_scrapet, (NoneType, int))
 
 
 @dataclass(order=True, frozen=True)

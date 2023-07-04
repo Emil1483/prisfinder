@@ -1,7 +1,17 @@
 from dataclasses import dataclass
 from types import NoneType
+from enum import Enum
+from urllib.parse import urlparse
 
 from dataclasses_json import dataclass_json
+
+from src.helpers.misc import hash_string
+
+
+class URLStatus(Enum):
+    WAITING = "WAITING"
+    COMPLETED = "COMPLETED"
+    FAILED = "FAILED"
 
 
 @dataclass_json
@@ -61,6 +71,22 @@ class URL(object):
     def __post_init__(self):
         assert isinstance(self.value, URLValue)
         assert isinstance(self.key, URLKey)
+
+    @classmethod
+    def from_url_string(cls, url_str: str):
+        domain = urlparse(url_str).netloc.replace("www.", "")
+        url_id = hash_string(url_str)
+        return URL(
+            key=URLKey(
+                domain=domain,
+                id=url_id,
+            ),
+            value=URLValue(
+                url=url_str,
+                next=url_id,
+                prev=url_id,
+            ),
+        )
 
     def __str__(self):
         return self.value.url
