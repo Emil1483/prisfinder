@@ -58,8 +58,6 @@ def run():
 
                         p.append_urls(urls, URLStatus.WAITING)
 
-                        sleep(5 * (end - start))
-
                         p.complete_url(url, URLStatus.WAITING)
                     except Exception as e:
                         print(f"failed for url", url)
