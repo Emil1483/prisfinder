@@ -88,7 +88,7 @@ def _find_category(url_path: str, sku: str) -> str:
     return category
 
 
-def scrape(res: requests.Response) -> Product:
+def scrape(res: requests.Response):
     auto_scraped = auto_scraper.parse(res.content)
     product_jsons = auto_scraped.get("jsonld", {}).get("Product", None)
 

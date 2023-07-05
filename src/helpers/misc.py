@@ -1,5 +1,6 @@
 from datetime import datetime
 import hashlib
+from html.parser import HTMLParser
 
 
 def hash_string(string: str, length=32):
@@ -10,3 +11,16 @@ def hash_string(string: str, length=32):
 
 def timestamp():
     return round(datetime.now().timestamp() * 1000)
+
+
+class HTMLFilter(HTMLParser):
+    text = ""
+
+    def handle_data(self, data):
+        self.text += data
+
+
+def html_to_plaintext(html: str) -> str:
+    html_filter = HTMLFilter()
+    html_filter.feed(html)
+    return html_filter.text

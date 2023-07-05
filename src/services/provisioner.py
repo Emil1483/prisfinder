@@ -76,6 +76,7 @@ class Provisioner:
         self.disabled = True
 
     def time_id(self, current_time: datetime = None):
+        # TODO: use zulu
         if not current_time:
             current_time = datetime.now()
 
@@ -257,6 +258,8 @@ class Provisioner:
                 )
 
     def append_urls(self, urls: list[URL], url_status: URLStatus):
+        # TODO: refactor this please
+
         assert not self.disabled
         assert len(urls) == len(list(dict.fromkeys([url.value.url for url in urls])))
 

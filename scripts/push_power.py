@@ -16,8 +16,8 @@ def push_komplett():
         for key in r.scan_iter():
             pipe.delete(key)
 
-        url_str = "https://www.komplett.no/product/1179971"
-        domain = "komplett.no"
+        url_str = "https://www.power.no/tv-og-lyd/hodetelefoner/true-wireless-hodetelefoner/samsung-galaxy-buds2-pro-true-wireless-bora-purple/p-1646111/"
+        domain = "power.no"
         url_id = hash_string(url_str)
 
         provisioner_value = ProvisionerValue(
