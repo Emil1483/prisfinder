@@ -43,6 +43,9 @@ def _find_existing(product: Product):
 def _update_product(existing: Product, new: Product):
     new_json = asdict(new)
     del new_json["_id"]
+
+    # TODO: merge data
+
     products_collection.update_one(
         {"_id": existing._id},
         {"$set": new_json},

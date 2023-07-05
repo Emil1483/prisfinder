@@ -1,5 +1,5 @@
 import os
-from time import sleep, time
+from time import sleep
 import traceback
 
 from selenium import webdriver
@@ -42,9 +42,7 @@ def run():
                     print(url)
 
                     try:
-                        start = time()
                         driver.get(url.value.url)
-                        end = time()
 
                         try:
                             products = scrape(driver)
@@ -60,8 +58,7 @@ def run():
 
                         p.complete_url(url, URLStatus.WAITING)
                     except Exception as e:
-                        print(f"failed for url", url)
-                        print(e)
+                        print(f"failed for url", url, e, type(e).__name__)
                         print(traceback.format_exc())
                         p.fail_url(url, URLStatus.WAITING)
 
