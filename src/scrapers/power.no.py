@@ -1,17 +1,10 @@
-from base64 import b64decode
-import json
-from pprint import pprint
-from bs4 import BeautifulSoup
-from selenium.webdriver.chrome.webdriver import WebDriver
-import requests
-
 import src.helpers.auto_scrape as auto_scraper
 from src.helpers.exceptions import NotAProductPage
-from src.helpers.misc import html_to_plaintext
 from src.models.product import Product, Retailer
+from src.services.chrome_service import ChromeService
 
 
-def scrape(driver: WebDriver):
+def scrape(driver: ChromeService):
     auto_scraped = auto_scraper.parse(driver.page_source)
     product_jsons = auto_scraped.get("jsonld", {}).get("Product", None)
 

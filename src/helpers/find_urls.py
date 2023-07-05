@@ -5,6 +5,8 @@ from bs4 import BeautifulSoup
 from requests import Response
 from selenium.webdriver.chrome.webdriver import WebDriver
 
+from src.services.chrome_service import ChromeService
+
 
 def iter_urls(domain: str, content):
     soup = BeautifulSoup(content, "html.parser")
@@ -27,7 +29,7 @@ def iter_urls(domain: str, content):
                 yield url
 
 
-def find_urls(driver: WebDriver, domain: str):
+def find_urls(driver: ChromeService, domain: str):
     n = 0
     i = 0
     for _ in range(100):

@@ -4,6 +4,7 @@ import traceback
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from src.services.chrome_service import ChromeService
 
 from src.services.mongo_service import upload_products
 from src.helpers.exceptions import NotAProductPage
@@ -19,56 +20,49 @@ from src.services.provisioner import (
 
 
 def run():
-    options = Options()
-    options.add_argument("--headless")
-    options.add_argument("--disable-gpu")
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--no-sandbox")
+    with ChromeService() as driver:
+        while True:
+            try:
+                with Provisioner() as p:
+                    # TODO: respect robots.txt
+                    scrape = import_scraper(p.key.domain)
+                    for url in p.iter_urls(URLStatus.WAITING):
+                        if url is None:
+                            # TODO: switch to failed urls
+                            print("Empty Cursor. Disabling")
+                            p.disable()
+                            break
 
-    # TODO: create context manager
-    driver = webdriver.Chrome(options)
-    while True:
-        try:
-            with Provisioner() as p:
-                # TODO: respect robots.txt
-                scrape = import_scraper(p.key.domain)
-                for url in p.iter_urls(URLStatus.WAITING):
-                    if url is None:
-                        # TODO: switch to failed urls
-                        print("Empty Cursor. Disabling")
-                        p.disable()
-                        break
-
-                    print(url)
-
-                    try:
-                        driver.get(url.value.url)
+                        print(url)
 
                         try:
-                            products = scrape(driver)
-                            upload_products(products)
+                            driver.get(url.value.url)
 
-                        except NotAProductPage:
-                            pass
+                            try:
+                                products = scrape(driver)
+                                upload_products(products)
 
-                        urls_str = find_urls(driver, p.key.domain)
-                        urls = [URL.from_url_string(s) for s in urls_str]
+                            except NotAProductPage:
+                                pass
 
-                        p.append_urls(urls, URLStatus.WAITING)
+                            urls_str = find_urls(driver, p.key.domain)
+                            urls = [URL.from_url_string(s) for s in urls_str]
 
-                        p.complete_url(url, URLStatus.WAITING)
-                    except Exception as e:
-                        print(f"failed for url", url, e, type(e).__name__)
-                        print(traceback.format_exc())
-                        p.fail_url(url, URLStatus.WAITING)
+                            p.append_urls(urls, URLStatus.WAITING)
 
-        except CouldNotFindProvisioner as e:
-            print(f"{type(e).__name__} {e}: sleeping...")
-            sleep(10)
+                            p.complete_url(url, URLStatus.WAITING)
+                        except Exception as e:
+                            print(f"failed for url", url, e, type(e).__name__)
+                            print(traceback.format_exc())
+                            p.fail_url(url, URLStatus.WAITING)
 
-        except TakeOver:
-            print("Warning: TakeOver")
-            continue
+            except CouldNotFindProvisioner as e:
+                print(f"{type(e).__name__} {e}: sleeping...")
+                sleep(10)
+
+            except TakeOver:
+                print("Warning: TakeOver")
+                continue
 
 
 if __name__ == "__main__":
