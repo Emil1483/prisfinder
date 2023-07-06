@@ -8,3 +8,4 @@ redis==4.5.5
 Requests==2.31.0
 selenium==4.10.0
 tensorflow_hub==0.13.0
+tensorflow==2.12.0

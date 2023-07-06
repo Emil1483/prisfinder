@@ -20,4 +20,9 @@ COPY . .
 
 ENV PYTHONPATH "${PYTHONPATH}:/app"
 
+RUN wget https://tfhub.dev/google/universal-sentence-encoder/4?tf-hub-format=compressed -O model.tar.gz
+RUN mkdir model
+RUN tar -xzf model.tar.gz -C model
+
+
 CMD ["python", "-u", "scripts/worker.py"]
