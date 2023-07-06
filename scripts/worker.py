@@ -2,10 +2,8 @@ import os
 from time import sleep
 import traceback
 
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
+import src.services.finn_service as finn_service
 from src.services.chrome_service import ChromeService
-
 from src.services.mongo_service import upload_products
 from src.helpers.exceptions import NotAProductPage
 from src.helpers.import_tools import import_scraper
@@ -35,6 +33,11 @@ def run():
 
                         print(url)
 
+                        if p.key.domain == "finn.no":
+                            product_id = url.value.url
+                            finn_service.populate_product(product_id)
+                            continue
+
                         try:
                             driver.get(url.value.url)
 
@@ -57,7 +60,7 @@ def run():
                             p.fail_url(url, URLStatus.WAITING)
 
             except CouldNotFindProvisioner as e:
-                print(f"{type(e).__name__} {e}: sleeping...")
+                print(f"CouldNotFindProvisioner {e}: sleeping...")
                 sleep(10)
 
             except TakeOver:

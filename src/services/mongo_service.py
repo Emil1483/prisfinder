@@ -5,7 +5,9 @@ from typing import Iterable
 from bson import ObjectId
 
 from dotenv import load_dotenv
-from pymongo import MongoClient
+from pymongo import MongoClient, UpdateOne
+from src.helpers.misc import string_to_object_id
+from src.models.finn_ad import FinnAd
 
 from src.models.product import Product
 
@@ -18,13 +20,6 @@ db = client["prisfinder"]
 
 finn_ads_collection = db["finn_ads"]
 products_collection = db["products"]
-
-
-def string_to_object_id(string: str) -> ObjectId:
-    string_bytes = string.encode(encoding="utf8")
-    hexdigest = hashlib.sha256(string_bytes).hexdigest()
-    _id = ObjectId(hexdigest[:24])
-    return _id
 
 
 def _find_existing(product: Product):
@@ -40,7 +35,7 @@ def _find_existing(product: Product):
         return Product.from_dict(existing)
 
 
-def _update_product(existing: Product, new: Product):
+def update_product(existing: Product, new: Product):
     new_json = asdict(new)
     del new_json["_id"]
 
@@ -63,6 +58,31 @@ def upload_products(products: Iterable[Product]):
         existing = _find_existing(product)
 
         if existing:
-            return _update_product(existing, product)
+            return update_product(existing, product)
 
         _create_product(product)
+
+
+def upsert_finn_ads(finn_ads: list[FinnAd]):
+    def gen():
+        for ad in finn_ads:
+            _id = string_to_object_id(str(ad.ad_id))
+            yield UpdateOne(
+                {"_id": _id},
+                {
+                    "$set": {
+                        "_id": _id,
+                        **ad.to_dict(),
+                    },
+                },
+                upsert=True,
+            )
+
+    operations = [*gen()]
+
+    return finn_ads_collection.bulk_write(operations)
+
+
+def fetch_product(product_id: str) -> Product:
+    product_dict = products_collection.find_one({"_id": ObjectId(product_id)})
+    return Product.from_dict(product_dict)

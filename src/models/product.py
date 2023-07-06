@@ -35,3 +35,16 @@ class Product(object):
     retailers: List[Retailer]
     category: Category | None = None
     _id: ObjectId | None = None
+
+    def copy_with_category(self, category: Category):
+        return Product(
+            name=self.name,
+            brand=self.brand,
+            description=self.description,
+            image=self.image,
+            mpns=self.mpns,
+            gtins=self.gtins,
+            retailers=self.retailers,
+            category=category,
+            _id=self._id,
+        )
