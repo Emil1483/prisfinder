@@ -1,9 +1,10 @@
 beautifulsoup4==4.11.2
 dataclasses_json==0.5.8
-load_dotenv==0.1.0
 microdata==0.8.0
+numpy==1.23.5
 pymongo==4.3.3
 python-dotenv==0.21.1
 redis==4.5.5
 Requests==2.31.0
 selenium==4.10.0
+tensorflow_hub==0.13.0
