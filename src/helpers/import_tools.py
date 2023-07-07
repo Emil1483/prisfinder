@@ -16,7 +16,10 @@ def import_module(function_path: str):
 
 
 def import_scraper(domain: str) -> Callable:
-    module = import_module(f"scrapers/{domain}.py")
+    try:
+        module = import_module(f"scrapers/{domain}.py")
 
-    function = getattr(module, "scrape")
-    return function
+        function = getattr(module, "scrape")
+        return function
+    except FileNotFoundError:
+        return None

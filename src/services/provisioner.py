@@ -104,13 +104,22 @@ class Provisioner:
     def find_provisioner(self):
         print("finding provisioner...")
 
+        domain = os.getenv("DOMAIN")
+
         def gen_keys():
-            yield from self.r.scan_iter("provisioner:off:*")
+            if domain:
+                yield from self.r.scan_iter(f"provisioner:off:{domain}")
+            else:
+                yield from self.r.scan_iter("provisioner:off:*")
 
             max_id = floor(timedelta(days=1) / self.timeout)
             for i in range(2, max_id):
                 time_id = self.time_id(datetime.now() - i * self.timeout)
-                yield from self.r.scan_iter(f"provisioner:on:{time_id}:*")
+
+                if domain:
+                    yield from self.r.scan_iter(f"provisioner:on:{time_id}:{domain}")
+                else:
+                    yield from self.r.scan_iter(f"provisioner:on:{time_id}:*")
 
         for provisioner_key in gen_keys():
             try:
@@ -218,12 +227,16 @@ class Provisioner:
         assert not self.disabled
         while True:
             url = self.fetch_url_at_cursor(urls_to_iter)
-            if url:
-                self.value = self.value.copy_with(
-                    last_scrapet=timestamp(),
-                    cursor=url.value.next,
-                    url_status=urls_to_iter,
-                )
+
+            if not url:
+                yield None
+                continue
+
+            self.value = self.value.copy_with(
+                last_scrapet=timestamp(),
+                cursor=url.value.next,
+                url_status=urls_to_iter,
+            )
 
             yield url
 
@@ -274,6 +287,7 @@ class Provisioner:
         unique_urls = [u for u, r in zip(urls, results) if not r]
 
         if len(unique_urls) == 0:
+            print("WARNING: appended no unique urls. Ignoring")
             return
 
         url_at_cursor = self.fetch_url_at_cursor(url_status)

@@ -5,7 +5,8 @@ from typing import Iterable
 from bson import ObjectId
 
 from dotenv import load_dotenv
-from pymongo import MongoClient, UpdateOne
+from pymongo import DeleteOne, MongoClient, UpdateOne
+from pyparsing import Any, Generator
 from src.helpers.misc import string_to_object_id
 from src.models.finn_ad import FinnAd
 
@@ -20,6 +21,7 @@ db = client["prisfinder"]
 
 finn_ads_collection = db["finn_ads"]
 products_collection = db["products"]
+urls_collection = db["urls"]
 
 
 def _find_existing(product: Product):
@@ -86,3 +88,38 @@ def upsert_finn_ads(finn_ads: list[FinnAd]):
 def fetch_product(product_id: str) -> Product:
     product_dict = products_collection.find_one({"_id": ObjectId(product_id)})
     return Product.from_dict(product_dict)
+
+
+def fetch_products(limit=10) -> Generator[Product, Any, None]:
+    for doc in products_collection.find({})[:limit]:
+        yield Product.from_dict(doc)
+
+
+def fetch_pending_urls(domain: str, limit=10) -> list[str]:
+    def gen():
+        for doc in urls_collection.find({"domain": domain})[:limit]:
+            yield doc["url"], DeleteOne({"_id": doc["_id"]})
+
+    result = [*gen()]
+
+    if not result:
+        return []
+
+    urls, operations = zip(*result)
+
+    urls_collection.bulk_write(list(operations))
+
+    return urls
+
+
+def insert_pending_urls(domain: str, urls: Iterable[str]):
+    def gen():
+        for url in urls:
+            yield {
+                "_id": string_to_object_id(url),
+                "domain": domain,
+                "url": url,
+            }
+
+    docs = [*gen()]
+    return urls_collection.insert_many(docs)

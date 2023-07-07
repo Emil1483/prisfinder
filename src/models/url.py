@@ -73,8 +73,7 @@ class URL(object):
         assert isinstance(self.key, URLKey)
 
     @classmethod
-    def from_url_string(cls, url_str: str):
-        domain = urlparse(url_str).netloc.replace("www.", "")
+    def from_string(cls, url_str: str, domain: str):
         url_id = hash_string(url_str)
         return URL(
             key=URLKey(

@@ -1,9 +1,9 @@
 from pprint import pprint
 import json
+from time import time
 import requests
-import numpy as np
-import tensorflow_hub as hub
-
+from sentence_transformers import SentenceTransformer
+from sentence_transformers.util import cos_sim
 
 from src.models.finn_ad import FinnAd
 from src.models.product import Category, Product
@@ -15,19 +15,17 @@ class NoFinnAds(Exception):
     pass
 
 
-def simularity(word1, word2):
-    features = encoder([word1, word2])
-    inner = np.inner(features, features)
-    return inner[1][0]
-
-
 def load_json(filename):
     with open(filename, "r") as f:
         return json.load(f)
 
 
 finn_categories = load_json("finn_categories.json")
-encoder = hub.load("./model")
+model = SentenceTransformer("all-MiniLM-L6-v2")
+
+
+def simularity(word1, word2):
+    return cos_sim(model.encode(word1), model.encode(word2))
 
 
 def get_finn_category_parent(category: dict) -> dict:
@@ -92,12 +90,12 @@ def parse_category(category_str: str) -> Category:
     finn_category = category_list_to_finn_category(category_list)
     parents = get_finn_category_parents(finn_category)
     full_category = [*parents[::-1], finn_category]
-    category_ids = [c["id"] for c in full_category]
+    category_ids = [int(c["id"]) for c in full_category]
     category_ids.extend([None] * (3 - len(full_category)))
     return Category(
-        main=int(category_ids[0]),
-        sub=int(category_ids[1]),
-        product=int(category_ids[2]),
+        main=category_ids[0],
+        sub=category_ids[1],
+        product=category_ids[2],
     )
 
 
@@ -166,7 +164,20 @@ def populate_product(product_id: str):
 
 
 if __name__ == "__main__":
-    # pprint(populate_product("64a534654d1aba67b4243eaf")) SANITIZED PRODUCT NAME
+    start = time()
+    print(parse_category("hardware/phones and gps/smartphone accessories/headset"))
+    end = time()
+    print(end - start)
+
+    start = time()
+    print(parse_category("Activities and art/Antique furniture"))
+    end = time()
+    print(end - start)
+
+    import os, psutil
+
+    print(psutil.Process(os.getpid()).memory_info().rss / 1024**2)
+    # pprint(populate_product("64a534654d1aba67b4243eaf"))  # SANITIZED PRODUCT NAME
     # pprint(populate_product("64a5509b2721b2407a0028bd")) SANITIZED PRODUCT NAME
     # pprint(populate_product("64a550d868b8fc7f7f62e645")) ALREADY SANITIZED
-    pprint(populate_product("64a551512a9c612eb7e3227e"))  # SANITATION NEEDED
+    # pprint(populate_product("64a551512a9c612eb7e3227e"))  # SANITATION NEEDED
