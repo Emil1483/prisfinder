@@ -1,15 +1,11 @@
 import os
 from time import sleep
 import traceback
-from src.helpers.misc import hash_string
+import os, psutil
 
-import src.services.finn_service as finn_service
-from src.services.chrome_service import ChromeService
+from src.services.chrome_service import RequestClient, SeliniumClient, WebPageService
 from src.services.mongo_service import fetch_pending_urls, upload_products
-from src.helpers.exceptions import NotAProductPage
-from src.helpers.import_tools import import_scraper
-from src.helpers.find_urls import find_urls
-from src.models.url import URL, URLKey, URLStatus, URLValue
+from src.models.url import URL, URLStatus
 from src.helpers.thread import concurrent_threads
 from src.services.provisioner import (
     CouldNotFindProvisioner,
@@ -19,12 +15,11 @@ from src.services.provisioner import (
 
 
 def run():
-    with ChromeService() as driver:
-        while True:
-            try:
-                with Provisioner() as p:
+    while True:
+        try:
+            with Provisioner() as p:
+                with WebPageService(p.key.domain, p.create_web_page_client()) as web:
                     # TODO: respect robots.txt
-                    scrape = import_scraper(p.key.domain)
                     for url in p.iter_urls(URLStatus.WAITING):
                         print(url)
                         if url is None:
@@ -41,22 +36,22 @@ def run():
                                 p.disable()
                                 break
 
+                        memory_info = psutil.Process(os.getpid()).memory_info()
+                        print("Current memory usage:", memory_info.rss / 1024**2)
+
                         try:
                             if p.key.domain == "finn.no":
+                                import src.services.finn_service as finn_service
+
                                 product_id = url.value.url
                                 finn_service.populate_product(product_id)
                                 continue
 
-                            driver.get(url.value.url)
-
-                            try:
-                                products = scrape(driver)
+                            products = web.scrape(url.value.url)
+                            if products:
                                 upload_products(products)
 
-                            except NotAProductPage:
-                                pass
-
-                            urls_str = find_urls(driver, p.key.domain)
+                            urls_str = web.find_links()
                             urls = [URL.from_string(u, p.key.domain) for u in urls_str]
 
                             p.append_urls(urls, URLStatus.WAITING)
@@ -67,13 +62,13 @@ def run():
                             print(traceback.format_exc())
                             p.fail_url(url, URLStatus.WAITING)
 
-            except CouldNotFindProvisioner as e:
-                print(f"CouldNotFindProvisioner {e}: sleeping...")
-                sleep(10)
+        except CouldNotFindProvisioner as e:
+            print(f"CouldNotFindProvisioner {e}: sleeping...")
+            sleep(10)
 
-            except TakeOver:
-                print("Warning: TakeOver")
-                continue
+        except TakeOver:
+            print("Warning: TakeOver")
+            continue
 
 
 if __name__ == "__main__":

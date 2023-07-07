@@ -1,11 +1,11 @@
 import src.helpers.auto_scrape as auto_scraper
 from src.helpers.exceptions import NotAProductPage
 from src.models.product import Product, Retailer
-from src.services.chrome_service import ChromeService
+from src.services.chrome_service import WebPageService
 
 
-def scrape(driver: ChromeService):
-    auto_scraped = auto_scraper.parse(driver.page_source)
+def scrape(service: WebPageService):
+    auto_scraped = auto_scraper.parse(service.client.content())
     product_jsons = auto_scraped.get("jsonld", {}).get("Product", None)
 
     if not product_jsons:
@@ -30,7 +30,7 @@ def scrape(driver: ChromeService):
                 category=category,
                 price=product_json["offers"]["price"],
                 sku=str(product_json["sku"]),
-                url=driver.current_url,
+                url=service.current_url,
             ),
         ],
     )

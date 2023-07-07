@@ -13,6 +13,7 @@ from src.models.provisioner import (
     ProvisionerValue,
 )
 from src.models.url import URL, URLKey, URLStatus, URLValue
+from src.services.chrome_service import RequestClient, SeliniumClient
 from src.services.redis_service import CustomRedis
 
 
@@ -74,6 +75,13 @@ class Provisioner:
 
     def disable(self):
         self.disabled = True
+
+    def create_web_page_client(self):
+        clients = {
+            "power.no": SeliniumClient,
+        }
+
+        return clients.get(self.key.domain, RequestClient)()
 
     def time_id(self, current_time: datetime = None):
         # TODO: use zulu

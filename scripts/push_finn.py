@@ -9,7 +9,7 @@ def push_finn():
     load_dotenv()
 
     def iter_product_ids():
-        for product in fetch_products(limit=10):
+        for product in fetch_products(limit=30):
             yield str(product._id)
 
     insert_pending_urls(domain="finn.no", urls=iter_product_ids())
