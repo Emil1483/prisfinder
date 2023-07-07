@@ -2,8 +2,6 @@ import os
 from time import sleep
 import traceback
 
-# import os, psutil
-
 from src.services.chrome_service import WebPageService
 from src.services.mongo_service import fetch_pending_urls, upload_products
 from src.models.url import URL, URLStatus
