@@ -1,9 +1,10 @@
 import os
 from time import sleep
 import traceback
-import os, psutil
 
-from src.services.chrome_service import RequestClient, SeliniumClient, WebPageService
+# import os, psutil
+
+from src.services.chrome_service import WebPageService
 from src.services.mongo_service import fetch_pending_urls, upload_products
 from src.models.url import URL, URLStatus
 from src.helpers.thread import concurrent_threads
@@ -36,8 +37,8 @@ def run():
                                 p.disable()
                                 break
 
-                        memory_info = psutil.Process(os.getpid()).memory_info()
-                        print("Current memory usage:", memory_info.rss / 1024**2)
+                        # memory_info = psutil.Process(os.getpid()).memory_info()
+                        # print("Current memory usage:", memory_info.rss / 1024**2)
 
                         try:
                             if p.key.domain == "finn.no":

@@ -1,15 +1,12 @@
 from dataclasses import asdict
-import hashlib
 import os
-from typing import Iterable
+from typing import Any, Generator, Iterable
 from bson import ObjectId
-
 from dotenv import load_dotenv
 from pymongo import DeleteOne, MongoClient, UpdateOne
-from pyparsing import Any, Generator
+
 from src.helpers.misc import string_to_object_id
 from src.models.finn_ad import FinnAd
-
 from src.models.product import Product
 
 
