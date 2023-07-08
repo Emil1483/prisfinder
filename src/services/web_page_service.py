@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from pprint import pprint
 from time import sleep
 from typing import Iterable
 from urllib.parse import urlparse
@@ -6,6 +7,7 @@ import requests
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from playwright.sync_api import sync_playwright
 
 from src.models.product import Product
 from src.helpers.exceptions import NotAProductPage
@@ -109,49 +111,48 @@ class RequestClient(WebPageClient):
         return [*iter_urls(domain, self.content)]
 
 
-class SeliniumClient(WebPageClient):
+class PlayWrightClient(WebPageClient):
     def setup(self):
-        options = Options()
-        options.add_argument("--headless")
-        options.add_argument("--disable-gpu")
-        options.add_argument("--disable-dev-shm-usage")
-        options.add_argument("--no-sandbox")
-
-        self._driver = webdriver.Chrome(options)
-        return self
+        self.playwright = sync_playwright().start()
+        self.browser = self.playwright.webkit.launch(headless=False)
+        self.context = self.browser.new_context()
+        self.page = self.context.new_page()
 
     def teardown(self):
-        self._driver.quit()
+        self.playwright.stop()
 
     def get(self, url: str):
         try:
-            return self._driver.get(url)
+            return self.page.goto(url)
         except Exception as e:
             print("WARNING", type(e), type(e).__name__, e)
-            self._driver.quit()
-            self.__enter__()
-            return self.get(url)
+            self.teardown()
+            self.setup()
+            return self.page.goto(url)
 
     def content(self):
-        return self._driver.page_source
+        return self.page.content()
 
     def find_links(self, domain: str):
-        n = 0
-        i = 0
-        for _ in range(100):
-            if i >= 4:
-                break
-
-            sleep(0.1)
-            url_count = len([*iter_urls("power.no", self._driver.page_source)])
-            if url_count > n:
-                n = url_count
-                i = 0
-            else:
-                i += 1
-
-        return list(dict.fromkeys(iter_urls(domain, self._driver.page_source)))
+        return [*iter_urls(domain, self.content)]
 
 
-# TODO: implement Playwright https://playwright.dev/python/docs/intro
-# https://www.linkedin.com/pulse/web-scraping-using-playwright-python-javascript-scrape-hero/
+if __name__ == "__main__":
+    with WebPageService("power.no", PlayWrightClient()) as web:
+        web.client.get(
+            "https://www.power.no/tv-og-lyd/hodetelefoner/true-wireless-hodetelefoner/samsung-galaxy-buds2-pro-true-wireless-bora-purple/p-1646111/"
+        )
+        print(web.client.content())
+        print(web.client.find_links("power.no"))
+
+        web.client.get(
+            "https://www.power.no/mobil-og-foto/mobiltelefon/samsung-galaxy-a54-5g-128-gb-svart/p-1940239/"
+        )
+        print(web.client.content())
+        print(web.client.find_links("power.no"))
+
+        web.client.get(
+            "https://www.power.no/data-og-tilbehoer/skjermer/pc-skjerm/samsung-u32r591-32-4k-uhd-skjerm-hvit/p-1891792/"
+        )
+        print(web.client.content())
+        print(web.client.find_links("power.no"))

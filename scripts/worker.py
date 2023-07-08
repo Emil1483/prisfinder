@@ -2,7 +2,7 @@ import os
 from time import sleep
 import traceback
 
-from src.services.chrome_service import WebPageService
+from src.services.web_page_service import WebPageService
 from src.services.mongo_service import fetch_pending_urls, upload_products
 from src.models.url import URL, URLStatus
 from src.helpers.thread import concurrent_threads

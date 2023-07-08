@@ -5,7 +5,7 @@ import requests
 from src.helpers.exceptions import CouldNotScrape, NotAProductPage
 from src.models.product import Product, Retailer
 import src.helpers.auto_scrape as auto_scraper
-from src.services.chrome_service import WebPageService
+from src.services.web_page_service import WebPageService
 
 
 def _nested_attribute(o, attribute_names: list):

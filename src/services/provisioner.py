@@ -13,7 +13,7 @@ from src.models.provisioner import (
     ProvisionerValue,
 )
 from src.models.url import URL, URLKey, URLStatus, URLValue
-from src.services.chrome_service import RequestClient, SeliniumClient
+from src.services.web_page_service import RequestClient, SeliniumClient
 from src.services.redis_service import CustomRedis
 
 

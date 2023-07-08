@@ -1,7 +1,7 @@
 import src.helpers.auto_scrape as auto_scraper
 from src.helpers.exceptions import NotAProductPage
 from src.models.product import Product, Retailer
-from src.services.chrome_service import WebPageService
+from src.services.web_page_service import WebPageService
 
 
 def scrape(service: WebPageService):
