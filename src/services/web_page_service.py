@@ -111,7 +111,7 @@ class RequestClient(WebPageClient):
 class PlayWrightClient(WebPageClient):
     def setup(self):
         self.playwright = sync_playwright().start()
-        self.browser = self.playwright.webkit.launch(headless=True)
+        self.browser = self.playwright.firefox.launch(headless=True)
         self.context = self.browser.new_context()
         self.page = self.context.new_page()
 
@@ -120,12 +120,17 @@ class PlayWrightClient(WebPageClient):
 
     def get(self, url: str):
         try:
-            return self.page.goto(url)
+            self.page.goto(url)
+            self.context.clear_cookies()
         except Exception as e:
             print("WARNING", type(e), type(e).__name__, e)
-            self.teardown()
+            try:
+                self.teardown()
+            except Exception as e:
+                print("Error running teardown:", e)
             self.setup()
-            return self.page.goto(url)
+            self.page.goto(url)
+            self.context.clear_cookies()
 
     def content(self):
         return self.page.content()
