@@ -3,17 +3,16 @@ from datetime import datetime, timedelta
 from math import floor
 import os
 from typing import Tuple
-from urllib.parse import urlparse
 from uuid import uuid4
 
-from src.helpers.misc import hash_string, timestamp
+from src.helpers.misc import timestamp
 from src.models.provisioner import (
     ProvisionerKey,
     ProvisionerStatus,
     ProvisionerValue,
 )
 from src.models.url import URL, URLKey, URLStatus, URLValue
-from src.services.web_page_service import RequestClient, SeliniumClient
+from src.services.web_page_service import PlayWrightClient, RequestClient
 from src.services.redis_service import CustomRedis
 
 
@@ -78,7 +77,7 @@ class Provisioner:
 
     def create_web_page_client(self):
         clients = {
-            "power.no": SeliniumClient,
+            "power.no": PlayWrightClient,
         }
 
         return clients.get(self.key.domain, RequestClient)()

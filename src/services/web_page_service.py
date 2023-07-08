@@ -1,12 +1,8 @@
 from abc import ABC, abstractmethod
-from pprint import pprint
-from time import sleep
 from typing import Iterable
 from urllib.parse import urlparse
 import requests
 from bs4 import BeautifulSoup
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 from playwright.sync_api import sync_playwright
 
 from src.models.product import Product
@@ -108,13 +104,14 @@ class RequestClient(WebPageClient):
         return self._content
 
     def find_links(self, domain: str) -> Iterable[str]:
-        return [*iter_urls(domain, self.content)]
+        links = [*iter_urls(domain, self.content())]
+        return list(dict.fromkeys(links))
 
 
 class PlayWrightClient(WebPageClient):
     def setup(self):
         self.playwright = sync_playwright().start()
-        self.browser = self.playwright.webkit.launch(headless=False)
+        self.browser = self.playwright.webkit.launch(headless=True)
         self.context = self.browser.new_context()
         self.page = self.context.new_page()
 
@@ -134,7 +131,8 @@ class PlayWrightClient(WebPageClient):
         return self.page.content()
 
     def find_links(self, domain: str):
-        return [*iter_urls(domain, self.content)]
+        links = [*iter_urls(domain, self.content())]
+        return list(dict.fromkeys(links))
 
 
 if __name__ == "__main__":
