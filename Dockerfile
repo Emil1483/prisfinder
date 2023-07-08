@@ -1,5 +1,4 @@
-FROM python:3.10-slim
-
+FROM mcr.microsoft.com/playwright/python:v1.35.0-jammy
 
 WORKDIR /app
 
@@ -7,8 +6,6 @@ RUN pip install --upgrade pip
 
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
-
-RUN playwright install webkit
 
 COPY . .
 
