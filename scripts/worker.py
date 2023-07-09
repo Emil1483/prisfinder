@@ -1,9 +1,11 @@
 import os
+import sys
 from time import sleep
 import traceback
 
 import psutil
 
+from src.helpers.exceptions import ExceededMemoryLimit
 from src.services.web_page_service import WebPageService
 from src.services.mongo_service import fetch_pending_urls, upload_products
 from src.models.url import URL, URLStatus
@@ -38,7 +40,11 @@ def run():
                                 break
 
                         memory_info = psutil.Process(os.getpid()).memory_info()
-                        print("Current memory usage:", memory_info.rss / 1024**2)
+                        memory_usage_mb = memory_info.rss / 1024**2
+                        print("Current memory usage:", memory_usage_mb, "MB")
+
+                        if memory_usage_mb > 300:
+                            raise ExceededMemoryLimit()
 
                         try:
                             if p.key.domain == "finn.no":
@@ -70,6 +76,11 @@ def run():
         except TakeOver:
             print("Warning: TakeOver")
             continue
+
+        except ExceededMemoryLimit:
+            print("Exceeded memory limit. Restarting")
+
+            os.execl(sys.executable, sys.executable, *sys.argv)
 
 
 if __name__ == "__main__":

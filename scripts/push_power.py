@@ -13,7 +13,7 @@ def push_komplett():
     with Redis.from_url(os.getenv("REDIS_URL", "redis://localhost:6379")) as r:
         pipe = r.pipeline()
 
-        for key in r.scan_iter():
+        for key in r.scan_iter("url:power.no:*"):
             pipe.delete(key)
 
         url_str = "https://www.power.no/tv-og-lyd/hodetelefoner/true-wireless-hodetelefoner/samsung-galaxy-buds2-pro-true-wireless-bora-purple/p-1646111/"

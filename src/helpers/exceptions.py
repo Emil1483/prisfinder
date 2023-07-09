@@ -4,3 +4,7 @@ class CouldNotScrape(Exception):
 
 class NotAProductPage(Exception):
     pass
+
+
+class ExceededMemoryLimit(Exception):
+    pass
