@@ -5,9 +5,39 @@ import { ParsedUrlQuery } from 'querystring';
 import { Product } from '@/models/product';
 
 import styles from './styles.module.css'
+import { useState } from 'react';
 
 
 const ProductDetails = ({ product }: { product: Product }) => {
+    const [query, setQuery] = useState(product.finn_query);
+
+    const handleQueryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setQuery(event.target.value);
+    };
+
+    const handleUpdateQuery = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
+        try {
+            const response = await fetch(`/api/products/${product._id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ finn_query: query }),
+            });
+
+            if (response.ok) {
+                product.finn_query = query;
+                alert('Successfully set query')
+            } else {
+                alert('Failed to update query ' + await response.text());
+            }
+        } catch (error) {
+            alert('Failed to update query ' + error);
+        }
+    };
+
     return (
         <div className={styles.product_details}>
             <h1>{product.name}</h1>
@@ -15,6 +45,18 @@ const ProductDetails = ({ product }: { product: Product }) => {
                 <img src={product.image} alt={product.name} />
             </div>
             <div className={styles.product_info}>
+                <form onSubmit={handleUpdateQuery}>
+                    <label htmlFor="finnQuery">Finn Query: </label>
+                    <input
+                        type="text"
+                        id="finnQuery"
+                        value={query}
+                        onChange={handleQueryChange}
+                    />
+                    <button type="submit">
+                        Set
+                    </button>
+                </form>
                 <h2>Description:</h2>
                 <p>{product.description}</p>
                 <h2>Brand:</h2>

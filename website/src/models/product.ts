@@ -4,6 +4,7 @@ import { ObjectId } from "mongodb";
 
 export interface Product {
   _id: ObjectId;
+  finn_query: string | undefined;
   name: string;
   brand: string;
   description: string;
