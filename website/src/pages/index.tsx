@@ -9,8 +9,6 @@ export async function getServerSideProps() {
     const collection = db.collection('products');
     const products = await collection.aggregate([{ $sample: { size: 20 } }]).toArray();
 
-    console.log(products)
-
     return {
         props: {
             products: JSON.parse(JSON.stringify(products)),
