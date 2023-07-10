@@ -15,7 +15,9 @@ const FinnAds = ({ finnAds = [] }: { finnAds: FinnAd[] }) => {
                     target="_blank"
                 >
                     <div className={styles.finn_ad_item}>
-                        <img src={finnAd.image.url} alt="Ad Image" className={styles.finn_ad_image} />
+                        {finnAd.image?.url
+                            ? (<img src={finnAd.image.url} alt="Ad Image" className={styles.finn_ad_image}></img>)
+                            : (<div></div>)}
                         <div className={styles.finn_ad_content}>
                             <h2 className={styles.finn_ad_heading}>{finnAd.heading}</h2>
                             <p className={styles.finn_ad_price}>{`${finnAd.price.amount} ${finnAd.price.currency_code}`}</p>

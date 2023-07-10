@@ -10,7 +10,8 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "justMyCode": false
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}/crawler"
         },
         {
             "name": "Worker",
@@ -18,7 +19,8 @@
             "request": "launch",
             "program": "${workspaceFolder}/scripts/worker.py",
             "console": "integratedTerminal",
-            "justMyCode": false
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}/crawler"
         }
     ]
 }

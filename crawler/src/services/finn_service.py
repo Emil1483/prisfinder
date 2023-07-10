@@ -117,6 +117,8 @@ def fetch_finn_ads(product: Product) -> list[FinnAd]:
     category_param = f"{prefix}={n-1}.{'.'.join(category_ids)}"
 
     query = product.name.replace(" ", "+")
+    if product.finn_query:
+        query = product.finn_query
 
     def gen():
         match_count = None
@@ -164,20 +166,8 @@ def populate_product(product_id: str):
 
 
 if __name__ == "__main__":
-    start = time()
-    print(parse_category("hardware/phones and gps/smartphone accessories/headset"))
-    end = time()
-    print(end - start)
-
-    start = time()
-    print(parse_category("Activities and art/Antique furniture"))
-    end = time()
-    print(end - start)
-
-    import os, psutil
-
-    print(psutil.Process(os.getpid()).memory_info().rss / 1024**2)
     # pprint(populate_product("64a534654d1aba67b4243eaf"))  # SANITIZED PRODUCT NAME
     # pprint(populate_product("64a5509b2721b2407a0028bd")) SANITIZED PRODUCT NAME
     # pprint(populate_product("64a550d868b8fc7f7f62e645")) ALREADY SANITIZED
     # pprint(populate_product("64a551512a9c612eb7e3227e"))  # SANITATION NEEDED
+    pprint(populate_product("64a61280fe2e6999887ccf5b"))  # MANUALLY SANITIZED

@@ -35,6 +35,7 @@ class Product(object):
     retailers: List[Retailer]
     category: Category | None = None
     _id: ObjectId | None = None
+    finn_query: str | None = None
 
     def copy_with_category(self, category: Category):
         return Product(
@@ -47,4 +48,5 @@ class Product(object):
             retailers=self.retailers,
             category=category,
             _id=self._id,
+            finn_query=self.finn_query,
         )

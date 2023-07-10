@@ -8,7 +8,6 @@ export interface FinnAd {
   flags: string[];
   heading: string;
   id: string;
-  image: Image;
   image_urls: string[];
   labels: any[];
   location: string;
@@ -18,6 +17,7 @@ export interface FinnAd {
   trade_type: string;
   type: string;
   product_id: string;
+  image: Image | null;
 }
 
 export interface Coordinates {

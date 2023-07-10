@@ -48,7 +48,6 @@ class FinnAd(object):
     main_search_key: str
     heading: str
     location: str
-    image: Image
     flags: List[str]
     timestamp: int
     coordinates: Coordinates
@@ -61,6 +60,7 @@ class FinnAd(object):
     image_urls: List[str]
     ad_id: int
     product_id: ObjectId
+    image: Image | None = None
 
     @classmethod
     def from_finn_dict(cls, finn_dict: dict, product_id: ObjectId):
