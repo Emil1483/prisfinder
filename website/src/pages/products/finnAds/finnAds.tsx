@@ -1,12 +1,11 @@
 import { FinnAd } from '@/models/finnAd';
 import Link from 'next/link';
-import Image from 'next/image';
 import React from 'react';
 
 import styles from './finnAds.module.css'
 
 
-const FinnAds = ({ finnAds }: { finnAds: FinnAd[] }) => {
+const FinnAds = ({ finnAds = [] }: { finnAds: FinnAd[] }) => {
     return (
         <div className="finn-ad-list">
             <h2>Finn Ads</h2>
