@@ -1,14 +1,16 @@
 import { GetServerSideProps } from 'next';
 import { ObjectId } from 'mongodb';
-import connectDB from '@/services/mongodb';
 import { ParsedUrlQuery } from 'querystring';
 import { Product } from '@/models/product';
-
-import styles from './styles.module.css'
 import { useState } from 'react';
+import { FinnAd } from '@/models/finnAd';
+
+import connectDB from '@/services/mongodb';
+import styles from './styles.module.css'
+import FinnAds from '@/pages/products/finnAds/finnAds';
 
 
-const ProductDetails = ({ product }: { product: Product }) => {
+const ProductDetails = ({ product, finnAds }: { product: Product, finnAds: FinnAd[] }) => {
     const [query, setQuery] = useState(product.finn_query);
 
     const handleQueryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -95,6 +97,7 @@ const ProductDetails = ({ product }: { product: Product }) => {
                     <p>Category undefined</p>
                 )}
             </div>
+            <FinnAds finnAds={finnAds}></FinnAds>
         </div>
     );
 };
@@ -106,15 +109,24 @@ interface Params extends ParsedUrlQuery {
     id: string;
 }
 
-export const getServerSideProps: GetServerSideProps<{ product: Product }, Params> = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps<{ product: Product, finnAds: FinnAd[] }, Params> = async ({ params }) => {
     const { id } = params!;
     const db = await connectDB();
-    const collection = db.collection('products');
-    const product = await collection.findOne({ _id: new ObjectId(id as string) });
+    const productsCollection = db.collection('products');
+    const finnAdsCollection = db.collection('finn_ads');
+
+    const product = await productsCollection.findOne({ _id: new ObjectId(id as string) });
+    const finnAdsCursor = await finnAdsCollection.find({ product_id: new ObjectId(id as string) });
+
+    const finnAds: FinnAd[] = []
+    for await (const doc of finnAdsCursor) {
+        finnAds.push(JSON.parse(JSON.stringify(doc)))
+    }
 
     return {
         props: {
             product: JSON.parse(JSON.stringify(product)),
+            finnAds: finnAds,
         },
     };
 };

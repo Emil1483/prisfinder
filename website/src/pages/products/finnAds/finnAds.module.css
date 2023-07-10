@@ -1,0 +1,35 @@
+.finn_ad_list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.finn_ad_item {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 16px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.finn_ad_image {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  margin-right: 16px;
+}
+
+.finn_ad_content {
+  flex: 1;
+}
+
+.finn_ad_heading {
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
+.finn_ad_price {
+  font-weight: bold;
+}
