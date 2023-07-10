@@ -117,6 +117,7 @@ class Provisioner:
             if domain:
                 yield from self.r.scan_iter(f"provisioner:off:{domain}")
             else:
+                yield from self.r.scan_iter("provisioner:off:finn.no")
                 yield from self.r.scan_iter("provisioner:off:*")
 
             max_id = floor(timedelta(days=1) / self.timeout)
@@ -126,6 +127,7 @@ class Provisioner:
                 if domain:
                     yield from self.r.scan_iter(f"provisioner:on:{time_id}:{domain}")
                 else:
+                    yield from self.r.scan_iter(f"provisioner:on:{time_id}:finn.no")
                     yield from self.r.scan_iter(f"provisioner:on:{time_id}:*")
 
         for provisioner_key in gen_keys():
