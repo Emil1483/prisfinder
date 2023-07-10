@@ -97,7 +97,7 @@ const ProductDetails = ({ product, finnAds }: { product: Product, finnAds: FinnA
                     <p>Category undefined</p>
                 )}
             </div>
-            <FinnAds finnAds={finnAds}></FinnAds>
+            {finnAds.length > 0 ? (<FinnAds finnAds={finnAds}></FinnAds>) : (<h2>No Finn Ads</h2>)}
         </div>
     );
 };
