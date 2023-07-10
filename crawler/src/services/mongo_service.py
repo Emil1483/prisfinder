@@ -104,7 +104,7 @@ def fetch_pending_urls(domain: str, limit=10) -> list[str]:
 
     urls, operations = zip(*result)
 
-    urls_collection.bulk_write(list(operations))
+    # urls_collection.bulk_write(list(operations))
 
     return urls
 

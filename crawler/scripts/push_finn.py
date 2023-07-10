@@ -8,15 +8,18 @@ from src.services.mongo_service import fetch_products, insert_pending_urls
 def push_finn():
     load_dotenv()
 
-    def iter_product_ids():
-        for product in fetch_products(limit=30):
-            yield str(product._id)
+    # def iter_product_ids():
+    #     for product in fetch_products(limit=30):
+    #         yield str(product._id)
 
-    insert_pending_urls(domain="finn.no", urls=iter_product_ids())
+    # insert_pending_urls(domain="finn.no", urls=iter_product_ids())
 
     with Redis.from_url(os.getenv("REDIS_URL", "redis://localhost:6379")) as r:
         pipe = r.pipeline()
         for key in r.scan_iter("url:finn.no:*"):
+            pipe.delete(key)
+
+        for key in r.scan_iter("provisioner:*:finn.no"):
             pipe.delete(key)
 
         provisioner_value = ProvisionerValue()

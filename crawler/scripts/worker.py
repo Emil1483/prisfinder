@@ -1,5 +1,4 @@
 import os
-import sys
 from time import sleep
 import traceback
 
@@ -9,7 +8,7 @@ from src.helpers.exceptions import ExceededMemoryLimit
 from src.services.web_page_service import WebPageService
 from src.services.mongo_service import fetch_pending_urls, upload_products
 from src.models.url import URL, URLStatus
-from src.helpers.thread import concurrent_threads
+from src.helpers.thread import concurrent_workers
 from src.services.provisioner import (
     CouldNotFindProvisioner,
     Provisioner,
@@ -43,7 +42,7 @@ def run():
                         memory_usage_mb = memory_info.rss / 1024**2
                         print("Current memory usage:", memory_usage_mb, "MB")
 
-                        if memory_usage_mb > 300:
+                        if memory_usage_mb > 600:
                             raise ExceededMemoryLimit()
 
                         try:
@@ -72,6 +71,7 @@ def run():
         except CouldNotFindProvisioner as e:
             print(f"CouldNotFindProvisioner {e}: sleeping...")
             sleep(10)
+            continue
 
         except TakeOver:
             print("Warning: TakeOver")
@@ -79,15 +79,9 @@ def run():
 
         except ExceededMemoryLimit:
             print("Exceeded memory limit. Restarting")
-
-            os.execl(sys.executable, sys.executable, *sys.argv)
+            break
 
 
 if __name__ == "__main__":
     THREAD_COUNT = int(os.getenv("THREAD_COUNT", "1"))
-    if THREAD_COUNT > 1:
-        print("concurrent threads")
-        concurrent_threads(run, thread_count=THREAD_COUNT)
-    else:
-        print("single thread")
-        run()
+    concurrent_workers(run, workers_count=THREAD_COUNT)

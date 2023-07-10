@@ -16,6 +16,9 @@ def push_komplett():
         for key in r.scan_iter("url:power.no:*"):
             pipe.delete(key)
 
+        for key in r.scan_iter("provisioner:*:power.no"):
+            pipe.delete(key)
+
         url_str = "https://www.power.no/tv-og-lyd/hodetelefoner/true-wireless-hodetelefoner/samsung-galaxy-buds2-pro-true-wireless-bora-purple/p-1646111/"
         domain = "power.no"
         url_id = hash_string(url_str)
