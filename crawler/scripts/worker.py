@@ -42,7 +42,7 @@ def run():
                         memory_usage_mb = memory_info.rss / 1024**2
                         print("Current memory usage:", memory_usage_mb, "MB")
 
-                        if memory_usage_mb > 600:
+                        if memory_usage_mb > 800:
                             raise ExceededMemoryLimit()
 
                         try:
