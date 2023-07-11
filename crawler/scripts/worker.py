@@ -1,10 +1,11 @@
+import gc
 import os
+import sys
 from time import sleep
 import traceback
-
 import psutil
 
-from src.helpers.exceptions import ExceededMemoryLimit
+import src.services.finn_service as finn_service
 from src.services.web_page_service import WebPageService
 from src.services.mongo_service import fetch_pending_urls, upload_products
 from src.models.url import URL, URLStatus
@@ -42,15 +43,11 @@ def run():
                         memory_usage_mb = memory_info.rss / 1024**2
                         print("Current memory usage:", memory_usage_mb, "MB")
 
-                        if memory_usage_mb > 800:
-                            raise ExceededMemoryLimit()
-
                         try:
                             if p.key.domain == "finn.no":
-                                import src.services.finn_service as finn_service
-
                                 product_id = url.value.url
                                 finn_service.populate_product(product_id)
+                                p.complete_url(url, URLStatus.WAITING)
                                 continue
 
                             products = web.scrape(url.value.url)
@@ -76,10 +73,6 @@ def run():
         except TakeOver:
             print("Warning: TakeOver")
             continue
-
-        except ExceededMemoryLimit:
-            print("Exceeded memory limit. Restarting")
-            break
 
 
 if __name__ == "__main__":

@@ -87,25 +87,17 @@ def concurrent_workers(function, workers_count=5):
         threads.append(t)
 
     try:
-        while True:
+        while any(t.is_alive() for t in threads):
             for t in threads:
                 if not t.is_alive():
-                    threads.remove(t)
-                    del t
-                    gc.collect()
-
-                    t = MyThread(target=function)
-                    t.daemon = True
-                    t.start()
-
-                    threads.append(t)
-                    break
+                    continue
 
                 try:
                     t.join(0.1)
                 except BaseException as e:
                     t.kill()
                     raise e
+
     except BaseException as e:
         for t in threads:
             if t.is_alive():

@@ -1,6 +1,5 @@
 from pprint import pprint
 import json
-from time import time
 import requests
 from sentence_transformers import SentenceTransformer
 from sentence_transformers.util import cos_sim
