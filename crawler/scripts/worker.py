@@ -21,11 +21,13 @@ def run():
     while True:
         try:
             with Provisioner() as p:
-                with WebPageService(p.key.domain, p.create_web_page_client()) as web:
+                with WebPageService(p.key.domain) as web:
                     # TODO: respect robots.txt
                     for url in p.iter_urls(URLStatus.WAITING):
                         print(url)
                         if url is None:
+                            # REFACTOR
+                            # TODO: implement p.append_pending_urls()
                             pending_urls = [
                                 URL.from_string(u, p.key.domain)
                                 for u in fetch_pending_urls(p.key.domain, limit=100)
@@ -44,21 +46,12 @@ def run():
                         print("Current memory usage:", memory_usage_mb, "MB")
 
                         try:
-                            if p.key.domain == "finn.no":
-                                product_id = url.value.url
-                                finn_service.populate_product(product_id)
-                                p.complete_url(url, URLStatus.WAITING)
-                                continue
+                            new_urls_str = web.handle_url(url.value.url)
+                            new_urls = [
+                                URL.from_string(u, p.key.domain) for u in new_urls_str
+                            ]
 
-                            products = web.scrape(url.value.url)
-                            if products:
-                                upload_products(products)
-
-                            urls_str = web.find_links()
-                            urls = [URL.from_string(u, p.key.domain) for u in urls_str]
-
-                            p.append_urls(urls, URLStatus.WAITING)
-
+                            p.append_urls(new_urls, URLStatus.WAITING)
                             p.complete_url(url, URLStatus.WAITING)
                         except Exception as e:
                             print(f"failed for url", url, e, type(e).__name__)

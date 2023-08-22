@@ -5,7 +5,6 @@ import requests
 from src.helpers.exceptions import CouldNotScrape, NotAProductPage
 from src.models.product import Product, Retailer
 import src.helpers.auto_scrape as auto_scraper
-from src.services.web_page_service import WebPageService
 
 
 def _nested_attribute(o, attribute_names: list):
@@ -89,8 +88,8 @@ def _find_category(url_path: str, sku: str) -> str:
     return category
 
 
-def scrape(service: WebPageService):
-    auto_scraped = auto_scraper.parse(service.client.content())
+def scrape(url: str, content):
+    auto_scraped = auto_scraper.parse(content)
     product_jsons = auto_scraped.get("jsonld", {}).get("Product", None)
 
     if not product_jsons:
@@ -102,7 +101,7 @@ def scrape(service: WebPageService):
     price_str = product_json["offers"]["price"]
     price = float(price_str)
 
-    soup = BeautifulSoup(service.client.content(), "html.parser")
+    soup = BeautifulSoup(content, "html.parser")
 
     yield Product(
         name=product_json["name"],
@@ -116,8 +115,8 @@ def scrape(service: WebPageService):
                 name="komplett",
                 price=price,
                 sku=sku,
-                url=service.current_url,
-                category=_find_category(service.current_url, sku),
+                url=url,
+                category=_find_category(url, sku),
             )
         ],
     )

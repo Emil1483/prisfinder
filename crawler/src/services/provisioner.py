@@ -75,13 +75,6 @@ class Provisioner:
     def disable(self):
         self.disabled = True
 
-    def create_web_page_client(self):
-        clients = {
-            "power.no": PlayWrightClient,
-        }
-
-        return clients.get(self.key.domain, RequestClient)()
-
     def time_id(self, current_time: datetime = None):
         # TODO: use zulu
         if not current_time:

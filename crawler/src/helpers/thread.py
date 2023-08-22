@@ -77,6 +77,8 @@ class ContextManager:
         print("EXIT")
 
 
+# for memory optimization and performance,
+# TODO: use multi-processing instead of multi-threading
 def concurrent_workers(function, workers_count=5):
     threads: list[MyThread] = []
     for _ in range(workers_count):

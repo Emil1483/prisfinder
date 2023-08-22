@@ -5,7 +5,8 @@ import requests
 from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright
 
-from src.models.product import Product
+import src.services.finn_service as finn_service
+from src.services.mongo_service import upload_products
 from src.helpers.exceptions import NotAProductPage
 from src.helpers.import_tools import import_scraper
 
@@ -51,36 +52,6 @@ class WebPageClient(ABC):
     @abstractmethod
     def find_links(self, domain: str) -> Iterable[str]:
         raise NotImplementedError()
-
-
-class WebPageService:
-    def __init__(self, domain: str, client: WebPageClient):
-        self.domain = domain
-        self.client = client
-        self._scrape = import_scraper(domain)
-        self.current_url = None
-
-    def __enter__(self):
-        self.client.setup()
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.client.teardown()
-
-    def scrape(self, url: str) -> list[Product]:
-        if self._scrape is None:
-            raise NotImplementedError()
-
-        self.client.get(url)
-        self.current_url = url
-
-        try:
-            return [*self._scrape(self)]
-        except NotAProductPage:
-            return []
-
-    def find_links(self):
-        return self.client.find_links(self.domain)
 
 
 class RequestClient(WebPageClient):
@@ -140,22 +111,62 @@ class PlayWrightClient(WebPageClient):
         return list(dict.fromkeys(links))
 
 
-if __name__ == "__main__":
-    with WebPageService("power.no", PlayWrightClient()) as web:
-        web.client.get(
-            "https://www.power.no/tv-og-lyd/hodetelefoner/true-wireless-hodetelefoner/samsung-galaxy-buds2-pro-true-wireless-bora-purple/p-1646111/"
-        )
-        print(web.client.content())
-        print(web.client.find_links("power.no"))
+class URLHandler(ABC):
+    @abstractmethod
+    def handle_url(self, url: str) -> list[str]:
+        raise NotImplementedError()
 
-        web.client.get(
-            "https://www.power.no/mobil-og-foto/mobiltelefon/samsung-galaxy-a54-5g-128-gb-svart/p-1940239/"
-        )
-        print(web.client.content())
-        print(web.client.find_links("power.no"))
+    @abstractmethod
+    def setup(self):
+        raise NotImplementedError()
 
-        web.client.get(
-            "https://www.power.no/data-og-tilbehoer/skjermer/pc-skjerm/samsung-u32r591-32-4k-uhd-skjerm-hvit/p-1891792/"
-        )
-        print(web.client.content())
-        print(web.client.find_links("power.no"))
+    @abstractmethod
+    def teardown(self):
+        raise NotImplementedError()
+
+
+class ProductURLHandler(URLHandler):
+    def __init__(self, domain: str) -> list[str]:
+        clients = {
+            "power.no": PlayWrightClient,
+        }
+
+        self.client = clients.get(domain, RequestClient)()
+        self.scrape = import_scraper(domain)
+        self.domain = domain
+
+    def handle_url(self, url: str):
+        self.client.get(url)
+
+        try:
+            products = [*self.scrape(url, self.client.content())]
+            upload_products(products)
+        except NotAProductPage:
+            print("WARNING: NotAProductPage")
+
+        return self.client.find_links(self.domain)
+
+    def setup(self):
+        self.client.setup()
+
+    def teardown(self):
+        self.client.teardown()
+
+
+class WebPageService:
+    def __init__(self, domain: str):
+        self.domain = domain
+
+        url_handlers = {"finn.no": finn_service.FinnURLHandler}
+
+        self.url_handler = url_handlers.get(domain, ProductURLHandler)(domain)
+
+    def __enter__(self):
+        self.url_handler.setup()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.url_handler.teardown()
+
+    def handle_url(self, url: str) -> list[str]:
+        return self.url_handler.handle_url(url)

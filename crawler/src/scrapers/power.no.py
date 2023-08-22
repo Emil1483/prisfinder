@@ -1,11 +1,10 @@
 import src.helpers.auto_scrape as auto_scraper
 from src.helpers.exceptions import NotAProductPage
 from src.models.product import Product, Retailer
-from src.services.web_page_service import WebPageService
 
 
-def scrape(service: WebPageService):
-    auto_scraped = auto_scraper.parse(service.client.content())
+def scrape(url: str, content):
+    auto_scraped = auto_scraper.parse(content)
     product_jsons = auto_scraped.get("jsonld", {}).get("Product", None)
 
     if not product_jsons:
@@ -30,7 +29,7 @@ def scrape(service: WebPageService):
                 category=category,
                 price=product_json["offers"]["price"],
                 sku=str(product_json["sku"]),
-                url=service.current_url,
+                url=url,
             ),
         ],
     )
