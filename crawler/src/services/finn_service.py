@@ -3,7 +3,7 @@ import requests
 from sentence_transformers import SentenceTransformer
 from sentence_transformers.util import cos_sim
 
-from src.services.web_page_service import URLHandler
+from src.services.url_handler import URLHandler
 from src.models.finn_ad import FinnAd
 from src.models.product import Category, Product
 from src.services.mongo_service import fetch_product, update_product, upsert_finn_ads

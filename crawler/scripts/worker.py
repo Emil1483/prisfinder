@@ -21,7 +21,7 @@ def run():
     while True:
         try:
             with Provisioner() as p:
-                with WebPageService(p.key.domain) as web:
+                with WebPageService.from_domain(p.key.domain) as web:
                     # TODO: respect robots.txt
                     for url in p.iter_urls(URLStatus.WAITING):
                         print(url)

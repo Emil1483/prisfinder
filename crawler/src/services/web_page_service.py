@@ -5,7 +5,8 @@ import requests
 from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright
 
-import src.services.finn_service as finn_service
+from src.services.finn_service import FinnURLHandler
+from src.services.url_handler import URLHandler
 from src.services.mongo_service import upload_products
 from src.helpers.exceptions import NotAProductPage
 from src.helpers.import_tools import import_scraper
@@ -111,20 +112,6 @@ class PlayWrightClient(WebPageClient):
         return list(dict.fromkeys(links))
 
 
-class URLHandler(ABC):
-    @abstractmethod
-    def handle_url(self, url: str) -> list[str]:
-        raise NotImplementedError()
-
-    @abstractmethod
-    def setup(self):
-        raise NotImplementedError()
-
-    @abstractmethod
-    def teardown(self):
-        raise NotImplementedError()
-
-
 class ProductURLHandler(URLHandler):
     def __init__(self, domain: str) -> list[str]:
         clients = {
@@ -154,12 +141,15 @@ class ProductURLHandler(URLHandler):
 
 
 class WebPageService:
-    def __init__(self, domain: str):
-        self.domain = domain
+    def __init__(self, url_handler: URLHandler):
+        self.url_handler = url_handler
 
-        url_handlers = {"finn.no": finn_service.FinnURLHandler}
+    @classmethod
+    def from_domain(cls, domain: str):
+        if domain == "finn.no":
+            return FinnURLHandler()
 
-        self.url_handler = url_handlers.get(domain, ProductURLHandler)(domain)
+        return ProductURLHandler(domain)
 
     def __enter__(self):
         self.url_handler.setup()
