@@ -5,10 +5,9 @@ from time import sleep
 import traceback
 import psutil
 
-import src.services.finn_service as finn_service
 from src.services.web_page_service import WebPageService
 from src.services.mongo_service import fetch_pending_urls, upload_products
-from src.models.url import URL, URLStatus
+from src.models.url import URL
 from src.helpers.thread import concurrent_workers
 from src.services.provisioner import (
     CouldNotFindProvisioner,
@@ -23,9 +22,9 @@ def run():
             with Provisioner() as p:
                 with WebPageService.from_domain(p.key.domain) as web:
                     # TODO: respect robots.txt
-                    for url in p.iter_urls(URLStatus.WAITING):
+                    for url in p.iter_urls():
                         print(url)
-                        if url is None:
+                        if url.value.scraped_at:
                             # REFACTOR
                             # TODO: implement p.append_pending_urls()
                             pending_urls = [
@@ -34,7 +33,7 @@ def run():
                             ]
 
                             if pending_urls:
-                                p.append_urls(pending_urls, URLStatus.WAITING)
+                                p.append_urls(pending_urls)
                                 continue
                             else:
                                 print("Empty Cursor. Disabling")
@@ -51,12 +50,12 @@ def run():
                                 URL.from_string(u, p.key.domain) for u in new_urls_str
                             ]
 
-                            p.append_urls(new_urls, URLStatus.WAITING)
-                            p.complete_url(url, URLStatus.WAITING)
+                            p.append_urls(new_urls)
+                            p.complete_url(url)
                         except Exception as e:
                             print(f"failed for url", url, e, type(e).__name__)
                             print(traceback.format_exc())
-                            p.fail_url(url, URLStatus.WAITING)
+                            p.fail_url(url)
 
         except CouldNotFindProvisioner as e:
             print(f"CouldNotFindProvisioner {e}: sleeping...")

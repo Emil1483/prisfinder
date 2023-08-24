@@ -8,7 +8,7 @@ from redis import Redis
 from src.services.web_page_service import URLHandler, WebPageService
 from src.services.provisioner import Provisioner
 from src.models.provisioner import ProvisionerKey, ProvisionerStatus, ProvisionerValue
-from src.models.url import URL, URLStatus
+from src.models.url import URL
 
 
 class TestURLHandler(URLHandler):
@@ -43,24 +43,37 @@ class TestURLHandler(URLHandler):
 
 
 class TestProvisioner(unittest.TestCase):
-    def test_append_and_complete_urls(self):
+    def test_append_urls(self):
+        urls = []
         with Provisioner() as p:
             with WebPageService(TestURLHandler()) as web:
-                for url in p.iter_urls(URLStatus.WAITING):
+                for url in p.iter_urls():
                     print(url)
 
-                    if url is None:
+                    if url.value.scraped_at:
                         break
+
+                    urls.append(url.value.url)
 
                     new_urls_str = web.handle_url(url.value.url)
                     new_urls = [URL.from_string(u, p.key.domain) for u in new_urls_str]
 
-                    p.append_urls(new_urls, URLStatus.WAITING)
-                    p.complete_url(url, URLStatus.WAITING)
+                    p.append_urls(new_urls)
 
-                    # TODO: Delete did not work
+                    p.set_scraped(url)
 
-                    sleep(1)
+        self.assertListEqual(
+            urls,
+            [
+                "https://www.test.com",
+                "https://www.test.com/p/0",
+                "https://www.test.com/p/1",
+                "https://www.test.com/p/1/0",
+                "https://www.test.com/p/2",
+                "https://www.test.com/p/2/0",
+                "https://www.test.com/p/2/1",
+            ],
+        )
 
     def setUp(self) -> None:
         with Redis() as r:
@@ -80,10 +93,7 @@ class TestProvisioner(unittest.TestCase):
                 status=ProvisionerStatus.OFF,
             )
 
-            provisioner_value = ProvisionerValue(
-                cursor_waiting=url.key.id,
-                last_scrapet=None,
-            )
+            provisioner_value = ProvisionerValue(cursor=url.key.id)
 
             pipe.set(str(provisioner_key), provisioner_value.to_json())
 

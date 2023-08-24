@@ -44,7 +44,7 @@ def populate_test():
 
     provisioner_value = ProvisionerValue(
         cursor_waiting=urls[0].key.id,
-        last_scrapet=None,
+        last_scraped=None,
     )
 
     provisioner_key = ProvisionerKey(

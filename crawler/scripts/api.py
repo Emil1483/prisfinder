@@ -3,6 +3,7 @@ from flask import Flask
 import os
 
 from redis import Redis
+from src.models.url import URLKey, URLValue
 
 app = Flask(__name__)
 
@@ -19,20 +20,42 @@ def provisioners():
     return [*gen()]
 
 
-@app.route("/provisioners/<key>", methods=["GET"])
-def provisioner(key):
-    return json.loads(redis.get(key).decode())
+@app.route("/provisioners/<domain>", methods=["GET"])
+def provisioner(domain):
+    keys = redis.keys(f"provisioner:*:{domain}")
+    if not keys:
+        return f"provisioner with domain {domain} not found", 404
+
+    key = keys[0].decode()
+    value = json.loads(redis.get(key).decode())
+
+    return {
+        "value": value,
+        "key": key,
+    }
 
 
-@app.route("/urls/<domain>", methods=["GET"])
-def urls(domain):
-    # Return :10 keys
-
+@app.route("/urls/<domain>/<cursor>", methods=["GET"])
+def urls(domain, cursor):
     def gen():
-        for key in redis.scan_iter(f"url:{domain}:*"):
-            yield key.decode()
+        url_key = URLKey(domain=domain, id=cursor)
+        url_value: URLValue = URLValue.from_json(redis.get(str(url_key)))
 
-    return [*gen()]
+        yield url_key, url_value
+
+        i = 1
+
+        while url_value.next != cursor:
+            if i >= 10:
+                break
+
+            url_key = URLKey(domain=domain, id=url_value.next)
+            url_value: URLValue = URLValue.from_json(redis.get(str(url_key)))
+
+            yield url_key, url_value
+            i += 1
+
+    return [{"key": key, "value": value} for key, value in gen()]
 
 
 if __name__ == "__main__":

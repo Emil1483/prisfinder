@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from math import floor
 import os
 from typing import Tuple
+from urllib.parse import urlparse
 from uuid import uuid4
 
 from src.helpers.misc import timestamp
@@ -11,8 +12,7 @@ from src.models.provisioner import (
     ProvisionerStatus,
     ProvisionerValue,
 )
-from src.models.url import URL, URLKey, URLStatus, URLValue
-from src.services.web_page_service import PlayWrightClient, RequestClient
+from src.models.url import URL, URLKey, URLValue
 from src.services.redis_service import CustomRedis
 
 
@@ -47,10 +47,11 @@ class Provisioner:
     def __enter__(self):
         self.key, self.value = self.find_provisioner()
         print(f"claimed provisioner {self}")
+        self.cursor = self.fetch_url(self.value.cursor)
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        print("EXIT CALLED")
+        print(f"exiting provisioner {self}")
         pipe = self.r.pipeline()
 
         value = self.r.get(str(self.key))
@@ -76,7 +77,6 @@ class Provisioner:
         self.disabled = True
 
     def time_id(self, current_time: datetime = None):
-        # TODO: use zulu
         if not current_time:
             current_time = datetime.now()
 
@@ -150,8 +150,8 @@ class Provisioner:
 
         value: ProvisionerValue = ProvisionerValue.from_dict(provisioner_json)
 
-        if value.last_scrapet:
-            age = timestamp() - value.last_scrapet
+        if value.last_scraped:
+            age = timestamp() - value.last_scraped
             age_timedelta = timedelta(milliseconds=age)
             print(f"claiming provisioner with age {age_timedelta}")
 
@@ -182,7 +182,7 @@ class Provisioner:
         url_keys = [
             URLKey(
                 domain=self.key.domain,
-                id=url_id or self.value.cursor_waiting,
+                id=url_id,
             )
             for url_id in url_ids
         ]
@@ -201,67 +201,39 @@ class Provisioner:
                 urls.append(None)
                 continue
 
-            url = URL(
-                key=url_key,
-                value=URLValue.from_json(url_value_json),
+            urls.append(
+                URL(
+                    key=url_key,
+                    value=URLValue.from_json(url_value_json),
+                )
             )
-
-            urls.append(url)
 
         return urls
 
     def fetch_url(self, url_id: str, should_raise=True) -> URL:
         return self.fetch_urls([url_id], should_raise=should_raise)[0]
 
-    def fetch_url_at_cursor(self, url_status: URLStatus):
-        url_id = {
-            URLStatus.WAITING: self.value.cursor_waiting,
-            URLStatus.COMPLETED: self.value.cursor_completed,
-            URLStatus.FAILED: self.value.cursor_failed,
-        }[url_status]
+    def move_cursor(self) -> ProvisionerValue:
+        self.cursor = self.fetch_url(self.cursor.value.next)
+        self.value.cursor = self.cursor.value.next
+        self.value.last_scraped = timestamp()
 
-        if url_id is None:
-            return None
-
-        return self.fetch_url(url_id)
-
-    def iter_urls(self, urls_to_iter: URLStatus):
+    def iter_urls(self):
         assert not self.disabled
         while True:
-            url = self.fetch_url_at_cursor(urls_to_iter)
-
-            if not url:
-                yield None
-                continue
-
-            self.value = self.value.copy_with(
-                last_scrapet=timestamp(),
-                cursor=url.value.next,
-                url_status=urls_to_iter,
-            )
-
-            yield url
+            yield self.cursor
 
             assert not self.disabled
 
-            url = self.fetch_url(url.key.id, should_raise=False)
+            self.move_cursor()
 
             pipe = self.r.pipeline()
-
             pipe.delete(str(self.key))
-
             self.key = self.update_key()
-
             pipe.set(
                 str(self.key),
                 self.value.to_json(),
             )
-
-            if url:
-                pipe.set(
-                    str(url.key),
-                    url.value.copy_with(scrapet_at=timestamp()).to_json(),
-                )
 
             result = pipe.execute()
 
@@ -272,161 +244,64 @@ class Provisioner:
                     "Could not modify key. Provisioner was probably claimed by another worker"
                 )
 
-    def append_urls(self, urls: list[URL], url_status: URLStatus):
-        # TODO: refactor this please
+    def set_scraped(self, url: URL):
+        url.value.scraped_at = timestamp()
+        self.r.set(str(url.key), url.value.to_json())
 
+    def append_urls(self, urls: list[URL]):
         assert not self.disabled
         assert len(urls) == len(list(dict.fromkeys([url.value.url for url in urls])))
+        assert all(u.key.domain == self.key.domain for u in urls)
 
-        pipe = self.r.pipeline()
-        for url in urls:
-            assert url.key.domain == self.key.domain
+        def filter_urls_by_domain(urls: list[URL]):
+            results = []
+            for url in urls:
+                domain = urlparse(url.value.url).netloc
+                domain = domain.replace("www.", "")
+                if domain == self.key.domain:
+                    results.append(url)
+            return results
 
-            pipe.get(str(url.key))
+        filtered_urls = filter_urls_by_domain(urls)
 
-        results = pipe.execute()
+        def filter_unique_urls(urls: list[URL]):
+            pipe = self.r.pipeline()
+            for url in urls:
+                pipe.get(str(url.key))
 
-        unique_urls = [u for u, r in zip(urls, results) if not r]
+            results = pipe.execute()
+            unique_urls = [u for u, r in zip(urls, results) if not r]
+            return unique_urls
+
+        unique_urls = filter_unique_urls(filtered_urls)
 
         if len(unique_urls) == 0:
-            print("WARNING: appended no unique urls. Ignoring")
             return
 
-        url_at_cursor = self.fetch_url_at_cursor(url_status)
-        if url_at_cursor is None:
-            urls_to_insert = []
-
-            for i, url in enumerate(unique_urls):
-                urls_to_insert.append(
-                    url.copy_with(
-                        value=url.value.copy_with(
-                            prev_id=unique_urls[(i - 1) % len(unique_urls)].key.id,
-                            next_id=unique_urls[(i + 1) % len(unique_urls)].key.id,
-                        ),
-                    ),
-                )
-
-            self.value = self.value.copy_with(
-                cursor=urls_to_insert[0].key.id,
-                url_status=url_status,
-            )
-
-            pipe = self.r.pipeline()
-
-            for url in urls_to_insert:
-                pipe.set(
-                    str(url.key),
-                    url.value.to_json(),
-                )
-
-            pipe.set(
-                str(self.key),
-                self.value.to_json(),
-            )
-
-            pipe.execute()
-
-            return
-
-        prev_url_id = url_at_cursor.value.prev
-        prev_url = self.fetch_url(prev_url_id)
-
-        all_urls = [prev_url, *unique_urls, url_at_cursor]
-
-        urls_to_insert = []
-
-        for url, prev_url, next_url in zip(unique_urls, all_urls[:-2], all_urls[2:]):
-            urls_to_insert.append(
-                url.copy_with(
-                    value=url.value.copy_with(
-                        prev_id=prev_url.key.id,
-                        next_id=next_url.key.id,
-                    ),
-                ),
-            )
-
-        self.value = self.value.copy_with(
-            cursor=urls_to_insert[0].key.id,
-            url_status=url_status,
-        )
-
-        pipe = self.r.pipeline()
-
-        pipe.set(
-            str(prev_url.key),
-            prev_url.value.copy_with(next_id=urls_to_insert[0].key.id).to_json(),
-        )
-
-        pipe.set(
-            str(url_at_cursor.key),
-            url_at_cursor.value.copy_with(prev_id=urls_to_insert[-1].key.id).to_json(),
-        )
-
-        for url in urls_to_insert:
-            pipe.set(
-                str(url.key),
-                url.value.to_json(),
-            )
-
-        pipe.set(
-            str(self.key),
-            self.value.to_json(),
-        )
-
-        pipe.execute()
-
-    def append_url(self, url: URL, url_status: URLStatus):
-        return self.append_urls([url], url_status)
-
-    def delete_url(self, url: URL, url_status: URLStatus):
-        if url.value.prev == url.value.next:
-            if url.key.id == url.value.prev:
-                self.r.delete(str(url.key))
-                self.value = self.value.with_cursor_none(url_status)
+        def order_urls(urls: list[URL]):
+            if len(urls) == 1:
                 return
 
-            prev_url = self.fetch_url(url.value.prev)
-            prev_url = prev_url.copy_with(
-                value=prev_url.value.copy_with(
-                    prev_id=prev_url.key.id,
-                    next_id=prev_url.key.id,
-                ),
-            )
+            for url, next_url in zip(urls[:-1], urls[1:]):
+                url.value.next = next_url.key.id
 
-            pipe = self.r.pipeline()
-
-            pipe.delete(str(url.key))
-            pipe.set(str(prev_url.key), prev_url.value.to_json())
-
-            pipe.execute()
-
-            return
-
-        prev_url, next_url = self.fetch_urls([url.value.prev, url.value.next])
-
-        prev_url = prev_url.copy_with(
-            value=prev_url.value.copy_with(next_id=next_url.key.id),
-        )
-
-        next_url = next_url.copy_with(
-            value=next_url.value.copy_with(prev_id=prev_url.key.id)
-        )
+        order_urls(unique_urls)
 
         pipe = self.r.pipeline()
 
-        pipe.delete(str(url.key))
-        pipe.set(str(prev_url.key), prev_url.value.to_json())
-        pipe.set(str(next_url.key), next_url.value.to_json())
+        unique_urls[-1].value.next = self.cursor.value.next
+        self.cursor.value.next = unique_urls[0].key.id
+
+        pipe.set(str(self.cursor.key), self.cursor.value.to_json())
+
+        for url in unique_urls:
+            pipe.set(str(url.key), url.value.to_json())
 
         pipe.execute()
 
-        # TODO: don't execute the pipe. Execute both delete and append
-        # TODO: at the same time.
+    def append_url(self, url: URL):
+        return self.append_urls([url])
 
-    def complete_url(self, url: URL, url_status: URLStatus):
-        self.delete_url(self.fetch_url(url.key.id), url_status)
-        self.append_url(url, url_status=URLStatus.COMPLETED)
-
-    def fail_url(self, url: URL, url_status: URLStatus):
-        self.delete_url(self.fetch_url(url.key.id), url_status)
-        self.append_url(url, url_status=URLStatus.FAILED)
+    def fail_url(self, url: URL):
+        # TODO: store url somewhere such that it can be retried easily
+        raise NotImplementedError()
