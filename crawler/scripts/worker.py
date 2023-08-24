@@ -6,11 +6,11 @@ import traceback
 import psutil
 
 from src.services.web_page_service import WebPageService
-from src.services.mongo_service import fetch_pending_urls, upload_products
 from src.models.url import URL
 from src.helpers.thread import concurrent_workers
 from src.services.provisioner import (
     CouldNotFindProvisioner,
+    ExitProvisioner,
     Provisioner,
     TakeOver,
 )
@@ -25,20 +25,7 @@ def run():
                     for url in p.iter_urls():
                         print(url)
                         if url.value.scraped_at:
-                            # REFACTOR
-                            # TODO: implement p.append_pending_urls()
-                            pending_urls = [
-                                URL.from_string(u, p.key.domain)
-                                for u in fetch_pending_urls(p.key.domain, limit=100)
-                            ]
-
-                            if pending_urls:
-                                p.append_urls(pending_urls)
-                                continue
-                            else:
-                                print("Empty Cursor. Disabling")
-                                p.disable()
-                                break
+                            p.append_pending_urls()
 
                         memory_info = psutil.Process(os.getpid()).memory_info()
                         memory_usage_mb = memory_info.rss / 1024**2
@@ -65,6 +52,9 @@ def run():
         except TakeOver:
             print("Warning: TakeOver")
             continue
+
+        except ExitProvisioner as e:
+            print(f"Exit Provisioner: {e.reason}")
 
 
 if __name__ == "__main__":

@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 import json
 from datetime import datetime, timedelta
 from math import floor
@@ -6,6 +7,7 @@ from typing import Tuple
 from urllib.parse import urlparse
 from uuid import uuid4
 
+from src.services.mongo_service import fetch_pending_urls
 from src.helpers.misc import timestamp
 from src.models.provisioner import (
     ProvisionerKey,
@@ -30,6 +32,11 @@ class AlreadyClosed(Exception):
 
 class TakeOver(Exception):
     pass
+
+
+@dataclass()
+class ExitProvisioner(Exception):
+    reason: str
 
 
 class Provisioner:
@@ -301,6 +308,18 @@ class Provisioner:
 
     def append_url(self, url: URL):
         return self.append_urls([url])
+
+    def append_pending_urls(self):
+        pending_urls = [
+            URL.from_string(u, self.key.domain)
+            for u in fetch_pending_urls(self.key.domain, limit=100)
+        ]
+
+        if pending_urls:
+            self.append_urls(pending_urls)
+        else:
+            self.disable()
+            raise ExitProvisioner("No more urls to scrape.")
 
     def fail_url(self, url: URL):
         # TODO: store url somewhere such that it can be retried easily
