@@ -14,7 +14,7 @@ from src.models.provisioner import (
     ProvisionerStatus,
     ProvisionerValue,
 )
-from src.models.url import URL, URLKey, URLValue
+from src.models.url import URL, FailedURLKey, URLKey, URLValue
 from src.services.redis_service import CustomRedis
 
 
@@ -251,9 +251,12 @@ class Provisioner:
                     "Could not modify key. Provisioner was probably claimed by another worker"
                 )
 
-    def set_scraped(self, url: URL):
-        url.value.scraped_at = timestamp()
-        self.r.set(str(url.key), url.value.to_json())
+    def all_urls(self):
+        start_id = self.cursor.key.id
+        for url in self.iter_urls():
+            yield url
+            if url.value.next == start_id:
+                break
 
     def append_urls(self, urls: list[URL]):
         assert not self.disabled
@@ -321,6 +324,19 @@ class Provisioner:
             self.disable()
             raise ExitProvisioner("No more urls to scrape.")
 
+    def set_scraped(self, url: URL):
+        url.value.scraped_at = timestamp()
+        success = self.r.set(str(url.key), url.value.to_json())
+
+        assert success
+
     def fail_url(self, url: URL):
-        # TODO: store url somewhere such that it can be retried easily
-        raise NotImplementedError()
+        url.value.failed_at = timestamp()
+        failed_url_key = FailedURLKey.from_url_key(url.key)
+
+        pipe = self.r.pipeline()
+        pipe.set(str(url.key), url.value.to_json())
+        pipe.set(str(failed_url_key), b"")
+
+        results = pipe.execute()
+        assert all(results)

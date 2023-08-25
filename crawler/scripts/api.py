@@ -58,5 +58,26 @@ def urls(domain, cursor):
     return [{"key": key, "value": value} for key, value in gen()]
 
 
+@app.route("/url/<domain>/<url_id>", methods=["GET"])
+def url(domain, url_id):
+    url_key = URLKey(domain=domain, id=url_id)
+    url_value: URLValue = URLValue.from_json(redis.get(str(url_key)))
+
+    return {"key": url_key, "value": url_value}
+
+
+@app.route("/failed_urls/<domain>", methods=["GET"])
+def failed_urls(domain):
+    def gen():
+        i = 0
+        for key in redis.scan_iter(f"failed_url:{domain}:*"):
+            i += 1
+            if i > 10:
+                break
+            yield key.decode()
+
+    return [*gen()]
+
+
 if __name__ == "__main__":
     app.run(debug=True, port=8080)

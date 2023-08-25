@@ -43,6 +43,26 @@ class TestURLHandler(URLHandler):
 
 
 class TestProvisioner(unittest.TestCase):
+    def test_fail_urls(self):
+        with Provisioner() as p:
+            p.append_url(
+                URL.from_string(
+                    "https://www.test.com/fail",
+                    domain=p.key.domain,
+                ),
+            )
+
+            for url in p.all_urls():
+                if url.value.url.endswith("fail"):
+                    p.fail_url(url)
+                else:
+                    p.set_scraped(url)
+
+            for url in p.all_urls():
+                print(url)
+
+        input("press enter to continue")
+
     def test_append_urls(self):
         urls = []
         with Provisioner() as p:
@@ -50,7 +70,7 @@ class TestProvisioner(unittest.TestCase):
                 for url in p.iter_urls():
                     print(url)
 
-                    if url.value.scraped_at:
+                    if url.visited:
                         break
 
                     urls.append(url.value.url)
@@ -74,6 +94,8 @@ class TestProvisioner(unittest.TestCase):
                 "https://www.test.com/p/2/1",
             ],
         )
+
+        input("press enter to continue")
 
     def setUp(self) -> None:
         with Redis() as r:
