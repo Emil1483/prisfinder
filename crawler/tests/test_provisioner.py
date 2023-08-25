@@ -68,6 +68,8 @@ class TestProvisioner(unittest.TestCase):
                 [u.value.url for u in p.all_failed_urls()],
             )
 
+        input("press enter to continue")
+
     def test_append_urls(self):
         urls = []
         with Provisioner() as p:
@@ -99,6 +101,8 @@ class TestProvisioner(unittest.TestCase):
                 "https://www.test.com/p/2/1",
             ],
         )
+
+        input("press enter to continue")
 
     def setUp(self) -> None:
         with Redis() as r:
