@@ -106,4 +106,4 @@ def dynamic_route(nested_route: str):
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=3000)
+    app.run(debug=True, port=80)

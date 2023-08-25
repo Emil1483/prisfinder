@@ -147,9 +147,9 @@ class WebPageService:
     @classmethod
     def from_domain(cls, domain: str):
         if domain == "finn.no":
-            return FinnURLHandler()
+            return WebPageService(FinnURLHandler())
 
-        return ProductURLHandler(domain)
+        return WebPageService(ProductURLHandler(domain))
 
     def __enter__(self):
         self.url_handler.setup()
