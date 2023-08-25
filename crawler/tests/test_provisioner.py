@@ -59,9 +59,14 @@ class TestProvisioner(unittest.TestCase):
                     p.set_scraped(url)
 
             for url in p.all_urls():
-                print(url)
+                failed = url.value.failed_at != None
+                failed_url = url.value.url.endswith("fail")
+                self.assertTrue(failed == failed_url)
 
-        input("press enter to continue")
+            self.assertListEqual(
+                ["https://www.test.com/fail"],
+                [u.value.url for u in p.all_failed_urls()],
+            )
 
     def test_append_urls(self):
         urls = []
@@ -94,8 +99,6 @@ class TestProvisioner(unittest.TestCase):
                 "https://www.test.com/p/2/1",
             ],
         )
-
-        input("press enter to continue")
 
     def setUp(self) -> None:
         with Redis() as r:

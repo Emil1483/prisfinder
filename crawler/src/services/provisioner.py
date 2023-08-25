@@ -258,6 +258,16 @@ class Provisioner:
             if url.value.next == start_id:
                 break
 
+    def all_failed_urls(self):
+        for key in self.r.scan_iter(f"failed_url:{self.key.domain}:*"):
+            url_id = key.decode().split(":")[-1]
+            url_key = URLKey(domain=self.key.domain, id=url_id)
+            url_value = URLValue.from_json(self.r.get(str(url_key)))
+            yield URL(
+                key=url_key,
+                value=url_value,
+            )
+
     def append_urls(self, urls: list[URL]):
         assert not self.disabled
         assert len(urls) == len(list(dict.fromkeys([url.value.url for url in urls])))
