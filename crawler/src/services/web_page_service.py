@@ -12,8 +12,10 @@ from src.helpers.exceptions import NotAProductPage
 from src.helpers.import_tools import import_scraper
 
 
-def iter_urls(domain: str, content):
+def iter_urls(base_url: str, content):
     soup = BeautifulSoup(content, "html.parser")
+    domain = urlparse(base_url).netloc
+    scheme = urlparse(base_url).scheme
 
     for a in soup.find_all("a"):
         href = a.get("href")
@@ -27,7 +29,7 @@ def iter_urls(domain: str, content):
             if url_domain == domain:
                 yield str(href)
         else:
-            url = f"https://{domain}{href}"
+            url = f"{scheme}://{domain}{href}"
             url_domain = urlparse(url).netloc
             if url_domain == domain:
                 yield url
@@ -64,7 +66,7 @@ class RequestClient(WebPageClient):
 
     def get(self, url):
         response = requests.get(
-            url,
+            url.replace("localhost", "127.0.0.1"),
             allow_redirects=True,
             headers={
                 "User-Agent": "PostmanRuntime/7.32.3",
@@ -131,7 +133,7 @@ class ProductURLHandler(URLHandler):
         except NotAProductPage:
             print("WARNING: NotAProductPage")
 
-        return self.client.find_links(self.domain)
+        return self.client.find_links(url)
 
     def setup(self):
         self.client.setup()

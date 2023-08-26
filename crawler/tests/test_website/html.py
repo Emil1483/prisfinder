@@ -30,7 +30,7 @@ def product_html(links: list[str], product: Product):
                     "{product.image}"
                 ],
                 "description": "{product.description}",
-                "sku": {product.sku},
+                "sku": "{product.sku}",
                 "mpn": "{product.mpn}",
                 "gtin13": "{product.gtin13}",
                 "brand": {{

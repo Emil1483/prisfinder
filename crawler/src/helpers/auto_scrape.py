@@ -1,9 +1,15 @@
+from dataclasses import dataclass
 from html import unescape
 import json
 from pprint import pprint
 import requests
 from bs4 import BeautifulSoup
 import microdata
+
+
+@dataclass(order=True, frozen=True)
+class ParseJsonLdException(Exception):
+    error: Exception
 
 
 def parse_metatags_data(soup: BeautifulSoup):
@@ -45,7 +51,7 @@ def get_jsonld_data(soup: BeautifulSoup):
                 jsonld_data[obj_type] = jsonld_data.get(obj_type, [])
                 jsonld_data[obj_type].append(obj)
         except Exception as e:
-            print(f"Error in jsonld parse - {e}")
+            raise ParseJsonLdException(e)
 
     return jsonld_data
 

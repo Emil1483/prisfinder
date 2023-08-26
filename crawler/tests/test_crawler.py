@@ -5,7 +5,7 @@ import unittest
 
 from redis import Redis
 
-from tests.test_provisioner import TestURLHandler
+from tests.test_website.graph import build_endpoints_graph
 from src.models.provisioner import ProvisionerKey, ProvisionerStatus, ProvisionerValue
 from src.models.url import URL
 from src.services.web_page_service import WebPageService
@@ -22,7 +22,6 @@ class TestCrawler(unittest.TestCase):
                     if url.visited:
                         break
 
-                    # TODO: implement test scraper
                     new_urls_str = web.handle_url(url.value.url)
                     new_urls = [URL.from_string(u, p.key.domain) for u in new_urls_str]
 
@@ -30,7 +29,12 @@ class TestCrawler(unittest.TestCase):
 
                     p.set_scraped(url)
 
-                    sleep(1)
+                all_urls = [*p.all_urls()]
+                website_graph = build_endpoints_graph()
+                nodes = website_graph.nodes
+                website_endpoints = [n for n in nodes if "http" not in n]
+
+                self.assertEqual(len(all_urls), len(website_endpoints))
 
         input("press enter to continue")
 
@@ -41,9 +45,9 @@ class TestCrawler(unittest.TestCase):
             for key in r.scan_iter():
                 pipe.delete(key)
 
-            domain = "localhost"
+            domain = "127.0.0.1"
 
-            url = URL.from_string(f"http://{domain}", domain)
+            url = URL.from_string(f"http://{domain}/home", domain)
 
             pipe.set(str(url.key), url.value.to_json())
 
