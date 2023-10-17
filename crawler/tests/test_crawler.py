@@ -4,8 +4,9 @@ from time import sleep
 import unittest
 
 from redis import Redis
-
 from tests.test_website.graph import build_endpoints_graph
+
+from src.services.mongo_service import delete_all_products
 from src.models.provisioner import ProvisionerKey, ProvisionerStatus, ProvisionerValue
 from src.models.url import URL
 from src.services.web_page_service import WebPageService
@@ -29,6 +30,8 @@ class TestCrawler(unittest.TestCase):
 
                     p.set_scraped(url)
 
+                    sleep(1)
+
                 all_urls = [*p.all_urls()]
                 website_graph = build_endpoints_graph()
                 nodes = website_graph.nodes
@@ -39,6 +42,8 @@ class TestCrawler(unittest.TestCase):
         input("press enter to continue")
 
     def setUp(self) -> None:
+        delete_all_products()
+
         with Redis() as r:
             pipe = r.pipeline()
 
@@ -63,6 +68,8 @@ class TestCrawler(unittest.TestCase):
             pipe.execute()
 
     def tearDown(self) -> None:
+        delete_all_products()
+
         with Redis() as r:
             pipe = r.pipeline()
 

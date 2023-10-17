@@ -46,6 +46,10 @@ def update_product(existing: Product, new: Product):
     )
 
 
+def delete_all_products():
+    products_collection.drop()
+
+
 def _create_product(product: Product):
     product_json = asdict(product)
     del product_json["_id"]

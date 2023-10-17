@@ -1,0 +1,58 @@
+datasource db {
+    provider = "postgresql"
+
+    url = env("POSTGRESQL_URI")
+}
+
+generator client {
+    provider             = "prisma-client-py"
+    interface            = "sync"
+    recursive_type_depth = 5
+}
+
+model Product {
+    id          Int               @id @default(autoincrement())
+    name        String
+    description String
+    image       String
+    brand       String?
+    category    Json?
+    finn_query  String?
+    mpns        Mpn[]
+    gtins       Gtin[]
+    retailers   ProductRetailer[]
+}
+
+model Mpn {
+    id  Int    @id @default(autoincrement())
+    mpn String
+
+    product    Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
+    product_id Int
+
+    @@index([mpn])
+}
+
+model Gtin {
+    id   Int    @id @default(autoincrement())
+    gtin String @unique
+
+    product    Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
+    product_id Int
+
+    @@index([gtin])
+}
+
+model ProductRetailer {
+    name     String
+    sku      String
+    price    Float
+    url      String
+    category String
+
+    product    Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
+    product_id Int
+
+    @@id([name, sku])
+    @@index([sku])
+}

@@ -18,24 +18,33 @@ class Category(object):
 class Retailer(object):
     name: str
     price: float
-    sku: int
+    sku: str
     url: str
     category: str
 
+    @property
+    def id(self):
+        return f"{self.name}_{self.sku}"
+
 
 @dataclass_json
-@dataclass(order=True, frozen=True)
+@dataclass(order=True)
 class Product(object):
     name: str
-    brand: str
     description: str
     image: str
     mpns: List[str]
     gtins: List[str]
     retailers: List[Retailer]
+    brand: str = None
     category: Category | None = None
-    _id: ObjectId | None = None
     finn_query: str | None = None
+    id: str | None = None
+
+    def __post_init__(self):
+        assert all(isinstance(mpn, str) for mpn in self.mpns)
+        assert all(isinstance(gtin, str) for gtin in self.gtins)
+        assert all(isinstance(retailer, Retailer) for retailer in self.retailers)
 
     def copy_with_category(self, category: Category):
         return Product(
@@ -47,6 +56,5 @@ class Product(object):
             gtins=self.gtins,
             retailers=self.retailers,
             category=category,
-            _id=self._id,
             finn_query=self.finn_query,
         )
