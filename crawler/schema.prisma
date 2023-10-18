@@ -21,6 +21,10 @@ model Product {
     mpns        Mpn[]
     gtins       Gtin[]
     retailers   ProductRetailer[]
+
+    ambiguous_to_id Int?
+    ambiguous_to    Product?  @relation("Ambiguities", fields: [ambiguous_to_id], references: [id])
+    ambiguities     Product[] @relation("Ambiguities")
 }
 
 model Mpn {

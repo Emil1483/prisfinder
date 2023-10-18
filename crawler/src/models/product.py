@@ -39,7 +39,7 @@ class Product(object):
     brand: str = None
     category: Category | None = None
     finn_query: str | None = None
-    id: str | None = None
+    id: int | None = None
 
     def __post_init__(self):
         assert all(isinstance(mpn, str) for mpn in self.mpns)
