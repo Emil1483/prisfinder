@@ -30,8 +30,6 @@ class TestCrawler(unittest.TestCase):
 
                     p.set_scraped(url)
 
-                    sleep(1)
-
                 all_urls = [*p.all_urls()]
                 website_graph = build_endpoints_graph()
                 nodes = website_graph.nodes

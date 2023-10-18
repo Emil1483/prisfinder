@@ -1,13 +1,21 @@
-import { Product } from "@/models/product";
-import connectDB from "@/services/mongodb";
+import { Product, fromPrismaProduct } from "@/models/product";
 import Link from "next/link";
 
 import styles from "./styles.module.css"
+import prisma from "@/services/prisma";
+import { JsonObject } from "@prisma/client/runtime/library";
 
 export async function getServerSideProps() {
-    const db = await connectDB();
-    const collection = db.collection('products');
-    const products = await collection.aggregate([{ $sample: { size: 20 } }]).toArray();
+    const prismaProducts = await prisma.product.findMany({
+        take: 10,
+        include: {
+            gtins: true,
+            mpns: true,
+            retailers: true,
+        },
+    })
+
+    const products = prismaProducts.map(fromPrismaProduct);
 
     return {
         props: {
@@ -20,7 +28,7 @@ const Home = ({ products }: { products: Product[] }) => {
     return (
         <div className={styles.product_list}>
             {products.map((product) => (
-                <Link key={product._id.toString()} href={`/products/${product._id.toString()}`}>
+                <Link key={product.id.toString()} href={`/products/${product.id.toString()}`}>
                     <div className={styles.product_card}>
                         <div className={styles.product_image}>
                             <img src={product.image} alt={product.name} />

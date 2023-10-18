@@ -1,17 +1,16 @@
 import { GetServerSideProps } from 'next';
-import { ObjectId } from 'mongodb';
 import { ParsedUrlQuery } from 'querystring';
-import { Product } from '@/models/product';
+import { Product, fromPrismaProduct } from '@/models/product';
 import { useState } from 'react';
 import { FinnAd } from '@/models/finnAd';
 
-import connectDB from '@/services/mongodb';
 import styles from './styles.module.css'
 import FinnAds from '@/pages/products/finnAds/finnAds';
+import prisma from '@/services/prisma';
 
 
 const ProductDetails = ({ product, finnAds }: { product: Product, finnAds: FinnAd[] }) => {
-    const [query, setQuery] = useState(product.finn_query);
+    const [query, setQuery] = useState(product.finn_query ?? "");
 
     const handleQueryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setQuery(event.target.value);
@@ -21,7 +20,7 @@ const ProductDetails = ({ product, finnAds }: { product: Product, finnAds: FinnA
         event.preventDefault();
 
         try {
-            const response = await fetch(`/api/products/${product._id}`, {
+            const response = await fetch(`/api/products/${product.id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -111,21 +110,27 @@ interface Params extends ParsedUrlQuery {
 
 export const getServerSideProps: GetServerSideProps<{ product: Product, finnAds: FinnAd[] }, Params> = async ({ params }) => {
     const { id } = params!;
-    const db = await connectDB();
-    const productsCollection = db.collection('products');
-    const finnAdsCollection = db.collection('finn_ads');
 
-    const product = await productsCollection.findOne({ _id: new ObjectId(id as string) });
-    const finnAdsCursor = await finnAdsCollection.find({ product_id: new ObjectId(id as string) });
+    console.log(id, parseInt(id))
+
+    const product = await prisma.product.findUnique({
+        where: { id: parseInt(id) },
+        include: {
+            gtins: true,
+            mpns: true,
+            retailers: true,
+        },
+    })
+    // const finnAdsCursor = await finnAdsCollection.find({ product_id: new ObjectId(id as string) });
 
     const finnAds: FinnAd[] = []
-    for await (const doc of finnAdsCursor) {
-        finnAds.push(JSON.parse(JSON.stringify(doc)))
-    }
+    // for await (const doc of finnAdsCursor) {
+    //     finnAds.push(JSON.parse(JSON.stringify(doc)))
+    // }
 
     return {
         props: {
-            product: JSON.parse(JSON.stringify(product)),
+            product: fromPrismaProduct(product!),
             finnAds: finnAds,
         },
     };

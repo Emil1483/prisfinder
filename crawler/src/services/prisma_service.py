@@ -83,7 +83,7 @@ def as_product_model(prisma_product: PrismaProduct):
 
 
 def get_product_by_id(id: int):
-    prisma_product = prisma.product.find_first(
+    prisma_product = prisma.product.find_unique(
         where={"id": id},
         include={
             "gtins": True,
@@ -195,7 +195,7 @@ def upsert_product(product: Product):
         if not existing:
             return insert_product(product)
     except AmbiguousProductMatch as e:
-        prisma_product = prisma.product.find_first(
+        prisma_product = prisma.product.find_unique(
             where={"id": e.conflicting_product_id},
         )
 
@@ -241,7 +241,7 @@ def upsert_product(product: Product):
 
 
 def get_ambiguous_products(product_id: int):
-    prisma_product = prisma.product.find_first(
+    prisma_product = prisma.product.find_unique(
         where={"id": product_id},
         include={
             "mpns": True,
