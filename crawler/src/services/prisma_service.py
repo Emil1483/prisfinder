@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Iterable
 from prisma import Prisma
 from src.models.product import Category, Product, Retailer
 from prisma.models import Product as PrismaProduct
@@ -271,15 +272,51 @@ def get_ambiguous_products(product_id: int):
     )
 
     if prisma_product.ambiguous_to:
-        print("product id not root")
         root = prisma_product.ambiguous_to
         children = prisma_product.ambiguous_to.ambiguities
         return as_product_model(root), [as_product_model(c) for c in children]
 
-    print("product id root")
     root = prisma_product
     children = prisma_product.ambiguities
     return as_product_model(root), [as_product_model(c) for c in children]
+
+
+def insert_pending_urls(domain: str, urls: Iterable[str]):
+    return prisma.pendingurl.create_many(
+        [
+            {
+                "domain": domain,
+                "url": url,
+            }
+            for url in urls
+        ],
+        skip_duplicates=True,
+    )
+
+
+def fetch_pending_urls(domain: str, limit=10) -> list[str]:
+    prisma_urls = prisma.pendingurl.find_many(
+        where={"domain": domain},
+        take=limit,
+    )
+
+    return [u.url for u in prisma_urls], [u.id for u in prisma_urls]
+
+
+def delete_pending_urls(ids: list[str]):
+    return prisma.pendingurl.delete_many(
+        where={
+            "id": {"in": ids},
+        },
+    )
+
+
+def count_pending_urls(domain: str) -> int:
+    return prisma.pendingurl.count(
+        where={
+            "domain": domain,
+        },
+    )
 
 
 def clear_tables():

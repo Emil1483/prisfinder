@@ -7,7 +7,7 @@ from typing import Tuple
 from urllib.parse import urlparse
 from uuid import uuid4
 
-from src.services.mongo_service import fetch_pending_urls
+from src.services.prisma_service import delete_pending_urls, fetch_pending_urls
 from src.helpers.misc import timestamp
 from src.models.provisioner import (
     ProvisionerKey,
@@ -323,13 +323,12 @@ class Provisioner:
         return self.append_urls([url])
 
     def append_pending_urls(self):
-        pending_urls = [
-            URL.from_string(u, self.key.domain)
-            for u in fetch_pending_urls(self.key.domain, limit=100)
-        ]
+        pending_urls, pending_url_ids = fetch_pending_urls(self.key.domain, limit=100)
+        urls = [URL.from_string(u, self.key.domain) for u in pending_urls]
 
         if pending_urls:
-            self.append_urls(pending_urls)
+            self.append_urls(urls)
+            delete_pending_urls(pending_url_ids)
         else:
             self.disable()
             raise ExitProvisioner("No more urls to scrape.")

@@ -26,9 +26,7 @@ def product_html(links: list[str], product: Product):
                 "@context": "https://schema.org",
                 "@type": "Product",
                 "name": "{product.name}",
-                "image": [
-                    "{product.image}"
-                ],
+                "image": "{product.image}",
                 "description": "{product.description}",
                 "sku": "{product.sku}",
                 "mpn": "{product.mpn}",

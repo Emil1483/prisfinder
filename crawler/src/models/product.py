@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from types import NoneType
 from typing import List
 from bson import ObjectId
 
@@ -45,6 +46,13 @@ class Product(object):
         assert all(isinstance(mpn, str) for mpn in self.mpns)
         assert all(isinstance(gtin, str) for gtin in self.gtins)
         assert all(isinstance(retailer, Retailer) for retailer in self.retailers)
+        assert isinstance(self.name, str)
+        assert isinstance(self.description, str)
+        assert isinstance(self.image, str)
+        assert isinstance(self.brand, (NoneType, str))
+        assert isinstance(self.category, (NoneType, Category))
+        assert isinstance(self.finn_query, (NoneType, str))
+        assert isinstance(self.id, (NoneType, int))
 
     def copy_with_category(self, category: Category):
         return Product(

@@ -5,9 +5,9 @@ import requests
 from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright
 
+from src.services.prisma_service import upsert_product
 from src.services.finn_service import FinnURLHandler
 from src.services.url_handler import URLHandler
-from src.services.mongo_service import upload_products
 from src.helpers.exceptions import NotAProductPage
 from src.helpers.import_tools import import_scraper
 
@@ -129,7 +129,8 @@ class ProductURLHandler(URLHandler):
 
         try:
             products = [*self.scrape(url, self.client.content())]
-            upload_products(products)
+            for product in products:
+                upsert_product(product)
         except NotAProductPage:
             print("WARNING: NotAProductPage")
 

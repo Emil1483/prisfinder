@@ -4,9 +4,9 @@ from time import sleep
 import unittest
 
 from redis import Redis
-from tests.test_website.graph import build_endpoints_graph
 
-from src.services.mongo_service import delete_all_products
+from src.services.prisma_service import clear_tables
+from tests.test_website.graph import build_endpoints_graph
 from src.models.provisioner import ProvisionerKey, ProvisionerStatus, ProvisionerValue
 from src.models.url import URL
 from src.services.web_page_service import WebPageService
@@ -42,7 +42,7 @@ class TestCrawler(unittest.TestCase):
         input("press enter to continue")
 
     def setUp(self) -> None:
-        delete_all_products()
+        clear_tables()
 
         with Redis() as r:
             pipe = r.pipeline()
@@ -68,7 +68,7 @@ class TestCrawler(unittest.TestCase):
             pipe.execute()
 
     def tearDown(self) -> None:
-        delete_all_products()
+        clear_tables()
 
         with Redis() as r:
             pipe = r.pipeline()

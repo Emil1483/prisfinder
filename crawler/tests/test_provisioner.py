@@ -5,8 +5,9 @@ import unittest
 
 from redis import Redis
 
+from src.services.prisma_service import count_pending_urls, insert_pending_urls
 from src.services.web_page_service import URLHandler, WebPageService
-from src.services.provisioner import Provisioner
+from src.services.provisioner import ExitProvisioner, Provisioner
 from src.models.provisioner import ProvisionerKey, ProvisionerStatus, ProvisionerValue
 from src.models.url import URL
 
@@ -43,6 +44,40 @@ class TestURLHandler(URLHandler):
 
 
 class TestProvisioner(unittest.TestCase):
+    def test_pending_urls(self):
+        insert_pending_urls(
+            self.domain,
+            [
+                "https://test.com/q/0",
+                "https://test.com/q/1",
+                "https://test.com/q/2",
+                "https://test.com/q/3",
+            ],
+        )
+
+        visited_urls = {}
+
+        try:
+            with Provisioner() as p:
+                for url in p.iter_urls():
+                    print(url)
+
+                    visited_urls[url.value.url] = True
+
+                    if url.visited:
+                        p.append_pending_urls()
+                        continue
+
+                    p.set_scraped(url)
+
+        except ExitProvisioner as e:
+            print(f"exit provisioner: {e.reason}")
+
+        self.assertEqual(count_pending_urls(self.domain), 0)
+        self.assertEqual(len(visited_urls.keys()), 5)
+
+        input("press enter to continue")
+
     def test_fail_urls(self):
         with Provisioner() as p:
             p.append_url(
@@ -112,6 +147,7 @@ class TestProvisioner(unittest.TestCase):
                 pipe.delete(key)
 
             domain = "test.com"
+            self.domain = domain
 
             url = URL.from_string(f"https://www.{domain}", domain)
 
