@@ -21,6 +21,7 @@ model Product {
     mpns        Mpn[]
     gtins       Gtin[]
     retailers   ProductRetailer[]
+    finn_ads    FinnAd[]
 
     ambiguous_to_id Int?
     ambiguous_to    Product?  @relation("Ambiguities", fields: [ambiguous_to_id], references: [id])
@@ -35,6 +36,7 @@ model Mpn {
     product_id Int
 
     @@index([mpn])
+    @@index([product_id])
 }
 
 model Gtin {
@@ -45,6 +47,7 @@ model Gtin {
     product_id Int
 
     @@index([gtin])
+    @@index([product_id])
 }
 
 model ProductRetailer {
@@ -59,6 +62,7 @@ model ProductRetailer {
 
     @@id([name, sku])
     @@index([sku])
+    @@index([product_id])
 }
 
 model PendingUrl {
@@ -67,4 +71,19 @@ model PendingUrl {
     url    String @unique
 
     @@index([domain])
+}
+
+model FinnAd {
+    id        Int    @id
+    image     String
+    lat       Float
+    lng       Float
+    price     Float
+    timestamp BigInt
+    title     String
+
+    product    Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
+    product_id Int
+
+    @@index([product_id])
 }

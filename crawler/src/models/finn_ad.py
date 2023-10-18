@@ -42,9 +42,9 @@ class Price(object):
 
 @dataclass_json
 @dataclass(order=True, frozen=True)
-class FinnAd(object):
+class RawFinnAd(object):
     type: str
-    id: int
+    id: str
     main_search_key: str
     heading: str
     location: str
@@ -59,14 +59,30 @@ class FinnAd(object):
     trade_type: str
     image_urls: List[str]
     ad_id: int
-    product_id: ObjectId
     image: Image | None = None
 
+
+@dataclass_json
+@dataclass(order=True)
+class FinnAd(object):
+    id: int
+    image: str
+    lat: float
+    lng: float
+    price: float
+    timestamp: int
+    title: str
+    product_id: int
+
     @classmethod
-    def from_finn_dict(cls, finn_dict: dict, product_id: ObjectId):
-        return FinnAd.from_dict(
-            {
-                **finn_dict,
-                "product_id": product_id,
-            }
+    def from_raw(cls, ad: RawFinnAd, product_id: int):
+        return FinnAd(
+            id=ad.ad_id,
+            image=ad.image.url,
+            lat=ad.coordinates.lat,
+            lng=ad.coordinates.lon,
+            price=ad.price.amount,
+            product_id=product_id,
+            timestamp=ad.timestamp,
+            title=ad.heading,
         )

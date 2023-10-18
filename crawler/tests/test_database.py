@@ -221,9 +221,5 @@ class TestDatabase(unittest.TestCase):
         self.assertEqual(root, self.product_0)
         self.assertListEqual(children, [product0_to_upsert, product1_to_upsert])
 
-    def test_unique_finn_ads(self):
-        # TODO: implement upsert finn ads
-        pass
-
     def tearDown(self) -> None:
         clear_tables()

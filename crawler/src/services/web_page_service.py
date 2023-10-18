@@ -114,6 +114,22 @@ class PlayWrightClient(WebPageClient):
         return list(dict.fromkeys(links))
 
 
+class ClientTester:
+    def __init__(self, client: WebPageClient):
+        self.client = client
+
+    def __enter__(self):
+        self.client.setup()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.client.teardown()
+
+    def get(self, url: str) -> bytes:
+        self.client.get(url)
+        return self.client.content()
+
+
 class ProductURLHandler(URLHandler):
     def __init__(self, domain: str) -> list[str]:
         clients = {

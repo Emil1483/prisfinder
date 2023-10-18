@@ -28,6 +28,7 @@ class Retailer(object):
         return f"{self.name}_{self.sku}"
 
 
+# TODO: use pydantic
 @dataclass_json
 @dataclass(order=True)
 class Product(object):
@@ -53,16 +54,3 @@ class Product(object):
         assert isinstance(self.category, (NoneType, Category))
         assert isinstance(self.finn_query, (NoneType, str))
         assert isinstance(self.id, (NoneType, int))
-
-    def copy_with_category(self, category: Category):
-        return Product(
-            name=self.name,
-            brand=self.brand,
-            description=self.description,
-            image=self.image,
-            mpns=self.mpns,
-            gtins=self.gtins,
-            retailers=self.retailers,
-            category=category,
-            finn_query=self.finn_query,
-        )

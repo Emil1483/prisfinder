@@ -2,7 +2,6 @@ import os
 from dotenv import load_dotenv
 from redis import Redis
 from src.models.provisioner import ProvisionerKey, ProvisionerStatus, ProvisionerValue
-from src.services.mongo_service import fetch_products, insert_pending_urls
 
 
 def push_finn():

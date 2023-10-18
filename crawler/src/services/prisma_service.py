@@ -1,6 +1,7 @@
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from typing import Iterable
 from prisma import Prisma
+from crawler.src.models.finn_ad import FinnAd
 from src.models.product import Category, Product, Retailer
 from prisma.models import Product as PrismaProduct
 
@@ -73,9 +74,9 @@ def as_product_model(prisma_product: PrismaProduct):
             for r in prisma_product.retailers
         ],
         category=Category(
-            main=prisma_product["main"],
-            product=prisma_product["product"],
-            sub=prisma_product["sub"],
+            main=prisma_product.category["main"],
+            product=prisma_product.category["product"],
+            sub=prisma_product.category["sub"],
         )
         if prisma_product.category
         else None,
@@ -93,6 +94,20 @@ def get_product_by_id(id: int):
     )
 
     return as_product_model(prisma_product)
+
+
+def update_product(id: int, product: Product):
+    prisma.product.update(
+        where={"id": id},
+        data={
+            "name": product.name,
+            "description": product.description,
+            "brand": product.brand,
+            "finn_query": product.finn_query,
+            "image": product.image,
+            "category": product.category.to_json() if product.category else "null",
+        },
+    )
 
 
 def find_existing_product(
@@ -317,6 +332,42 @@ def count_pending_urls(domain: str) -> int:
             "domain": domain,
         },
     )
+
+
+def upsert_finn_ads(finn_ads: list[FinnAd]):
+    prisma.finnad.create_many(
+        [
+            {
+                "id": ad.id,
+                "image": ad.image,
+                "lat": ad.lat,
+                "lng": ad.lng,
+                "price": ad.price,
+                "timestamp": ad.timestamp,
+                "title": ad.title,
+                "product_id": ad.product_id,
+            }
+            for ad in finn_ads
+        ],
+        skip_duplicates=True,
+    )
+
+
+def fetch_finn_ads(product_id: int):
+    prisma_finn_ads = prisma.finnad.find_many(where={"product_id": product_id})
+    return [
+        FinnAd(
+            lng=ad.lng,
+            lat=ad.lat,
+            title=ad.title,
+            timestamp=ad.timestamp,
+            id=ad.id,
+            image=ad.image,
+            price=ad.price,
+            product_id=ad.product_id,
+        )
+        for ad in prisma_finn_ads
+    ]
 
 
 def clear_tables():

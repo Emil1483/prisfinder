@@ -3,10 +3,14 @@ import requests
 from sentence_transformers import SentenceTransformer
 from sentence_transformers.util import cos_sim
 
+from src.services.prisma_service import (
+    get_product_by_id,
+    update_product,
+    upsert_finn_ads,
+)
+from src.models.finn_ad import FinnAd, RawFinnAd
 from src.services.url_handler import URLHandler
-from src.models.finn_ad import FinnAd
 from src.models.product import Category, Product
-from src.services.mongo_service import fetch_product, update_product, upsert_finn_ads
 from src.services.translator_service import translate_to_eng
 
 
@@ -21,19 +25,19 @@ def load_json(filename):
 
 class FinnURLHandler(URLHandler):
     def handle_url(self, url: str) -> list[str]:
-        product_id = url
-        product = fetch_product(product_id)
+        product_id = int(url)
+        product = get_product_by_id(product_id)
 
         if product.category is None:
-            category = self.parse_category(product.retailers[0].category)
-            product = product.copy_with_category(category)
-            update_product(product, product)
+            product.category = self.parse_category(product.retailers[0].category)
+            update_product(product_id, product)
 
-        finn_ads = self.fetch_finn_ads(product)
+        raw_finn_ads = self.fetch_finn_ads(product)
 
-        if not finn_ads:
+        if not raw_finn_ads:
             raise NoFinnAds()
 
+        finn_ads = [FinnAd.from_raw(ad, product_id) for ad in raw_finn_ads]
         upsert_finn_ads(finn_ads)
         return []
 
@@ -113,7 +117,7 @@ class FinnURLHandler(URLHandler):
             product=category_ids[2],
         )
 
-    def fetch_finn_ads(self, product: Product) -> list[FinnAd]:
+    def fetch_finn_ads(self, product: Product) -> list[RawFinnAd]:
         def gen_category_ids():
             if product.category.main:
                 yield str(product.category.main)
@@ -132,7 +136,7 @@ class FinnURLHandler(URLHandler):
 
         query = product.name.replace(" ", "+")
         if product.finn_query:
-            query = product.finn_query
+            query = product.finn_query.replace(" ", "+")
 
         def gen():
             match_count = None
@@ -142,8 +146,13 @@ class FinnURLHandler(URLHandler):
             while match_count is None or yielded_count < match_count:
                 page += 1
 
+                # TODO: fix categories
+                # response = requests.get(
+                #     f"https://www.finn.no/api/search-qf?searchkey=SEARCH_ID_BAP_COMMON&{category_param}&q={query}&sort=RELEVANCE&vertical=bap&page={page}",
+                # )
+
                 response = requests.get(
-                    f"https://www.finn.no/api/search-qf?searchkey=SEARCH_ID_BAP_COMMON&{category_param}&q={query}&sort=RELEVANCE&vertical=bap&page={page}",
+                    f"https://www.finn.no/api/search-qf?searchkey=SEARCH_ID_BAP_COMMON&q={query}&sort=RELEVANCE&vertical=bap&page={page}",
                 )
 
                 res_json = response.json()
@@ -156,7 +165,5 @@ class FinnURLHandler(URLHandler):
                     yield ad
 
         return [
-            FinnAd.from_finn_dict(ad, product._id)
-            for ad in gen()
-            if ad["trade_type"] == "Til salgs"
+            RawFinnAd.from_dict(ad) for ad in gen() if ad["trade_type"] == "Til salgs"
         ]
