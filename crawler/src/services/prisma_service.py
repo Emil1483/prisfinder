@@ -1,7 +1,7 @@
 from dataclasses import asdict, dataclass
 from typing import Iterable
 from prisma import Prisma
-from crawler.src.models.finn_ad import FinnAd
+from src.models.finn_ad import FinnAd
 from src.models.product import Category, Product, Retailer
 from prisma.models import Product as PrismaProduct
 
