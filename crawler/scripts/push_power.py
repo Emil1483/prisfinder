@@ -24,7 +24,7 @@ def push_komplett():
         url_id = hash_string(url_str)
 
         provisioner_value = ProvisionerValue(
-            cursor_waiting=url_id,
+            cursor=url_id,
         )
 
         provisioner_key = ProvisionerKey(
@@ -42,7 +42,6 @@ def push_komplett():
             value=URLValue(
                 url=url_str,
                 next=url_id,
-                prev=url_id,
             ),
         )
 

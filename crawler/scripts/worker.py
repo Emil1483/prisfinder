@@ -5,7 +5,6 @@ import psutil
 
 from src.services.web_page_service import WebPageService
 from src.models.url import URL
-from src.helpers.thread import concurrent_workers
 from src.services.provisioner import (
     CouldNotFindProvisioner,
     ExitProvisioner,
@@ -22,7 +21,7 @@ def run():
                     # TODO: respect robots.txt
                     for url in p.iter_urls():
                         print(url)
-                        if url.value.scraped_at:
+                        if url.visited:
                             p.append_pending_urls()
 
                         memory_info = psutil.Process(os.getpid()).memory_info()
@@ -36,7 +35,7 @@ def run():
                             ]
 
                             p.append_urls(new_urls)
-                            p.complete_url(url)
+                            p.set_scraped(url)
                         except Exception as e:
                             print(f"failed for url", url, e, type(e).__name__)
                             print(traceback.format_exc())
@@ -56,5 +55,4 @@ def run():
 
 
 if __name__ == "__main__":
-    THREAD_COUNT = int(os.getenv("THREAD_COUNT", "1"))
-    concurrent_workers(run, workers_count=THREAD_COUNT)
+    run()
