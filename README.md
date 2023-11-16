@@ -60,6 +60,8 @@ cd crawler
 python -m unittest
 ```
 
+Note that as of writing this, the finn.no test will fail due to it still being in development. New methods for implementing the finn.no integration is still being developed.
+
 To start crawling, first push a retailer provisioner with
 
 ```Bash
