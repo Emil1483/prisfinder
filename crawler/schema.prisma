@@ -74,13 +74,13 @@ model PendingUrl {
 }
 
 model FinnAd {
-    id        Int    @id
-    image     String
+    id        Int     @id
     lat       Float
     lng       Float
     price     Float
     timestamp BigInt
     title     String
+    image     String?
 
     product    Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
     product_id Int

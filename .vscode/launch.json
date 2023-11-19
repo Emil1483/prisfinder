@@ -11,7 +11,10 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "justMyCode": false,
-            "cwd": "${workspaceFolder}/crawler"
+            "cwd": "${workspaceFolder}/crawler",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/crawler"
+            }
         },
         {
             "name": "Worker",

@@ -66,23 +66,23 @@ class RawFinnAd(object):
 @dataclass(order=True)
 class FinnAd(object):
     id: int
-    image: str
     lat: float
     lng: float
     price: float
     timestamp: int
     title: str
     product_id: int
+    image: str | None
 
     @classmethod
     def from_raw(cls, ad: RawFinnAd, product_id: int):
         return FinnAd(
             id=ad.ad_id,
-            image=ad.image.url,
             lat=ad.coordinates.lat,
             lng=ad.coordinates.lon,
             price=ad.price.amount,
             product_id=product_id,
             timestamp=ad.timestamp,
             title=ad.heading,
+            image=ad.image.url if ad.image else None,
         )

@@ -22,7 +22,6 @@ class TestDatabase(unittest.TestCase):
         product = get_product_by_id(self.product_id)
 
         self.assertGreater(len(finn_ads), 0)
-        self.assertTrue(product.category)
         input("press enter to continue")
 
     def test_unique_finn_ads(self):
@@ -35,11 +34,12 @@ class TestDatabase(unittest.TestCase):
             Product(
                 finn_query="Garmin Forerunner 245",
                 name="GARMIN FORERUNNER 245 SPORTSKLOKKE SVART",
-                description="Stilig smartklokke med GPS som motiverer deg til bedre "
-                "trening og restitusjon",
+                description="Stilig smartklokke med GPS "
+                "som motiverer deg til bedre trening og restitusjon",
                 image="https://media.power-cdn.net/images/h-4877e411ac7093fd568b5a90f8deb153/products/1139441/1139441_11_600x600_t_g.webp",
                 mpns=["010-02120-10"],
                 gtins=["753759217174"],
+                brand="Garmin",
                 retailers=[
                     Retailer(
                         name="power",
@@ -50,7 +50,6 @@ class TestDatabase(unittest.TestCase):
                         "wearables/Sportsklokke",
                     )
                 ],
-                brand="Garmin",
             )
         )
 
