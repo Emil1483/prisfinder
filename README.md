@@ -38,7 +38,6 @@ Then, run
 ```Bash
 cd crawler
 
-pip install venv
 python -m venv venv
 ./venv/Scripts/Activate.ps1
 
