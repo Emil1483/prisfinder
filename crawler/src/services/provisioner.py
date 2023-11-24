@@ -39,6 +39,62 @@ class ExitProvisioner(Exception):
     reason: str
 
 
+def push_provisioner(root_url: str, priority=0):
+    domain = urlparse(root_url).netloc
+    domain = ".".join(domain.split(".")[-2:])
+
+    with CustomRedis() as r:
+        url = URL.from_string(root_url, domain)
+
+        pipe = r.pipeline()
+
+        pipe.set(str(url.key), url.value.to_json())
+
+        provisioner_key = ProvisionerKey(
+            domain=domain,
+            status=ProvisionerStatus.OFF,
+            priority=priority,
+        )
+
+        provisioner_value = ProvisionerValue(cursor=url.key.id)
+
+        pipe.set(str(provisioner_key), provisioner_value.to_json())
+
+        pipe.execute()
+
+
+def clear_provisioners():
+    with CustomRedis() as r:
+        pipe = r.pipeline()
+
+        for provisioner_key_bytes in r.scan_iter("provisioner:*"):
+            provisioner_key = ProvisionerKey.from_string(
+                provisioner_key_bytes.decode("UTF-8")
+            )
+
+            domain = provisioner_key.domain
+
+            for url_key_bytes in r.scan_iter(f"url:{domain}:*"):
+                pipe.delete(url_key_bytes)
+
+            pipe.delete(provisioner_key_bytes)
+
+        pipe.execute()
+
+
+def all_provisioner_keys():
+    def gen():
+        with CustomRedis() as r:
+            for provisioner_key_bytes in r.scan_iter("provisioner:*"):
+                provisioner_key = ProvisionerKey.from_string(
+                    provisioner_key_bytes.decode("UTF-8")
+                )
+
+                yield provisioner_key
+
+    return [*gen()]
+
+
 class Provisioner:
     def __init__(self, timeout=timedelta(minutes=5)):
         REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379")
@@ -106,29 +162,23 @@ class Provisioner:
             status=ProvisionerStatus.ON,
             provisioner_id=self.id,
             time_id=self.time_id(),
+            priority=old_key.priority,
         )
 
     def find_provisioner(self):
         print("finding provisioner...")
 
-        domain = os.getenv("DOMAIN")
-
         def gen_keys():
-            if domain:
-                yield from self.r.scan_iter(f"provisioner:off:{domain}")
-            else:
-                yield from self.r.scan_iter("provisioner:off:finn.no")
-                yield from self.r.scan_iter("provisioner:off:*")
+            for i in range(5):
+                yield from self.r.scan_iter(f"provisioner:off:*:{i}")
 
             max_id = floor(timedelta(days=1) / self.timeout)
+
             for i in range(2, max_id):
                 time_id = self.time_id(datetime.now() - i * self.timeout)
 
-                if domain:
-                    yield from self.r.scan_iter(f"provisioner:on:{time_id}:{domain}")
-                else:
-                    yield from self.r.scan_iter(f"provisioner:on:{time_id}:finn.no")
-                    yield from self.r.scan_iter(f"provisioner:on:{time_id}:*")
+                for j in range(5):
+                    yield from self.r.scan_iter(f"provisioner:on:{time_id}:*:{j}")
 
         for provisioner_key in gen_keys():
             try:

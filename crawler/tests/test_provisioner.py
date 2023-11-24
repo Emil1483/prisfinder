@@ -76,8 +76,6 @@ class TestProvisioner(unittest.TestCase):
         self.assertEqual(count_pending_urls(self.domain), 0)
         self.assertEqual(len(visited_urls.keys()), 5)
 
-        input("press enter to continue")
-
     def test_fail_urls(self):
         with Provisioner() as p:
             p.append_url(
@@ -102,8 +100,6 @@ class TestProvisioner(unittest.TestCase):
                 ["https://www.test.com/fail"],
                 [u.value.url for u in p.all_failed_urls()],
             )
-
-        input("press enter to continue")
 
     def test_append_urls(self):
         urls = []
@@ -136,8 +132,6 @@ class TestProvisioner(unittest.TestCase):
                 "https://www.test.com/p/2/1",
             ],
         )
-
-        input("press enter to continue")
 
     def setUp(self) -> None:
         with Redis() as r:
