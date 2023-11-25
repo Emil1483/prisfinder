@@ -6,9 +6,9 @@ from dataclasses_json import dataclass_json
 
 
 class ProvisionerStatus(Enum):
-    ON = "on"
-    OFF = "off"
-    DISABLED = "disabled"
+    on = "on"
+    off = "off"
+    disabled = "disabled"
 
     def __deepcopy__(self, memo):
         return self.value
@@ -52,13 +52,12 @@ class ProvisionerKey(object):
     def __str__(self) -> str:
         if self.provisioner_id:
             assert self.time_id is not None
-            assert self.status is ProvisionerStatus.ON
+            assert self.status is ProvisionerStatus.on
             return f"provisioner:{self.status}:{self.time_id}:{self.provisioner_id}:{self.domain}:{self.priority}"
 
         return f"provisioner:{self.status}:{self.domain}:{self.priority}"
 
-    def set_status(self, status: ProvisionerStatus):
-        assert self.status == ProvisionerStatus.ON
+    def with_status(self, status: ProvisionerStatus):
         return ProvisionerKey(
             status=status,
             domain=self.domain,
@@ -70,27 +69,23 @@ class ProvisionerKey(object):
         parts = string.split(":")
         if len(parts) == 6:
             _, status, time_id, provisioner_id, domain, priority = parts
-            assert status == ProvisionerStatus.ON
+            assert status == ProvisionerStatus.on
 
             return ProvisionerKey(
                 domain=domain,
                 priority=int(priority),
-                status=ProvisionerStatus.ON,
+                status=ProvisionerStatus.on,
                 provisioner_id=provisioner_id,
                 time_id=int(time_id),
             )
 
         elif len(parts) == 4:
             _, status, domain, priority = parts
-            assert status in (
-                ProvisionerStatus.OFF.value,
-                ProvisionerStatus.DISABLED.value,
-            )
 
             return ProvisionerKey(
                 domain=domain,
                 priority=int(priority),
-                status=ProvisionerStatus.OFF,
+                status=ProvisionerStatus[status],
                 provisioner_id=None,
                 time_id=None,
             )

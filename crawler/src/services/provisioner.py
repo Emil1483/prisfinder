@@ -15,7 +15,7 @@ from src.models.provisioner import (
     ProvisionerValue,
 )
 from src.models.url import URL, FailedURLKey, URLKey, URLValue
-from src.services.redis_service import CustomRedis
+from src.services.redis_service import RedisService
 
 
 class CouldNotFindProvisioner(Exception):
@@ -39,70 +39,12 @@ class ExitProvisioner(Exception):
     reason: str
 
 
-def push_provisioner(root_url: str, priority=0):
-    domain = urlparse(root_url).netloc
-
-    if domain != "127.0.0.1":
-        domain = ".".join(domain.split(".")[-2:])
-
-    with CustomRedis() as r:
-        url = URL.from_string(root_url, domain)
-
-        pipe = r.pipeline()
-
-        pipe.set(str(url.key), url.value.to_json())
-
-        provisioner_key = ProvisionerKey(
-            domain=domain,
-            status=ProvisionerStatus.OFF,
-            priority=priority,
-        )
-
-        provisioner_value = ProvisionerValue(cursor=url.key.id)
-
-        pipe.set(str(provisioner_key), provisioner_value.to_json())
-
-        pipe.execute()
-
-
-def clear_provisioners():
-    with CustomRedis() as r:
-        pipe = r.pipeline()
-
-        for provisioner_key_bytes in r.scan_iter("provisioner:*"):
-            provisioner_key = ProvisionerKey.from_string(
-                provisioner_key_bytes.decode("UTF-8")
-            )
-
-            domain = provisioner_key.domain
-
-            for url_key_bytes in r.scan_iter(f"url:{domain}:*"):
-                pipe.delete(url_key_bytes)
-
-            pipe.delete(provisioner_key_bytes)
-
-        pipe.execute()
-
-
-def all_provisioner_keys():
-    def gen():
-        with CustomRedis() as r:
-            for provisioner_key_bytes in r.scan_iter("provisioner:*"):
-                provisioner_key = ProvisionerKey.from_string(
-                    provisioner_key_bytes.decode("UTF-8")
-                )
-
-                yield provisioner_key
-
-    return [*gen()]
-
-
 class Provisioner:
     def __init__(self, timeout=timedelta(minutes=5)):
         REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379")
 
         self.timeout = timeout
-        self.r = CustomRedis.from_url(REDIS_URL)
+        self.r = RedisService.from_url(REDIS_URL)
         self.id = uuid4().hex
         self.disabled = False
 
@@ -122,11 +64,11 @@ class Provisioner:
         value = self.r.get(str(self.key))
 
         if not value:
-            print("Warning: Already Closed")
-            return
+            self.r.quit()
+            raise AlreadyClosed()
 
-        new_key = self.key.set_status(
-            ProvisionerStatus.DISABLED if self.disabled else ProvisionerStatus.OFF
+        new_key = self.key.with_status(
+            ProvisionerStatus.disabled if self.disabled else ProvisionerStatus.off
         )
         pipe.set(str(new_key), value)
         pipe.delete(str(self.key))
@@ -134,6 +76,7 @@ class Provisioner:
         _, del_count = pipe.execute()
 
         if del_count == 0:
+            self.r.quit()
             raise AlreadyClosed()
 
         self.r.quit()
@@ -161,7 +104,7 @@ class Provisioner:
 
         return ProvisionerKey(
             domain=old_key.domain,
-            status=ProvisionerStatus.ON,
+            status=ProvisionerStatus.on,
             provisioner_id=self.id,
             time_id=self.time_id(),
             priority=old_key.priority,

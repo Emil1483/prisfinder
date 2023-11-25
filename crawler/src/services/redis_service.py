@@ -1,66 +1,110 @@
-from datetime import timedelta
-from typing import Any
+from urllib.parse import urlparse
 from redis import Redis
-from redis.client import Pipeline
+from src.helpers.flask_error_handler import HTTPException
+from src.models.provisioner import ProvisionerKey, ProvisionerStatus, ProvisionerValue
+
+from src.models.url import URL, FailedURLKey, URLKey, URLValue
 
 
-class CustomRedis(Redis):
-    def __init__(self, *args, **kwargs):
-        self.cache = {}
-        return super().__init__(*args, **kwargs)
+class RedisService(Redis):
+    def push_provisioner(self, root_url: str, priority=0):
+        domain = urlparse(root_url).netloc
 
-    def get(self, name: str, use_cache=False) -> Any | None:
-        if use_cache and name in self.cache:
-            return self.cache[name]
+        if domain != "127.0.0.1":
+            domain = ".".join(domain.split(".")[-2:])
 
-        result = super().get(name)
-        self.cache[name] = result
-        return result
+        url = URL.from_string(root_url, domain)
 
-    def set(
-        self,
-        name: str,
-        value: str,
-        ex: float | timedelta | None = None,
-        px: float | timedelta | None = None,
-        nx: bool = False,
-        xx: bool = False,
-        keepttl: bool = False,
-        get: bool = False,
-        **kwargs,
-    ) -> bool | None:
-        self.cache[name] = value
-        return super().set(name, value, ex, px, nx, xx, keepttl, get, **kwargs)
+        pipe = self.pipeline()
 
-    def pipeline(self, transaction: bool = True, shard_hint: Any = None) -> Pipeline:
-        return CustomPipeline(
-            self.connection_pool, self.response_callbacks, transaction, shard_hint, self
+        pipe.set(str(url.key), url.value.to_json())
+
+        provisioner_key = ProvisionerKey(
+            domain=domain,
+            status=ProvisionerStatus.off,
+            priority=priority,
         )
 
+        provisioner_value = ProvisionerValue(cursor=url.key.id)
 
-class CustomPipeline(Pipeline):
-    def __init__(
-        self,
-        connection_pool,
-        response_callbacks,
-        transaction,
-        shard_hint,
-        r: CustomRedis,
-    ) -> None:
-        self.r = r
-        super().__init__(connection_pool, response_callbacks, transaction, shard_hint)
+        pipe.set(str(provisioner_key), provisioner_value.to_json())
 
-    def set(
+        pipe.execute()
+
+    def clear_provisioners(self):
+        pipe = self.pipeline()
+
+        for provisioner_key in self.scan_provisioner_keys():
+            domain = provisioner_key.domain
+
+            for url_key_bytes in self.scan_url_keys(domain):
+                pipe.delete(str(url_key_bytes))
+
+            for url_key_bytes in self.scan_failed_url_keys(domain):
+                pipe.delete(str(url_key_bytes))
+
+            pipe.delete(str(provisioner_key))
+
+        pipe.execute()
+
+    def scan_provisioner_keys(self):
+        def gen():
+            for provisioner_key_bytes in self.scan_iter("provisioner:*"):
+                provisioner_key = ProvisionerKey.from_string(
+                    provisioner_key_bytes.decode()
+                )
+
+                yield provisioner_key
+
+        return [*gen()]
+
+    def fetch_provisioner(self, domain: str):
+        keys = self.keys(f"provisioner:*:{domain}:*")
+        if not keys:
+            raise HTTPException(f"provisioner with domain {domain} not found", 404)
+
+        key = ProvisionerKey.from_string(keys[0].decode())
+        value_str = self.get(str(key)).decode()
+        value: ProvisionerValue = ProvisionerValue.from_json(value_str)
+
+        return key, value
+
+    def fetch_url(self, domain: str, url_id: str):
+        key = URLKey(domain=domain, id=url_id)
+        value: URLValue = URLValue.from_json(self.get(str(key)))
+        return key, value
+
+    def iter_urls(self, domain: str, cursor: str):
+        key, value = self.fetch_url(domain, cursor)
+        yield key, value
+
+        while value.next != cursor:
+            key, value = self.fetch_url(domain, value.next)
+            yield key, value
+
+    def scan_failed_url_keys(self, domain: str):
+        for key in self.scan_iter(f"failed_url:{domain}:*"):
+            yield FailedURLKey.from_string(key.decode())
+
+    def scan_url_keys(self, domain: str):
+        for key in self.scan_iter(f"url:{domain}:*"):
+            yield URLKey.from_string(key.decode())
+
+    def update_provisioner_key(
         self,
-        name: str,
-        value: str,
-        ex: int | timedelta | None = None,
-        px: int | timedelta | None = None,
-        nx: bool = False,
-        xx: bool = False,
-        keepttl: bool = False,
-        get: bool = False,
-        **kwargs,
-    ) -> Pipeline:
-        self.r.cache[name] = value
-        return super().set(name, value, ex, px, nx, xx, keepttl, get, **kwargs)
+        old_key: ProvisionerKey,
+        new_key: ProvisionerKey,
+        value: ProvisionerValue,
+    ):
+        pipe = self.pipeline()
+
+        pipe.set(str(new_key), value.to_json())
+        pipe.delete(str(old_key))
+
+        _, del_count = pipe.execute()
+
+        if del_count == 0:
+            self.r.delete(str(new_key))
+            raise ValueError(
+                "Could not modify key. Key was probably modified by another actor"
+            )

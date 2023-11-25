@@ -19,7 +19,7 @@ def push_finn():
 
         provisioner_key = ProvisionerKey(
             domain="finn.no",
-            status=ProvisionerStatus.OFF,
+            status=ProvisionerStatus.off,
         )
 
         pipe.set(str(provisioner_key), provisioner_value.to_json())

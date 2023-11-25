@@ -32,6 +32,14 @@ class URLKey(object):
     def __str__(self) -> str:
         return f"url:{self.domain}:{self.id}"
 
+    @classmethod
+    def from_string(cls, string: str):
+        _, domain, id = string.split(":")
+        return URLKey(
+            domain=domain,
+            id=id,
+        )
+
 
 @dataclass(order=True, frozen=True)
 class FailedURLKey(object):
@@ -43,6 +51,14 @@ class FailedURLKey(object):
         return FailedURLKey(
             domain=key.domain,
             id=key.id,
+        )
+
+    @classmethod
+    def from_string(cls, string: str):
+        _, domain, id = string.split(":")
+        return FailedURLKey(
+            domain=domain,
+            id=id,
         )
 
     def __post_init__(self):

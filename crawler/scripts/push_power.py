@@ -29,7 +29,7 @@ def push_komplett():
 
         provisioner_key = ProvisionerKey(
             domain=domain,
-            status=ProvisionerStatus.OFF,
+            status=ProvisionerStatus.off,
         )
 
         pipe.set(str(provisioner_key), provisioner_value.to_json())

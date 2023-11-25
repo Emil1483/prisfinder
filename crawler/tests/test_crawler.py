@@ -1,15 +1,14 @@
 # python -m unittest tests.test_crawler
 
+from time import sleep
 import unittest
 
-from redis import Redis
-
 from src.services.prisma_service import clear_tables
+from src.services.redis_service import RedisService
 from tests.test_website.graph import build_endpoints_graph
-from src.models.provisioner import ProvisionerKey, ProvisionerStatus, ProvisionerValue
 from src.models.url import URL
 from src.services.web_page_service import WebPageService
-from src.services.provisioner import Provisioner, clear_provisioners, push_provisioner
+from src.services.provisioner import Provisioner
 
 
 class TestCrawler(unittest.TestCase):
@@ -23,6 +22,8 @@ class TestCrawler(unittest.TestCase):
                         break
 
                     new_urls_str = web.handle_url(url.value.url)
+                    # sleep(10)
+
                     new_urls = [URL.from_string(u, self.domain) for u in new_urls_str]
 
                     p.append_urls(new_urls)
@@ -36,17 +37,21 @@ class TestCrawler(unittest.TestCase):
 
                 self.assertEqual(len(all_urls), len(website_endpoints))
 
+        input("press enter to continue")
+
     def setUp(self) -> None:
-        clear_tables()
+        with RedisService() as r:
+            clear_tables()
 
-        clear_provisioners()
+            r.clear_provisioners()
 
-        self.domain = "127.0.0.1"
-        push_provisioner(f"http://{self.domain}/home", priority=1)
+            self.domain = "127.0.0.1"
+            r.push_provisioner(f"http://{self.domain}/home", priority=1)
 
     def tearDown(self) -> None:
-        clear_tables()
-        clear_provisioners()
+        with RedisService() as r:
+            clear_tables()
+            r.clear_provisioners()
 
 
 if __name__ == "__main__":

@@ -1,17 +1,13 @@
 import json
 import requests
-from sentence_transformers import SentenceTransformer
-from sentence_transformers.util import cos_sim
 
 from src.services.prisma_service import (
     get_product_by_id,
-    update_product,
     upsert_finn_ads,
 )
 from src.models.finn_ad import FinnAd, RawFinnAd
 from src.services.url_handler import URLHandler
-from src.models.product import Category, Product
-from src.services.translator_service import translate_to_eng
+from src.models.product import Product
 
 
 class NoFinnAds(Exception):

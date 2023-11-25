@@ -3,13 +3,12 @@
 import unittest
 
 from src.services.prisma_service import count_pending_urls, insert_pending_urls
+from src.services.redis_service import RedisService
 from src.services.web_page_service import URLHandler, WebPageService
 from src.models.url import URL
 from src.services.provisioner import (
     ExitProvisioner,
     Provisioner,
-    clear_provisioners,
-    push_provisioner,
 )
 
 
@@ -135,13 +134,15 @@ class TestProvisioner(unittest.TestCase):
         )
 
     def setUp(self) -> None:
-        clear_provisioners()
+        with RedisService() as r:
+            r.clear_provisioners()
 
-        self.domain = "test.com"
-        push_provisioner(f"https://www.{self.domain}", priority=1)
+            self.domain = "test.com"
+            r.push_provisioner(f"https://www.{self.domain}", priority=1)
 
     def tearDown(self) -> None:
-        clear_provisioners()
+        with RedisService() as r:
+            r.clear_provisioners()
 
 
 if __name__ == "__main__":

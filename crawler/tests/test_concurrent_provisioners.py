@@ -5,12 +5,8 @@ from time import sleep
 import unittest
 from src.models.provisioner import ProvisionerStatus
 
-from src.services.provisioner import (
-    Provisioner,
-    all_provisioner_keys,
-    push_provisioner,
-    clear_provisioners,
-)
+from src.services.provisioner import Provisioner
+from src.services.redis_service import RedisService
 
 
 def run(start_event, stop_event):
@@ -63,17 +59,18 @@ class TestConcurrentProvisioner(unittest.TestCase):
 
     def test_prioritization(self):
         def expect(truth_table: dict):
-            truth_table_copy = truth_table.copy()
-            for key in all_provisioner_keys():
-                domain, status = key.domain, key.status
-                if domain in truth_table:
-                    self.assertEqual(truth_table[domain], status)
-                    del truth_table_copy[domain]
+            with RedisService() as r:
+                truth_table_copy = truth_table.copy()
+                for key in r.scan_provisioner_keys():
+                    domain, status = key.domain, key.status
+                    if domain in truth_table:
+                        self.assertEqual(truth_table[domain], status)
+                        del truth_table_copy[domain]
 
-            self.assertEqual(len(truth_table_copy), 0)
+                self.assertEqual(len(truth_table_copy), 0)
 
-        on = ProvisionerStatus.ON
-        off = ProvisionerStatus.OFF
+        on = ProvisionerStatus.on
+        off = ProvisionerStatus.off
 
         for i in range(5):
             self.add_provisioner(wait=True)
@@ -132,12 +129,14 @@ class TestConcurrentProvisioner(unittest.TestCase):
     def setUp(self) -> None:
         self.provisioners = []
 
-        clear_provisioners()
-        push_provisioner("http://www.priority1.com/", priority=1)
-        push_provisioner("http://www.priority4.com/", priority=4)
-        push_provisioner("http://www.priority3.com/", priority=3)
-        push_provisioner("http://www.priority0.com/", priority=0)
-        push_provisioner("http://www.priority2.com/", priority=2)
+        with RedisService() as r:
+            r.clear_provisioners()
+            r.push_provisioner("http://www.priority1.com/", priority=1)
+            r.push_provisioner("http://www.priority4.com/", priority=4)
+            r.push_provisioner("http://www.priority3.com/", priority=3)
+            r.push_provisioner("http://www.priority0.com/", priority=0)
+            r.push_provisioner("http://www.priority2.com/", priority=2)
 
     def tearDown(self) -> None:
-        clear_provisioners()
+        with RedisService() as r:
+            r.clear_provisioners()
