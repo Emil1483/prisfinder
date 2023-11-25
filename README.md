@@ -47,22 +47,23 @@ prisma db push
 playwright install
 ```
 
-Then, add the **full path to the /crawler** directory to your `PYTHONPATH` environment variable. On windows, simply run:
+Then, add the **full path to the /crawler** directory to your `PYTHONPATH` environment variable. On windows, this can be done by editing the `$profile`. See [this Stackoverflow question](https://stackoverflow.com/questions/714877/setting-windows-powershell-environment-variables):
 
-```PowerShell
-.\setup.ps1
-```
-
-By now, you should be good to go. Use the following command to run the tests
+By now, you should be good to go. Use the following command to run the tests:
 
 ```Bash
 cd crawler
 python -m unittest
 ```
 
-Note that as of writing this, the finn.no test will fail due to it still being in development. New methods for implementing the finn.no integration is still being developed.
+Note that the test_crawler tests require the test_website to be running. This can be done by running the following in a separate terminal:
 
-To start crawling, first push a retailer provisioner with
+```bash
+cd crawler
+python /tests/test_website/index.py
+```
+
+Finally, to start crawling, first push a retailer provisioner with
 
 ```Bash
 cd crawler
