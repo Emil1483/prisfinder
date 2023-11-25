@@ -1,15 +1,16 @@
 # python -m unittest tests.test_provisioner
 
-from time import sleep
 import unittest
-
-from redis import Redis
 
 from src.services.prisma_service import count_pending_urls, insert_pending_urls
 from src.services.web_page_service import URLHandler, WebPageService
-from src.services.provisioner import ExitProvisioner, Provisioner
-from src.models.provisioner import ProvisionerKey, ProvisionerStatus, ProvisionerValue
 from src.models.url import URL
+from src.services.provisioner import (
+    ExitProvisioner,
+    Provisioner,
+    clear_provisioners,
+    push_provisioner,
+)
 
 
 class TestURLHandler(URLHandler):
@@ -134,38 +135,13 @@ class TestProvisioner(unittest.TestCase):
         )
 
     def setUp(self) -> None:
-        with Redis() as r:
-            pipe = r.pipeline()
+        clear_provisioners()
 
-            for key in r.scan_iter():
-                pipe.delete(key)
-
-            domain = "test.com"
-            self.domain = domain
-
-            url = URL.from_string(f"https://www.{domain}", domain)
-
-            pipe.set(str(url.key), url.value.to_json())
-
-            provisioner_key = ProvisionerKey(
-                domain=domain,
-                status=ProvisionerStatus.OFF,
-            )
-
-            provisioner_value = ProvisionerValue(cursor=url.key.id)
-
-            pipe.set(str(provisioner_key), provisioner_value.to_json())
-
-            pipe.execute()
+        self.domain = "test.com"
+        push_provisioner(f"https://www.{self.domain}", priority=1)
 
     def tearDown(self) -> None:
-        with Redis() as r:
-            pipe = r.pipeline()
-
-            for key in r.scan_iter():
-                pipe.delete(key)
-
-            pipe.execute()
+        clear_provisioners()
 
 
 if __name__ == "__main__":
