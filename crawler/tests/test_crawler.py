@@ -1,6 +1,5 @@
 # python -m unittest tests.test_crawler
 
-from time import sleep
 import unittest
 
 from redis import Redis
@@ -10,13 +9,13 @@ from tests.test_website.graph import build_endpoints_graph
 from src.models.provisioner import ProvisionerKey, ProvisionerStatus, ProvisionerValue
 from src.models.url import URL
 from src.services.web_page_service import WebPageService
-from src.services.provisioner import Provisioner
+from src.services.provisioner import Provisioner, clear_provisioners, push_provisioner
 
 
 class TestCrawler(unittest.TestCase):
     def test_crawler(self):
         with Provisioner() as p:
-            with WebPageService.from_domain(p.key.domain) as web:
+            with WebPageService.from_domain(self.domain) as web:
                 for url in p.iter_urls():
                     print(url)
 
@@ -24,7 +23,7 @@ class TestCrawler(unittest.TestCase):
                         break
 
                     new_urls_str = web.handle_url(url.value.url)
-                    new_urls = [URL.from_string(u, p.key.domain) for u in new_urls_str]
+                    new_urls = [URL.from_string(u, self.domain) for u in new_urls_str]
 
                     p.append_urls(new_urls)
 
@@ -37,44 +36,17 @@ class TestCrawler(unittest.TestCase):
 
                 self.assertEqual(len(all_urls), len(website_endpoints))
 
-        input("press enter to continue")
-
     def setUp(self) -> None:
         clear_tables()
 
-        with Redis() as r:
-            pipe = r.pipeline()
+        clear_provisioners()
 
-            for key in r.scan_iter():
-                pipe.delete(key)
-
-            domain = "127.0.0.1"
-
-            url = URL.from_string(f"http://{domain}/home", domain)
-
-            pipe.set(str(url.key), url.value.to_json())
-
-            provisioner_key = ProvisionerKey(
-                domain=domain,
-                status=ProvisionerStatus.OFF,
-            )
-
-            provisioner_value = ProvisionerValue(cursor=url.key.id)
-
-            pipe.set(str(provisioner_key), provisioner_value.to_json())
-
-            pipe.execute()
+        self.domain = "127.0.0.1"
+        push_provisioner(f"http://{self.domain}/home", priority=1)
 
     def tearDown(self) -> None:
         clear_tables()
-
-        with Redis() as r:
-            pipe = r.pipeline()
-
-            for key in r.scan_iter():
-                pipe.delete(key)
-
-            pipe.execute()
+        clear_provisioners()
 
 
 if __name__ == "__main__":

@@ -8,7 +8,6 @@ from src.services.web_page_service import WebPageService
 from src.services.prisma_service import (
     clear_tables,
     fetch_finn_ads,
-    get_product_by_id,
     upsert_product,
 )
 
@@ -19,10 +18,8 @@ class TestDatabase(unittest.TestCase):
             finn.handle_url(self.product_id)
 
         finn_ads = fetch_finn_ads(self.product_id)
-        product = get_product_by_id(self.product_id)
 
         self.assertGreater(len(finn_ads), 0)
-        input("press enter to continue")
 
     def test_unique_finn_ads(self):
         pass

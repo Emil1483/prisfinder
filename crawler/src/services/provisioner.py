@@ -41,7 +41,9 @@ class ExitProvisioner(Exception):
 
 def push_provisioner(root_url: str, priority=0):
     domain = urlparse(root_url).netloc
-    domain = ".".join(domain.split(".")[-2:])
+
+    if domain != "127.0.0.1":
+        domain = ".".join(domain.split(".")[-2:])
 
     with CustomRedis() as r:
         url = URL.from_string(root_url, domain)
