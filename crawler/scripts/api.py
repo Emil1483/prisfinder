@@ -68,9 +68,7 @@ def failed_urls(domain):
 @app.route("/provisioners/<domain>/disable", methods=["POST"])
 @error_handler
 def disable_provisioner(domain):
-    old_key, value = redis.fetch_provisioner(domain)
-    new_key = old_key.with_status(ProvisionerStatus.disabled)
-    redis.update_provisioner_key(old_key, new_key, value)
+    redis.disable_provisioner(domain)
 
     return "OK"
 
@@ -78,9 +76,7 @@ def disable_provisioner(domain):
 @app.route("/provisioners/<domain>/enable", methods=["POST"])
 @error_handler
 def enable_provisioner(domain):
-    old_key, value = redis.fetch_provisioner(domain)
-    new_key = old_key.with_status(ProvisionerStatus.off)
-    redis.update_provisioner_key(old_key, new_key, value)
+    redis.enable_provisioner(domain)
 
     return "OK"
 

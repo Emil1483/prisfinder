@@ -108,3 +108,21 @@ class RedisService(Redis):
             raise ValueError(
                 "Could not modify key. Key was probably modified by another actor"
             )
+
+    def disable_provisioner(self, domain: str):
+        old_key, value = self.fetch_provisioner(domain)
+
+        if old_key.status == ProvisionerStatus.disabled:
+            raise HTTPException("Provisioner is already disabled", 400)
+
+        new_key = old_key.with_status(ProvisionerStatus.disabled)
+        self.update_provisioner_key(old_key, new_key, value)
+
+    def enable_provisioner(self, domain: str):
+        old_key, value = self.fetch_provisioner(domain)
+
+        if old_key.status != ProvisionerStatus.disabled:
+            raise HTTPException("Provisioner is not disabled", 400)
+
+        new_key = old_key.with_status(ProvisionerStatus.off)
+        self.update_provisioner_key(old_key, new_key, value)

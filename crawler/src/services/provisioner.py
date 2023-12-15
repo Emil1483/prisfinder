@@ -47,6 +47,7 @@ class Provisioner:
         self.r = RedisService.from_url(REDIS_URL)
         self.id = uuid4().hex
         self.disabled = False
+        self.take_over = None
 
     def __str__(self) -> str:
         return f"(key: {self.key}, value: {self.value})"
@@ -59,6 +60,10 @@ class Provisioner:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         print(f"exiting provisioner {self}")
+
+        if self.take_over:
+            raise self.take_over
+
         pipe = self.r.pipeline()
 
         value = self.r.get(str(self.key))
@@ -242,9 +247,11 @@ class Provisioner:
             del_count = result[0]
             if del_count == 0:
                 self.r.delete(str(self.key))
-                raise TakeOver(
-                    "Could not modify key. Provisioner was probably claimed by another worker"
+                self.take_over = TakeOver(
+                    "Could not modify key. Provisioner was probably claimed by another worker or disabled"
                 )
+
+                raise self.take_over
 
     def all_urls(self):
         start_id = self.cursor.key.id

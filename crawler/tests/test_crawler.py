@@ -13,6 +13,7 @@ from src.services.provisioner import Provisioner
 
 class TestCrawler(unittest.TestCase):
     def test_crawler(self):
+        # TODO use worker.py
         with Provisioner() as p:
             with WebPageService.from_domain(self.domain) as web:
                 for url in p.iter_urls():
