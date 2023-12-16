@@ -19,8 +19,8 @@ def error_handler(f):
         except HTTPException as e:
             return e.message, e.status_code
 
-        # except Exception as e:
-        # print(traceback.format_exc())
-        # return str(e), 500
+        except Exception as e:
+            print(traceback.format_exc())
+            return str(e), 500
 
     return decorated_function

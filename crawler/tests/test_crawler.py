@@ -38,8 +38,6 @@ class TestCrawler(unittest.TestCase):
 
                 self.assertEqual(len(all_urls), len(website_endpoints))
 
-        input("press enter to continue")
-
     def setUp(self) -> None:
         with RedisService() as r:
             clear_tables()

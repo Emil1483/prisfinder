@@ -80,6 +80,21 @@ def as_product_model(prisma_product: PrismaProduct):
         )
         if prisma_product.category
         else None,
+        finn_ads=[
+            FinnAd(
+                id=ad.id,
+                image=ad.image,
+                lat=ad.lat,
+                lng=ad.lng,
+                price=ad.price,
+                timestamp=ad.timestamp,
+                title=ad.title,
+                product_id=ad.product_id,
+            )
+            for ad in prisma_product.finn_ads
+        ]
+        if prisma_product.finn_ads
+        else [],
     )
 
 
@@ -90,6 +105,7 @@ def get_product_by_id(id: int):
             "gtins": True,
             "mpns": True,
             "retailers": True,
+            "finn_ads": True,
         },
     )
 
@@ -107,6 +123,41 @@ def update_product(id: int, product: Product):
             "image": product.image,
             "category": product.category.to_json() if product.category else "null",
         },
+    )
+
+
+def patch_product(
+    id: int,
+    name: str = None,
+    description: str = None,
+    brand: str = None,
+    finn_query: str = None,
+    image: str = None,
+    category: Category = None,
+):
+    data = {}
+
+    if name:
+        data["name"] = name
+
+    if description:
+        data["description"] = description
+
+    if brand:
+        data["brand"] = brand
+
+    if finn_query:
+        data["finn_query"] = finn_query
+
+    if image:
+        data["image"] = image
+
+    if category:
+        data["category"] = category.to_json()
+
+    prisma.product.update(
+        where={"id": id},
+        data=data,
     )
 
 
@@ -309,7 +360,7 @@ def insert_pending_urls(domain: str, urls: Iterable[str]):
     )
 
 
-def fetch_pending_urls(domain: str, limit=10) -> list[str]:
+def fetch_pending_urls(domain: str, limit=10):
     prisma_urls = prisma.pendingurl.find_many(
         where={"domain": domain},
         take=limit,

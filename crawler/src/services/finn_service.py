@@ -21,6 +21,9 @@ def load_json(filename):
 
 class FinnURLHandler(URLHandler):
     def handle_url(self, url: str) -> list[str]:
+        if not url:
+            return []
+
         product_id = int(url)
         product = get_product_by_id(product_id)
 

@@ -1,5 +1,6 @@
 from urllib.parse import urlparse
 from redis import Redis
+from redis.client import Redis
 from src.helpers.flask_error_handler import HTTPException
 from src.models.provisioner import ProvisionerKey, ProvisionerStatus, ProvisionerValue
 
@@ -7,16 +8,20 @@ from src.models.url import URL, FailedURLKey, URLKey, URLValue
 
 
 class RedisService(Redis):
-    def push_provisioner(self, root_url: str, priority=0):
-        domain = urlparse(root_url).netloc
+    def __enter__(self):
+        service: RedisService = super().__enter__()
+        return service
 
-        if domain != "127.0.0.1":
-            domain = ".".join(domain.split(".")[-2:])
+    def push_provisioner(self, root_url: str, priority=0, domain: str = None):
+        if not domain:
+            domain = urlparse(root_url).netloc
 
-        url = URL.from_string(root_url, domain)
+            if domain != "127.0.0.1":
+                domain = ".".join(domain.split(".")[-2:])
 
         pipe = self.pipeline()
 
+        url = URL.from_string(root_url, domain)
         pipe.set(str(url.key), url.value.to_json())
 
         provisioner_key = ProvisionerKey(
@@ -58,14 +63,14 @@ class RedisService(Redis):
 
         return [*gen()]
 
-    def fetch_provisioner(self, domain: str):
+    def fetch_provisioner(self, domain: str) -> tuple[ProvisionerKey, ProvisionerValue]:
         keys = self.keys(f"provisioner:*:{domain}:*")
         if not keys:
             raise HTTPException(f"provisioner with domain {domain} not found", 404)
 
         key = ProvisionerKey.from_string(keys[0].decode())
         value_str = self.get(str(key)).decode()
-        value: ProvisionerValue = ProvisionerValue.from_json(value_str)
+        value = ProvisionerValue.from_json(value_str)
 
         return key, value
 

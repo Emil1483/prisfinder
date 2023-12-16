@@ -279,9 +279,15 @@ class Provisioner:
             results = []
             for url in urls:
                 domain = urlparse(url.value.url).netloc
+
+                if not domain:
+                    results.append(url)
+                    continue
+
                 domain = domain.replace("www.", "")
                 if domain == self.key.domain:
                     results.append(url)
+
             return results
 
         filtered_urls = filter_urls_by_domain(urls)

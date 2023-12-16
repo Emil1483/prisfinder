@@ -1,11 +1,12 @@
-import itertools
-import json
-from flask import Flask
+from flask import Flask, request
 import os
-from src.helpers.flask_error_handler import error_handler
 
 from src.models.provisioner import ProvisionerStatus
+from src.helpers.flask_error_handler import error_handler
 from src.services.redis_service import RedisService
+
+import src.services.prisma_service as prisma
+
 
 app = Flask(__name__)
 
@@ -77,6 +78,22 @@ def disable_provisioner(domain):
 @error_handler
 def enable_provisioner(domain):
     redis.enable_provisioner(domain)
+
+    return "OK"
+
+
+@app.route("/products/<product_id>", methods=["PATCH"])
+@error_handler
+def patch_product(product_id: int):
+    prisma.patch_product(int(product_id), **request.json)
+
+    finn_query = request.json.get("finn_query")
+    if finn_query:
+        prisma.insert_pending_urls("finn.no", [str(product_id)])
+
+        key, _ = redis.fetch_provisioner("finn.no")
+        if key.status == ProvisionerStatus.disabled:
+            redis.enable_provisioner("finn.no")
 
     return "OK"
 
