@@ -173,22 +173,26 @@ class TestAPI(unittest.TestCase):
         with RedisService() as r:
             r.push_provisioner("http://www.test.com/", priority=0)
 
-            self.start_worker(async_test_worker)
+        self.start_worker(async_test_worker)
 
-            r.disable_provisioner("test.com")
+        response = self.client.post("/provisioners/test.com/disable")
+        self.assertEqual(response.status_code, 200, response.text)
 
-            exception = self.q.get(block=True, timeout=10)
-            self.assertIsInstance(exception, TakeOver)
+        exception = self.q.get(block=True, timeout=10)
+        self.assertIsInstance(exception, TakeOver)
 
-            self.assertRaises(CouldNotFindProvisioner, test_worker)
+        self.assertRaises(CouldNotFindProvisioner, test_worker)
 
-            r.enable_provisioner("test.com")
+        response = self.client.post("/provisioners/test.com/enable")
+        self.assertEqual(response.status_code, 200, response.text)
 
-            self.start_worker(async_test_worker)
+        self.start_worker(async_test_worker)
 
-            r.disable_provisioner("test.com")
-            exception = self.q.get(block=True, timeout=10)
-            self.assertIsInstance(exception, TakeOver)
+        response = self.client.post("/provisioners/test.com/disable")
+        self.assertEqual(response.status_code, 200, response.text)
+
+        exception = self.q.get(block=True, timeout=10)
+        self.assertIsInstance(exception, TakeOver)
 
 
 if __name__ == "__main__":
