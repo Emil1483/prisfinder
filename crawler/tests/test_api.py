@@ -5,31 +5,72 @@ from time import sleep
 import unittest
 
 from scripts.api import app
-from scripts.worker import run as work
+from scripts.worker import run
 
-from src.services.provisioner import ExitProvisioner
+from src.services.provisioner import (
+    CouldNotFindProvisioner,
+    ExitProvisioner,
+    Provisioner,
+    TakeOver,
+)
 from src.services.redis_service import RedisService
 from src.models.provisioner import ProvisionerStatus
 from src.models.product import Product, Retailer
 from src.services.prisma_service import clear_tables, get_product_by_id, upsert_product
 
 
-def work_async(q: Queue, start_event: Event):
+def test_handler(p: Provisioner, start_event: Event = None):
+    if start_event:
+        start_event.set()
+
+    for url in p.iter_urls():
+        print(url)
+        sleep(0.1)
+
+
+def test_worker():
+    run(test_handler)
+
+
+def async_test_worker(q: Queue, start_event: Event):
     try:
-        work(start_event)
+        run(test_handler, start_event=start_event)
+
+    except Exception as e:
+        q.put(e)
+
+
+def async_worker(q: Queue, start_event: Event):
+    try:
+        run(start_event=start_event)
 
     except Exception as e:
         q.put(e)
 
 
 class TestAPI(unittest.TestCase):
+    def start_worker(self, target):
+        start_event = Event()
+        self.q = Queue()
+
+        self.provisioner = Process(target=target, args=(self.q, start_event))
+        self.provisioner.start()
+
+        while True:
+            if start_event.is_set():
+                break
+
+            if not self.q.empty():
+                raise self.q.get()
+
+            sleep(0.1)
+
     def setUp(self):
         app.config["TESTING"] = True
         self.client = app.test_client()
 
         with RedisService() as r:
             r.clear_provisioners()
-            r.push_provisioner("", priority=0, domain="finn.no")
 
             self.product_ids = []
             for i in range(5):
@@ -62,10 +103,12 @@ class TestAPI(unittest.TestCase):
 
     def test_setting_finn_query(self):
         with RedisService() as r:
+            r.push_provisioner("", priority=0, domain="finn.no")
+
             key, _ = r.fetch_provisioner("finn.no")
             self.assertEqual(key.status, ProvisionerStatus.off)
 
-            self.assertRaises(ExitProvisioner, work)
+            self.assertRaises(ExitProvisioner, run)
 
             key, _ = r.fetch_provisioner("finn.no")
             self.assertEqual(key.status, ProvisionerStatus.disabled)
@@ -89,19 +132,7 @@ class TestAPI(unittest.TestCase):
             key, _ = r.fetch_provisioner("finn.no")
             self.assertEqual(key.status, ProvisionerStatus.off)
 
-            start_event = Event()
-            q = Queue()
-            worker = Process(target=work_async, args=(q, start_event))
-            worker.start()
-
-            while True:
-                if start_event.is_set():
-                    break
-
-                if not q.empty():
-                    raise q.get()
-
-                sleep(0.1)
+            self.start_worker(async_worker)
 
             key, _ = r.fetch_provisioner("finn.no")
             self.assertEqual(key.status, ProvisionerStatus.on)
@@ -127,7 +158,7 @@ class TestAPI(unittest.TestCase):
 
             self.assertEqual(response.status_code, 200, response.text)
 
-            exception = q.get(block=True, timeout=10)
+            exception = self.q.get(block=True, timeout=10)
 
             self.assertEqual(type(exception), ExitProvisioner)
 
@@ -137,6 +168,27 @@ class TestAPI(unittest.TestCase):
             for product_id in self.product_ids:
                 product = get_product_by_id(product_id)
                 self.assertGreater(len(product.finn_ads), 0)
+
+    def test_disable_enable_provisioner(self):
+        with RedisService() as r:
+            r.push_provisioner("http://www.test.com/", priority=0)
+
+            self.start_worker(async_test_worker)
+
+            r.disable_provisioner("test.com")
+
+            exception = self.q.get(block=True, timeout=10)
+            self.assertIsInstance(exception, TakeOver)
+
+            self.assertRaises(CouldNotFindProvisioner, test_worker)
+
+            r.enable_provisioner("test.com")
+
+            self.start_worker(async_test_worker)
+
+            r.disable_provisioner("test.com")
+            exception = self.q.get(block=True, timeout=10)
+            self.assertIsInstance(exception, TakeOver)
 
 
 if __name__ == "__main__":

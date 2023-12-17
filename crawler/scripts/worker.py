@@ -14,38 +14,42 @@ from src.services.provisioner import (
 )
 
 
-def run(start_event: Event = None):
+def default_handler(p: Provisioner, start_event: Event = None):
+    with WebPageService.from_domain(p.key.domain) as web:
+        if start_event:
+            start_event.set()
+
+        # TODO: respect robots.txt
+        for url in p.iter_urls():
+            print("handling url:", url)
+            if url.visited:
+                p.append_pending_urls()
+
+            memory_info = psutil.Process(os.getpid()).memory_info()
+            memory_usage_mb = memory_info.rss / 1024**2
+            print("Current memory usage:", memory_usage_mb, "MB")
+
+            try:
+                new_urls_str = web.handle_url(url.value.url)
+                new_urls = [URL.from_string(u, p.key.domain) for u in new_urls_str]
+
+                p.append_urls(new_urls)
+                p.set_scraped(url)
+            except Exception as e:
+                print(f"failed for url", url, e, type(e).__name__)
+                print(traceback.format_exc())
+                p.fail_url(url)
+
+
+def run(handler=default_handler, *args, **kwargs):
     with Provisioner() as p:
-        with WebPageService.from_domain(p.key.domain) as web:
-            if start_event:
-                start_event.set()
-
-            # TODO: respect robots.txt
-            for url in p.iter_urls():
-                print("handling url:", url)
-                if url.visited:
-                    p.append_pending_urls()
-
-                memory_info = psutil.Process(os.getpid()).memory_info()
-                memory_usage_mb = memory_info.rss / 1024**2
-                print("Current memory usage:", memory_usage_mb, "MB")
-
-                try:
-                    new_urls_str = web.handle_url(url.value.url)
-                    new_urls = [URL.from_string(u, p.key.domain) for u in new_urls_str]
-
-                    p.append_urls(new_urls)
-                    p.set_scraped(url)
-                except Exception as e:
-                    print(f"failed for url", url, e, type(e).__name__)
-                    print(traceback.format_exc())
-                    p.fail_url(url)
+        handler(p, *args, **kwargs)
 
 
-def run_forever():
+def run_forever(handler=default_handler, *args, **kwargs):
     while True:
         try:
-            run()
+            run(handler, *args, **kwargs)
 
         except CouldNotFindProvisioner as e:
             print(f"CouldNotFindProvisioner {e}: sleeping...")
