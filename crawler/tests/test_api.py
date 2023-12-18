@@ -103,7 +103,7 @@ class TestAPI(unittest.TestCase):
 
     def test_setting_finn_query(self):
         with RedisService() as r:
-            r.push_provisioner("", priority=0, domain="finn.no")
+            r.insert_provisioner("", priority=0, domain="finn.no")
 
             key, _ = r.fetch_provisioner("finn.no")
             self.assertEqual(key.status, ProvisionerStatus.off)
@@ -171,7 +171,7 @@ class TestAPI(unittest.TestCase):
 
     def test_disable_enable_provisioner(self):
         with RedisService() as r:
-            r.push_provisioner("http://www.test.com/", priority=0)
+            r.insert_provisioner("http://www.test.com/", priority=0)
 
         self.start_worker(async_test_worker)
 

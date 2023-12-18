@@ -45,7 +45,7 @@ class TestCrawler(unittest.TestCase):
             r.clear_provisioners()
 
             self.domain = "127.0.0.1"
-            r.push_provisioner(f"http://{self.domain}/home", priority=1)
+            r.insert_provisioner(f"http://{self.domain}/home", priority=1)
 
     def tearDown(self) -> None:
         with RedisService() as r:

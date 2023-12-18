@@ -131,11 +131,11 @@ class TestConcurrentProvisioner(unittest.TestCase):
 
         with RedisService() as r:
             r.clear_provisioners()
-            r.push_provisioner("http://www.priority1.com/", priority=1)
-            r.push_provisioner("http://www.priority4.com/", priority=4)
-            r.push_provisioner("http://www.priority3.com/", priority=3)
-            r.push_provisioner("http://www.priority0.com/", priority=0)
-            r.push_provisioner("http://www.priority2.com/", priority=2)
+            r.insert_provisioner("http://www.priority1.com/", priority=1)
+            r.insert_provisioner("http://www.priority4.com/", priority=4)
+            r.insert_provisioner("http://www.priority3.com/", priority=3)
+            r.insert_provisioner("http://www.priority0.com/", priority=0)
+            r.insert_provisioner("http://www.priority2.com/", priority=2)
 
     def tearDown(self) -> None:
         with RedisService() as r:

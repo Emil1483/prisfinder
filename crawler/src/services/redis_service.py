@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+import os
 from urllib.parse import urlparse
 from redis import Redis
 from redis.client import Redis
@@ -8,16 +10,27 @@ from src.models.url import URL, FailedURLKey, URLKey, URLValue
 
 
 class RedisService(Redis):
+    @classmethod
+    def from_env_url(cls):
+        redis_url = os.getenv("REDIS_URL", "redis://localhost:6379")
+        service: RedisService = RedisService.from_url(redis_url)
+        return service
+
     def __enter__(self):
         service: RedisService = super().__enter__()
         return service
 
-    def push_provisioner(self, root_url: str, priority=0, domain: str = None):
+    def insert_provisioner(self, root_url: str, priority=2, domain: str = None):
         if not domain:
             domain = urlparse(root_url).netloc
 
             if domain != "127.0.0.1":
                 domain = ".".join(domain.split(".")[-2:])
+
+        existing = self.keys(f"provisioner:*:{domain}:*")
+        if existing:
+            print(f"provisioner with domain '{domain}' already exists")
+            return
 
         pipe = self.pipeline()
 

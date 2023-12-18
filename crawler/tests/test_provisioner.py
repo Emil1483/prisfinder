@@ -138,7 +138,7 @@ class TestProvisioner(unittest.TestCase):
             r.clear_provisioners()
 
             self.domain = "test.com"
-            r.push_provisioner(f"https://www.{self.domain}", priority=1)
+            r.insert_provisioner(f"https://www.{self.domain}", priority=1)
 
     def tearDown(self) -> None:
         with RedisService() as r:
