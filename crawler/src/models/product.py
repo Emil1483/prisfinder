@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from types import NoneType
 from typing import List
-from bson import ObjectId
 
 from dataclasses_json import dataclass_json
 

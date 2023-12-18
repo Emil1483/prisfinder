@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 import os
 from urllib.parse import urlparse
 from redis import Redis
