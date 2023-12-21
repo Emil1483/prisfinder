@@ -1,4 +1,6 @@
 from dataclasses import asdict, dataclass
+from math import floor
+from random import random
 from typing import Iterable
 from prisma import Prisma
 from src.models.finn_ad import FinnAd
@@ -17,6 +19,23 @@ class AmbiguousProductMatch(Exception):
 
 class IdentifierChangeError(Exception):
     pass
+
+
+def fetch_products_sample(sample_size: int):
+    count = prisma.product.count()
+    skip = floor(random() * (count - sample_size))
+    prisma_products = prisma.product.find_many(
+        take=sample_size,
+        skip=skip,
+        include={
+            "gtins": True,
+            "mpns": True,
+            "retailers": True,
+            "finn_ads": True,
+        },
+    )
+
+    return [as_product_model(p) for p in prisma_products]
 
 
 def insert_product(product: Product, ambiguous_to_id: int | None = None):

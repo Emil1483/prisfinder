@@ -98,5 +98,19 @@ def patch_product(product_id: int):
     return "OK"
 
 
+@app.route("/products/<product_id>", methods=["GET"])
+@error_handler
+def get_product(product_id):
+    product = prisma.get_product_by_id(int(product_id))
+    return product.to_dict()
+
+
+@app.route("/products", methods=["GET"])
+@error_handler
+def get_sample_products():
+    products = prisma.fetch_products_sample(sample_size=10)
+    return [p.to_dict() for p in products]
+
+
 if __name__ == "__main__":
     app.run(debug=True, port=8080)
