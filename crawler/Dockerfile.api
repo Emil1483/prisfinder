@@ -13,7 +13,5 @@ RUN prisma generate
 COPY . .
 
 ENV PYTHONPATH "${PYTHONPATH}:/app"
-ENV FLASK_APP=scripts/api.py
-ENV FLASK_RUN_HOST=0.0.0.0
 
-CMD flask run --port=$PORT
+CMD gunicorn --bind 0.0.0.0:$PORT scripts.api:app
