@@ -440,6 +440,32 @@ def fetch_finn_ads(product_id: int):
     ]
 
 
+def fetch_products_with_finn_query(skip: int = 0, page_size: int = 10):
+    prisma_products = prisma.product.find_many(
+        where={
+            "finn_query": {"not": None},
+        },
+        take=page_size,
+        skip=skip,
+        include={
+            "gtins": True,
+            "mpns": True,
+            "retailers": True,
+            "finn_ads": True,
+        },
+    )
+
+    return [as_product_model(p) for p in prisma_products]
+
+
+def count_products_with_finn_query():
+    return prisma.product.count(
+        where={
+            "finn_query": {"not": None},
+        },
+    )
+
+
 def clear_tables():
     prisma.product.delete_many()
 

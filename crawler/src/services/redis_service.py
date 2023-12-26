@@ -88,7 +88,12 @@ class RedisService(Redis):
 
     def fetch_url(self, domain: str, url_id: str):
         key = URLKey(domain=domain, id=url_id)
-        value: URLValue = URLValue.from_json(self.get(str(key)))
+        value_json = self.get(str(key))
+
+        if value_json is None:
+            raise KeyError(f"URL with id {url_id} not found")
+
+        value: URLValue = URLValue.from_json(value_json)
         return key, value
 
     def iter_urls(self, domain: str, cursor: str):
