@@ -1,7 +1,11 @@
 # python -m unittest tests.test_provisioner
 
+from datetime import timedelta
+from multiprocessing import Event, Process, Queue
+from time import sleep, time
 import unittest
 
+from scripts.worker import run
 from src.services.prisma_service import count_pending_urls, insert_pending_urls
 from src.services.redis_service import RedisService
 from src.services.web_page_service import URLHandler, WebPageService
@@ -9,6 +13,7 @@ from src.models.url import URL
 from src.services.provisioner import (
     ExitProvisioner,
     Provisioner,
+    ProvisionerTooOld,
 )
 
 
@@ -43,7 +48,55 @@ class TestURLHandler(URLHandler):
         pass
 
 
+class InfiniteURLHandler(URLHandler):
+    def handle_url(self, url: str) -> list[str]:
+        sleep(0.1)
+        if url == "https://www.test.com":
+            return [
+                "https://www.test.com/0",
+            ]
+
+        i = int(url.split("/")[-1])
+        return [f"https://www.test.com/{i + 1}"]
+
+    def setup(self):
+        pass
+
+    def teardown(self):
+        pass
+
+
+def async_worker(q: Queue, start_event: Event):
+    try:
+        run(
+            start_event=start_event,
+            max_age=timedelta(seconds=5),
+            service=WebPageService(InfiniteURLHandler()),
+        )
+
+    except Exception as e:
+        q.put(e)
+
+
 class TestProvisioner(unittest.TestCase):
+    def test_provisioner_too_old(self):
+        exceptions = Queue()
+        start_event = Event()
+
+        p = Process(target=async_worker, args=(exceptions, start_event))
+        p.start()
+
+        start_event.wait()
+
+        start = time()
+
+        exception = exceptions.get()
+
+        end = time()
+
+        self.assertIsInstance(exception, ProvisionerTooOld)
+        self.assertAlmostEqual(end - start, 5, delta=0.5)
+
     def test_pending_urls(self):
         insert_pending_urls(
             self.domain,

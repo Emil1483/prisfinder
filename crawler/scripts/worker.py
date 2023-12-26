@@ -1,3 +1,4 @@
+from datetime import timedelta
 from multiprocessing import Event
 import os
 from time import sleep
@@ -14,8 +15,12 @@ from src.services.provisioner import (
 )
 
 
-def default_handler(p: Provisioner, start_event: Event = None):
-    with WebPageService.from_domain(p.key.domain) as web:
+def default_handler(
+    p: Provisioner,
+    start_event: Event = None,
+    service: WebPageService = None,
+):
+    with service or WebPageService.from_domain(p.key.domain) as web:
         if start_event:
             start_event.set()
 
@@ -41,28 +46,16 @@ def default_handler(p: Provisioner, start_event: Event = None):
                 p.fail_url(url)
 
 
-def run(handler=default_handler, *args, **kwargs):
-    with Provisioner() as p:
+def run(
+    handler=default_handler,
+    *args,
+    timeout=timedelta(minutes=5),
+    max_age=timedelta(minutes=10),
+    **kwargs,
+):
+    with Provisioner(timeout=timeout, max_age=max_age) as p:
         handler(p, *args, **kwargs)
 
 
-def run_forever(handler=default_handler, *args, **kwargs):
-    while True:
-        try:
-            run(handler, *args, **kwargs)
-
-        except CouldNotFindProvisioner as e:
-            print(f"CouldNotFindProvisioner {e}: sleeping...")
-            sleep(10)
-            continue
-
-        except TakeOver:
-            print("Warning: TakeOver")
-            continue
-
-        except ExitProvisioner as e:
-            print(f"Exit Provisioner: {e.reason}")
-
-
 if __name__ == "__main__":
-    run_forever()
+    run()

@@ -49,6 +49,7 @@ def async_worker(q: Queue, start_event: Event):
 
 
 class TestAPI(unittest.TestCase):
+    # TODO: put this in a multiprocessing helper file
     def start_worker(self, target):
         start_event = Event()
         self.q = Queue()

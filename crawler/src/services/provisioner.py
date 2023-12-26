@@ -34,20 +34,26 @@ class TakeOver(Exception):
     pass
 
 
+class ProvisionerTooOld(Exception):
+    pass
+
+
 @dataclass()
 class ExitProvisioner(Exception):
     reason: str
 
 
 class Provisioner:
-    def __init__(self, timeout=timedelta(minutes=5)):
+    def __init__(self, timeout=timedelta(minutes=5), max_age=timedelta(minutes=10)):
         REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379")
 
         self.timeout = timeout
+        self.max_age = max_age
         self.r = RedisService.from_url(REDIS_URL)
         self.id = uuid4().hex
         self.disabled = False
         self.take_over = None
+        self.started_at = datetime.now()
 
     def __str__(self) -> str:
         return f"(key: {self.key}, value: {self.value})"
@@ -85,6 +91,10 @@ class Provisioner:
             raise AlreadyClosed()
 
         self.r.quit()
+
+    @property
+    def age(self):
+        return datetime.now() - self.started_at
 
     def disable(self):
         self.disabled = True
@@ -228,6 +238,9 @@ class Provisioner:
     def iter_urls(self):
         assert not self.disabled
         while True:
+            if self.age > self.max_age:
+                raise ProvisionerTooOld()
+
             yield self.cursor
 
             assert not self.disabled
