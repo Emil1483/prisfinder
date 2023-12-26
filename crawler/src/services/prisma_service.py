@@ -450,16 +450,16 @@ def patch_finn_ad(
 ):
     data = {}
 
-    if price:
+    if price is not None:
         data["price"] = price
 
-    if title:
+    if title is not None:
         data["title"] = title
 
-    if image:
+    if image is not None:
         data["image"] = image
 
-    if relevance:
+    if relevance is not None:
         data["relevance"] = relevance
 
     prisma.finnad.update(

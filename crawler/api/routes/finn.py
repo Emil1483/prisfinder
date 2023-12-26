@@ -28,8 +28,10 @@ def get_finn_products():
 
     def gen():
         for product in products:
-            url_id = hash_string(str(product.id))
+            product.finn_ads.sort(key=lambda p: p.id)
+
             try:
+                url_id = hash_string(str(product.id))
                 _, url_value = redis.fetch_url("finn.no", url_id)
                 url_value.failed_at
                 yield {
