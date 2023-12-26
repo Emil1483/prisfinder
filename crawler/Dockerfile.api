@@ -14,4 +14,4 @@ COPY . .
 
 ENV PYTHONPATH "${PYTHONPATH}:/app"
 
-CMD gunicorn --bind 0.0.0.0:$PORT scripts.api:app
+CMD gunicorn --bind 0.0.0.0:$PORT api.app:app

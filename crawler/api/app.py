@@ -1,8 +1,8 @@
 from flask import Flask
 
-from routes.provisioners import provisioners_bp
-from routes.products import products_bp
-from routes.finn import finn_bp
+from api.routes.provisioners import provisioners_bp
+from api.routes.products import products_bp
+from api.routes.finn import finn_bp
 
 app = Flask(__name__)
 
