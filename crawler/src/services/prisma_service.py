@@ -109,6 +109,7 @@ def as_product_model(prisma_product: PrismaProduct):
                 timestamp=ad.timestamp,
                 title=ad.title,
                 product_id=ad.product_id,
+                relevance=ad.relevance,
             )
             for ad in prisma_product.finn_ads
         ]
@@ -438,6 +439,33 @@ def fetch_finn_ads(product_id: int):
         )
         for ad in prisma_finn_ads
     ]
+
+
+def patch_finn_ad(
+    id: int,
+    price: int = None,
+    title: str = None,
+    image: str = None,
+    relevance: float = None,
+):
+    data = {}
+
+    if price:
+        data["price"] = price
+
+    if title:
+        data["title"] = title
+
+    if image:
+        data["image"] = image
+
+    if relevance:
+        data["relevance"] = relevance
+
+    prisma.finnad.update(
+        where={"id": id},
+        data=data,
+    )
 
 
 def fetch_products_with_finn_query(skip: int = 0, page_size: int = 10):

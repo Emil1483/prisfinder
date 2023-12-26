@@ -45,3 +45,10 @@ def get_finn_products():
                 }
 
     return [*gen()]
+
+
+@finn_bp.route("/finn_ads/<id>", methods=["PATCH"])
+@error_handler
+def patch_finn_ad(id):
+    prisma.patch_finn_ad(int(id), **request.json)
+    return "OK"

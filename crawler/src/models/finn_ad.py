@@ -73,6 +73,7 @@ class FinnAd(object):
     title: str
     product_id: int
     image: str | None
+    relevance: float | None = None
 
     @classmethod
     def from_raw(cls, ad: RawFinnAd, product_id: int):

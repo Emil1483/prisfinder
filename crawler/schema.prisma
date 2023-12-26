@@ -81,6 +81,7 @@ model FinnAd {
     timestamp BigInt
     title     String
     image     String?
+    relevance Float?
 
     product    Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
     product_id Int
