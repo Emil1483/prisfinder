@@ -11,6 +11,7 @@ from src.services.provisioner import (
     CouldNotFindProvisioner,
     ExitProvisioner,
     Provisioner,
+    ProvisionerTooOld,
     TakeOver,
 )
 
@@ -58,4 +59,13 @@ def run(
 
 
 if __name__ == "__main__":
-    run()
+    try:
+        run()
+    except ProvisionerTooOld:
+        print("Provisioner too old, exiting")
+    except CouldNotFindProvisioner:
+        print("Could not find provisioner, exiting")
+    except TakeOver:
+        print("Someone else is handling this provisioner, exiting")
+    except ExitProvisioner as e:
+        print("Exiting:", e)
