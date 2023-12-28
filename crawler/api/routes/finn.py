@@ -3,7 +3,7 @@ from flask import Blueprint, request
 from src.helpers.flask_error_handler import error_handler
 from src.helpers.misc import hash_string
 import src.services.prisma_service as prisma
-from api import redis
+from api.redis_service import redis
 
 finn_bp = Blueprint("finn", __name__)
 

@@ -4,7 +4,7 @@ from src.models.provisioner import ProvisionerStatus
 from src.helpers.flask_error_handler import error_handler
 import src.services.prisma_service as prisma
 
-from api import redis
+from api.redis_service import redis
 
 products_bp = Blueprint("products", __name__)
 

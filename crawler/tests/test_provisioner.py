@@ -4,9 +4,20 @@ from datetime import timedelta
 from multiprocessing import Event, Process, Queue
 from time import sleep, time
 import unittest
+import os
+
+os.environ[
+    "POSTGRESQL_URL"
+] = "postgresql://test:rootpassword@localhost:5433/prisfinder"
+
+os.environ["REDIS_URL"] = "redis://localhost:6379"
 
 from scripts.worker import run
-from src.services.prisma_service import count_pending_urls, insert_pending_urls
+from src.services.prisma_service import (
+    clear_tables,
+    count_pending_urls,
+    insert_pending_urls,
+)
 from src.services.redis_service import RedisService
 from src.services.web_page_service import URLHandler, WebPageService
 from src.models.url import URL
@@ -187,14 +198,16 @@ class TestProvisioner(unittest.TestCase):
         )
 
     def setUp(self) -> None:
-        with RedisService() as r:
+        clear_tables()
+        with RedisService.from_env_url() as r:
             r.clear_provisioners()
 
             self.domain = "test.com"
             r.insert_provisioner(f"https://www.{self.domain}", priority=1)
 
     def tearDown(self) -> None:
-        with RedisService() as r:
+        clear_tables()
+        with RedisService.from_env_url() as r:
             r.clear_provisioners()
 
 

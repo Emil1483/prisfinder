@@ -1,10 +1,10 @@
 from datetime import timedelta
 from multiprocessing import Event
 import os
-from time import sleep
 import traceback
 import psutil
 
+from src.services.redis_service import RedisService
 from src.services.web_page_service import WebPageService
 from src.models.url import URL
 from src.services.provisioner import (

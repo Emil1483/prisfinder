@@ -59,7 +59,7 @@ class TestConcurrentProvisioner(unittest.TestCase):
 
     def test_prioritization(self):
         def expect(truth_table: dict):
-            with RedisService() as r:
+            with RedisService.from_env_url() as r:
                 truth_table_copy = truth_table.copy()
                 for key in r.scan_provisioner_keys():
                     domain, status = key.domain, key.status
@@ -129,7 +129,7 @@ class TestConcurrentProvisioner(unittest.TestCase):
     def setUp(self) -> None:
         self.provisioners = []
 
-        with RedisService() as r:
+        with RedisService.from_env_url() as r:
             r.clear_provisioners()
             r.insert_provisioner("http://www.priority1.com/", priority=1)
             r.insert_provisioner("http://www.priority4.com/", priority=4)
@@ -138,5 +138,5 @@ class TestConcurrentProvisioner(unittest.TestCase):
             r.insert_provisioner("http://www.priority2.com/", priority=2)
 
     def tearDown(self) -> None:
-        with RedisService() as r:
+        with RedisService.from_env_url() as r:
             r.clear_provisioners()

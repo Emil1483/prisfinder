@@ -1,7 +1,7 @@
 # python -m unittest tests.test_crawler
 
-from time import sleep
 import unittest
+import os
 
 from src.services.prisma_service import clear_tables
 from src.services.redis_service import RedisService
@@ -9,6 +9,12 @@ from tests.test_website.graph import build_endpoints_graph
 from src.models.url import URL
 from src.services.web_page_service import WebPageService
 from src.services.provisioner import Provisioner
+
+os.environ[
+    "POSTGRESQL_URL"
+] = "postgresql://test:rootpassword@localhost:5433/prisfinder"
+
+os.environ["REDIS_URL"] = "redis://localhost:6379"
 
 
 class TestCrawler(unittest.TestCase):
@@ -39,7 +45,7 @@ class TestCrawler(unittest.TestCase):
                 self.assertEqual(len(all_urls), len(website_endpoints))
 
     def setUp(self) -> None:
-        with RedisService() as r:
+        with RedisService.from_env_url() as r:
             clear_tables()
 
             r.clear_provisioners()
@@ -48,7 +54,7 @@ class TestCrawler(unittest.TestCase):
             r.insert_provisioner(f"http://{self.domain}/home", priority=1)
 
     def tearDown(self) -> None:
-        with RedisService() as r:
+        with RedisService.from_env_url() as r:
             clear_tables()
             r.clear_provisioners()
 

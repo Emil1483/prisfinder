@@ -1,7 +1,7 @@
 from flask import Blueprint
-from src.helpers.flask_error_handler import error_handler
 
-from api import redis
+from src.helpers.flask_error_handler import error_handler
+from api.redis_service import redis
 
 provisioners_bp = Blueprint("provisioners", __name__)
 

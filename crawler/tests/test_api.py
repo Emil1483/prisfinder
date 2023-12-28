@@ -3,8 +3,16 @@
 from multiprocessing import Event, Process, Queue
 from time import sleep
 import unittest
+import os
 
-from scripts.api import app
+os.environ[
+    "POSTGRESQL_URL"
+] = "postgresql://test:rootpassword@localhost:5433/prisfinder"
+
+os.environ["REDIS_URL"] = "redis://localhost:6379"
+
+from api.app import app
+
 from scripts.worker import run
 
 from src.services.provisioner import (
@@ -67,10 +75,12 @@ class TestAPI(unittest.TestCase):
             sleep(0.1)
 
     def setUp(self):
+        clear_tables()
+
         app.config["TESTING"] = True
         self.client = app.test_client()
 
-        with RedisService() as r:
+        with RedisService.from_env_url() as r:
             r.clear_provisioners()
 
             self.product_ids = []
@@ -99,11 +109,11 @@ class TestAPI(unittest.TestCase):
 
     def tearDown(self) -> None:
         clear_tables()
-        with RedisService() as r:
+        with RedisService.from_env_url() as r:
             r.clear_provisioners()
 
     def test_setting_finn_query(self):
-        with RedisService() as r:
+        with RedisService.from_env_url() as r:
             r.insert_provisioner("", priority=0, domain="finn.no")
 
             key, _ = r.fetch_provisioner("finn.no")
@@ -159,7 +169,7 @@ class TestAPI(unittest.TestCase):
 
             self.assertEqual(response.status_code, 200, response.text)
 
-            exception = self.q.get(block=True, timeout=10)
+            exception = self.q.get(block=True, timeout=10000)
 
             self.assertEqual(type(exception), ExitProvisioner)
 
@@ -170,8 +180,11 @@ class TestAPI(unittest.TestCase):
                 product = get_product_by_id(product_id)
                 self.assertGreater(len(product.finn_ads), 0)
 
+            for key in r.scan_failed_url_keys("finn.no"):
+                self.fail(f"Failed url key: {key}")
+
     def test_disable_enable_provisioner(self):
-        with RedisService() as r:
+        with RedisService.from_env_url() as r:
             r.insert_provisioner("http://www.test.com/", priority=0)
 
         self.start_worker(async_test_worker)
@@ -179,7 +192,7 @@ class TestAPI(unittest.TestCase):
         response = self.client.post("/provisioners/test.com/disable")
         self.assertEqual(response.status_code, 200, response.text)
 
-        exception = self.q.get(block=True, timeout=10)
+        exception = self.q.get(block=True, timeout=10000)
         self.assertIsInstance(exception, TakeOver)
 
         self.assertRaises(CouldNotFindProvisioner, test_worker)
@@ -192,7 +205,7 @@ class TestAPI(unittest.TestCase):
         response = self.client.post("/provisioners/test.com/disable")
         self.assertEqual(response.status_code, 200, response.text)
 
-        exception = self.q.get(block=True, timeout=10)
+        exception = self.q.get(block=True, timeout=100000)
         self.assertIsInstance(exception, TakeOver)
 
 

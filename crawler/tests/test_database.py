@@ -1,6 +1,13 @@
 # python -m unittest tests.test_database
 
 import unittest
+import os
+
+os.environ[
+    "POSTGRESQL_URL"
+] = "postgresql://test:rootpassword@localhost:5433/prisfinder"
+
+os.environ["REDIS_URL"] = "redis://localhost:6379"
 
 from src.services.prisma_service import (
     AmbiguousProductMatch,

@@ -1,5 +1,6 @@
 import os
 from urllib.parse import urlparse
+from dotenv import load_dotenv
 from redis import Redis
 from redis.client import Redis
 from src.helpers.flask_error_handler import HTTPException
@@ -11,6 +12,7 @@ from src.models.url import URL, FailedURLKey, URLKey, URLValue
 class RedisService(Redis):
     @classmethod
     def from_env_url(cls):
+        load_dotenv()
         redis_url = os.getenv("REDIS_URL", "redis://localhost:6379")
         service: RedisService = RedisService.from_url(redis_url)
         return service
@@ -65,15 +67,10 @@ class RedisService(Redis):
         pipe.execute()
 
     def scan_provisioner_keys(self):
-        def gen():
-            for provisioner_key_bytes in self.scan_iter("provisioner:*"):
-                provisioner_key = ProvisionerKey.from_string(
-                    provisioner_key_bytes.decode()
-                )
+        for provisioner_key_bytes in self.scan_iter("provisioner:*"):
+            provisioner_key = ProvisionerKey.from_string(provisioner_key_bytes.decode())
 
-                yield provisioner_key
-
-        return [*gen()]
+            yield provisioner_key
 
     def fetch_provisioner(self, domain: str) -> tuple[ProvisionerKey, ProvisionerValue]:
         keys = self.keys(f"provisioner:*:{domain}:*")

@@ -45,11 +45,9 @@ class ExitProvisioner(Exception):
 
 class Provisioner:
     def __init__(self, timeout=timedelta(minutes=5), max_age=timedelta(minutes=10)):
-        REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379")
-
         self.timeout = timeout
         self.max_age = max_age
-        self.r = RedisService.from_url(REDIS_URL)
+        self.r = RedisService.from_env_url()
         self.id = uuid4().hex
         self.disabled = False
         self.take_over = None

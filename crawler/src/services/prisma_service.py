@@ -1,5 +1,6 @@
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from math import floor
+import os
 from random import random
 from typing import Iterable
 from prisma import Prisma
@@ -495,6 +496,11 @@ def count_products_with_finn_query():
 
 
 def clear_tables():
+    if "test" not in os.getenv("POSTGRESQL_URL"):
+        result = input("Are you sure you want to clear the database? (y/n) ")
+        if result.lower() != "y":
+            return
+
     prisma.product.delete_many()
 
 

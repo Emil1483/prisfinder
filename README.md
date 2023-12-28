@@ -27,10 +27,10 @@ winget install -e --id Python.Python.3.11
 winget install -e --id OpenJS.NodeJS
 ```
 
-Then, create a .env file with a `POSTGRESQL_URI` pointing to the created postgres docker container
+Then, create a .env file with a `POSTGRESQL_URL` pointing to the created postgres docker container
 
 ```
-POSTGRESQL_URI=postgresql://root:rootpassword@localhost:5432/prisfinder
+POSTGRESQL_URL=postgresql://root:rootpassword@localhost:5432/prisfinder
 ```
 
 Then, run
@@ -85,10 +85,10 @@ The website is currently a simple, bare bones next.js website written in typescr
 winget install -e --id Yarn.Yarn
 ```
 
-Then, create a .env file with a `POSTGRESQL_URI` pointing to the created postgres docker container
+Then, create a .env file with a `POSTGRESQL_URL` pointing to the created postgres docker container
 
 ```
-POSTGRESQL_URI=postgresql://root:rootpassword@localhost:5432/prisfinder
+POSTGRESQL_URL=postgresql://root:rootpassword@localhost:5432/prisfinder
 ```
 
 Then, run
