@@ -1,9 +1,6 @@
-venv
-model
-
 __pycache__
-.env
-
+venv
+backup/**
 .vscode
 
-data
+.env

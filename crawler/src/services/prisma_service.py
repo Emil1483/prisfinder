@@ -24,6 +24,9 @@ class IdentifierChangeError(Exception):
 
 def fetch_products_sample(sample_size: int):
     count = prisma.product.count()
+    if count < sample_size:
+        sample_size = count
+
     skip = floor(random() * (count - sample_size))
     prisma_products = prisma.product.find_many(
         take=sample_size,
@@ -499,7 +502,7 @@ def clear_tables():
     if "test" not in os.getenv("POSTGRESQL_URL"):
         result = input("Are you sure you want to clear the database? (y/n) ")
         if result.lower() != "y":
-            return
+            raise Exception("Aborted")
 
     prisma.product.delete_many()
 
