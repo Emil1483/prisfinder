@@ -1,3 +1,4 @@
+from multiprocessing import Manager, Pool
 import os
 import re
 from string import printable
@@ -32,8 +33,6 @@ def download_redis(REDIS_URL: str = typer.Option(..., "-f", "--from")):
                         failed_url_key = FailedURLKey.from_url_key(url_key)
                         home.set(str(failed_url_key), b"")
 
-                    i += 1
-
 
 @app.command()
 def upload_redis(REDIS_URL: str = typer.Option(..., "-t", "--to")):
@@ -53,8 +52,6 @@ def upload_redis(REDIS_URL: str = typer.Option(..., "-t", "--to")):
                         failed_url_key = FailedURLKey.from_url_key(url_key)
                         other.set(str(failed_url_key), b"")
 
-                    i += 1
-
 
 @app.command()
 def download_sql_dump(POSTGRESQL_URL: str = typer.Option(..., "-f", "--from")):
@@ -72,65 +69,96 @@ def download_sql_dump(POSTGRESQL_URL: str = typer.Option(..., "-f", "--from")):
     )
 
 
+def execute(args):
+    failed, sql = args
+    try:
+        print(sql)
+        prisma.execute_raw(sql)
+    except RawQueryError:
+        failed.append(sql)
+
+
 @app.command()
 def install_sql_dump():
     with open("backup/backup.sql") as f:
         print("executing sql dump from backup.sql")
 
-        def execute(ranges: list):
-            failed_ranges = []
-            for _, start, end in ranges:
-                f.seek(start)
-                current = ""
-                char_pos = start
-                while char_pos < end:
-                    line = f.readline()
-                    char_pos += len(line) + 1
+        index = {}
+        char_pos = 0
+        sql = ""
+        for line in f:
+            start = char_pos
+            end = start + len(line)
+            char_pos = end + 1
 
-                    if not line:
-                        break
+            current = re.sub("[^{}]+".format(printable), "", line)
+            current = re.sub("(\r\n|\n|\r)", "", current)
+            current = re.sub("\s+", " ", current)
 
-                    sql = re.sub("[^{}]+".format(printable), "", line)
-                    sql = re.sub("(\r\n|\n|\r)", "", sql)
-                    sql = re.sub("\s+", " ", sql)
+            if not current or current.startswith("--"):
+                continue
 
-                    if not sql or sql.startswith("--"):
-                        continue
+            sql += current
 
-                    current += sql
+            if sql.endswith(";"):
+                if "INSERT" not in sql:
+                    continue
 
-                    if sql.endswith(";") and "INSERT" in current:
-                        try:
-                            prisma.execute_raw(current)
-                        except RawQueryError as e:
-                            if not failed_ranges:
-                                failed_ranges.append(
-                                    (str(e), char_pos - len(line) - 1, char_pos)
-                                )
+                table = sql.split('"')[1]
+                sql = ""
 
-                            elif failed_ranges[-1][0] == str(e):
-                                failed_ranges[-1] = (
-                                    failed_ranges[-1][0],
-                                    failed_ranges[-1][1],
-                                    char_pos,
-                                )
+                if table not in index:
+                    index[table] = start, end
+                else:
+                    index[table] = index[table][0], end
 
-                            else:
-                                failed_ranges.append(
-                                    (str(e), char_pos - len(line) - 1, char_pos)
-                                )
-                        finally:
-                            current = ""
+        def generate_sql(start, end):
+            f.seek(start)
+            sql = ""
+            chars_left = end - start
+            while chars_left > 0:
+                line = f.readline()
+                chars_left -= len(line) + 1
 
-            return failed_ranges
+                current = re.sub("[^{}]+".format(printable), "", line)
+                current = re.sub("(\r\n|\n|\r)", "", current)
+                current = re.sub("\s+", " ", current)
+
+                if not current or current.startswith("--"):
+                    continue
+
+                sql += current
+
+                if sql.endswith(";"):
+                    yield sql
+                    sql = ""
 
         clear_tables()
-        ranges = [(None, 0, float("inf"))]
-        for _ in range(3):
-            ranges = execute(ranges)
 
-        for e, _, _ in ranges:
-            print("WARNING:", e, type(e))
+        def process_sqls(sqls, manager: Manager, pool: Pool):
+            failed = manager.list()
+            gen = ((failed, sql) for sql in sqls)
+            pool.map(execute, gen)
+            return [*failed]
+
+        with Manager() as manager, Pool(processes=10) as pool:
+            failed = process_sqls(generate_sql(*index["Product"]), manager, pool)
+            failed = process_sqls(failed, manager, pool)
+            assert not failed
+
+            failed = process_sqls(generate_sql(*index["FinnAd"]), manager, pool)
+            assert not failed
+
+            failed = process_sqls(generate_sql(*index["Gtin"]), manager, pool)
+            assert not failed
+
+            failed = process_sqls(generate_sql(*index["Mpn"]), manager, pool)
+            assert not failed
+
+            failed = process_sqls(
+                generate_sql(*index["ProductRetailer"]), manager, pool
+            )
+            assert not failed
 
 
 @app.command()
